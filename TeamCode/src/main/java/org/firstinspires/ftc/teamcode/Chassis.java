@@ -40,11 +40,6 @@ public class Chassis extends OpMode {
     // naj set constant for Gyro KP for driving straight
     public static final double chassis_KPGyroStraight = 0.02;
     private static final String TAGChassis = "8492-Chassis";
-    public Hanger hanger = new Hanger();
-    public IntakeArmStates intakeArm = new IntakeArmStates();
-    public DumpBox dumpBox = new DumpBox();
-    public ScannerArms scannerArms = new ScannerArms();
-    public MineralVision mineralVision = new MineralVision();
 
     // The IMU sensor object
     BNO055IMU imu;
@@ -136,28 +131,6 @@ public class Chassis extends OpMode {
         telemetry.addData("Chassis", "Initialized");
 
 
-        // naj hardwaremap and initialize all other classes
-        hanger.hardwareMap = hardwareMap;
-        hanger.telemetry = telemetry;
-        hanger.setIntakeArm(intakeArm);
-        hanger.init();
-
-        intakeArm.hardwareMap = hardwareMap;
-        intakeArm.telemetry = telemetry;
-        intakeArm.setHanger(hanger);
-        intakeArm.init();
-
-        dumpBox.hardwareMap = hardwareMap;
-        dumpBox.telemetry = telemetry;
-        dumpBox.init();
-
-        scannerArms.hardwareMap = hardwareMap;
-        scannerArms.telemetry = telemetry;
-        scannerArms.init();
-
-        mineralVision.hardwareMap = hardwareMap;
-        mineralVision.telemetry = telemetry;
-        mineralVision.init();
 
         runtime.reset();
     }
@@ -167,11 +140,6 @@ public class Chassis extends OpMode {
      */
     @Override
     public void init_loop() {
-        hanger.init_loop();
-        intakeArm.init_loop();
-        dumpBox.init_loop();
-        scannerArms.init_loop();
-        mineralVision.init_loop();
         if (runtime.milliseconds()  > 1000) {
             initCounter = initCounter + 1;
             telemetry.addData("Chassis init time: ", initCounter);
@@ -226,20 +194,11 @@ public class Chassis extends OpMode {
 
         switch (parentMode_Current) {
             case PARENT_MODE_AUTO:
-                intakeArm.autoStart();
-                hanger.autoStart();
                 break;
 
             case PARENT_MODE_TELE:
-                intakeArm.teleStart();
-                hanger.teleStart();
                 break;
         }
-        hanger.start();
-        intakeArm.start();
-        dumpBox.start();
-        scannerArms.start();
-        mineralVision.start();
     }
 
     /*
@@ -248,11 +207,6 @@ public class Chassis extends OpMode {
     @Override
     public void loop() {
 
-        intakeArm.loop();
-        hanger.loop();
-        dumpBox.loop();
-        scannerArms.loop();
-        mineralVision.loop();
 
 
         if (ChassisMode_Current == ChassisMode_Stop) {
@@ -496,11 +450,6 @@ public class Chassis extends OpMode {
         RDM1.setPower(0);
         RDM2.setPower(0);
         ChassisMode_Current = ChassisMode_Stop;
-        hanger.stop();
-        intakeArm.stop();
-        dumpBox.stop();
-        scannerArms.stop();
-        mineralVision.stop();
     }
     public void setMaxPower(double newMax){
 
