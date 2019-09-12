@@ -23,7 +23,7 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Judges-TFOD-Demo", group = "TeleOp")
+@TeleOp(name = "Judges-TFOD-Demo", group = "TeleOp_test")
 //@Disabled
 public class JudgesDemo_TFOD extends LinearOpMode {
     private static final String TAGMineralVision = "8492-ConceptTFOD";

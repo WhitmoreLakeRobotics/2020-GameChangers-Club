@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import java.util.Locale;
 
 
-//@TeleOp(name="Basic: Iterative OpMode", group="Iterative Opmode")
+//@TeleOp_test(name="Basic: Iterative OpMode", group="Iterative Opmode")
 //@Disabled
 public class Chassis_Test extends OpMode {
 
