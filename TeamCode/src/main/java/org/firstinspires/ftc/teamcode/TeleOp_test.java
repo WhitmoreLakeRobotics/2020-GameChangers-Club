@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
 /**
@@ -48,8 +49,9 @@ import com.qualcomm.robotcore.util.RobotLog;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-//@TeleOp(name = "Teleop-TestChassis", group = "TeleOp_test")
-@Disabled
+//@TeleOp_testp(name = "Teleop-TestChassis", group = "TeleOp_test")
+@TeleOp(name = "Teleop-TestChassis", group = "TeleOp")
+//@Disabled
 public class TeleOp_test extends OpMode {
     private static final String TAGTeleop = "8492-Teleop";
     Chassis_Test RBTChassis = new Chassis_Test();
