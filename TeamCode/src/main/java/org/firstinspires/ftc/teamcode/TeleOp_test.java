@@ -133,7 +133,8 @@ public class TeleOp_test extends OpMode {
         RobotLog.aa(TAGTeleop, "gamepad1 " + RightMotorPower);
 
 
-
+        RBTChassis.doTeleopH(joystickMath(gamepad1.left_trigger),
+                joystickMath(gamepad1.right_trigger));
 
 
 

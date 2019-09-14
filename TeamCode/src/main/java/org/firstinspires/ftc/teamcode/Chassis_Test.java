@@ -8,6 +8,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -61,6 +62,7 @@ public class Chassis_Test extends OpMode {
     private DcMotor LDM2 = null;
     private DcMotor RDM1 = null;
     private DcMotor RDM2 = null;
+    private DcMotor HDM1 = null;
     private double TargetMotorPowerLeft = 0;
     private double TargetMotorPowerRight = 0;
     private int TargetHeadingDeg = 0;
@@ -89,6 +91,7 @@ public class Chassis_Test extends OpMode {
         LDM1 = hardwareMap.dcMotor.get("LDM1");
         LDM2 = hardwareMap.dcMotor.get("LDM2");
         RDM2 = hardwareMap.dcMotor.get("RDM2");
+        HDM1 = hardwareMap.dcMotor.get("HDM1");
 
 
         if (LDM1 == null) {
@@ -102,6 +105,9 @@ public class Chassis_Test extends OpMode {
         }
         if (RDM2 == null) {
             telemetry.log().add("RDM2 is null...");
+        }
+        if (HDM1 == null) {
+            telemetry.log().add("HDM is null...");
         }
 
 
@@ -125,6 +131,10 @@ public class Chassis_Test extends OpMode {
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        HDM1.setDirection(DcMotor.Direction.FORWARD);
+        HDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
@@ -144,25 +154,8 @@ public class Chassis_Test extends OpMode {
         telemetry.addData("Chassis", "Initialized");
 
 
-        // naj hardwaremap and initialize all other classes
-       /* hanger.hardwareMap = hardwareMap;
-        hanger.telemetry = telemetry;
-        hanger.setIntakeArm(intakeArm);
-        hanger.init();
 
-        intakeArm.hardwareMap = hardwareMap;
-        intakeArm.telemetry = telemetry;
-        intakeArm.setHanger(hanger);
-        intakeArm.init();
 
-        dumpBox.hardwareMap = hardwareMap;
-        dumpBox.telemetry = telemetry;
-        dumpBox.init();
-/*
-        //scannerArms.hardwareMap = hardwareMap;
-        //scannerArms.telemetry = telemetry;
-        //scannerArms.init();
-    }
 
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -274,7 +267,14 @@ public class Chassis_Test extends OpMode {
 
     }
 
+    public void doTeleopH(double leftPower, double rightPower){
 
+        double totalPower = leftPower - rightPower;
+        RobotLog.aa(TAGChassis, "doTeleopH: leftPower=" + leftPower + " rightPower=" + rightPower);
+        HDM1.setPower(totalPower);
+
+
+    }
     public void doTeleop(double LDMpower, double RDMpower) {
         ChassisMode_Current = ChassisMode_Teleop;
 
