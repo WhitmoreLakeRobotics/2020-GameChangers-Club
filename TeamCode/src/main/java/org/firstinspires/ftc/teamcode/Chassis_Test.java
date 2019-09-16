@@ -1,6 +1,3 @@
-/*
- * Created by mg15 on 9/20/18.
- */
 
 package org.firstinspires.ftc.teamcode;
 
@@ -41,10 +38,6 @@ public class Chassis_Test extends OpMode {
     // naj set constant for Gyro KP for driving straight
     public static final double chassis_KPGyroStraight = 0.02;
     private static final String TAGChassis = "8492-Chassis";
-    //public Hanger hanger = new Hanger();
-    //public IntakeArm intakeArm = new IntakeArm();
-    //p/ublic DumpBox dumpBox = new DumpBox();
-    //public ScannerArms scannerArms = new ScannerArms();
     // The IMU sensor object
     BNO055IMU imu;
 
@@ -53,6 +46,7 @@ public class Chassis_Test extends OpMode {
     Orientation angles;
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    private int initCounter = 0;
     //current mode of operation for Chassis
     private int ChassisMode_Current = ChassisMode_Stop;
     private boolean cmdComplete = true;
@@ -75,18 +69,6 @@ public class Chassis_Test extends OpMode {
      */
     @Override
     public void init() {
-
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
-
-        // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialized");
-
-
         RDM1 = hardwareMap.dcMotor.get("RDM1");
         LDM1 = hardwareMap.dcMotor.get("LDM1");
         LDM2 = hardwareMap.dcMotor.get("LDM2");
@@ -134,7 +116,6 @@ public class Chassis_Test extends OpMode {
         HDM1.setDirection(DcMotor.Direction.FORWARD);
         HDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         HDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
@@ -155,17 +136,20 @@ public class Chassis_Test extends OpMode {
 
 
 
-
+        runtime.reset();
+    }
 
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
-        //  @Override
-        // public void init_loop() {
-       // hanger.init_loop();
-        //intakeArm.init_loop();
-            //dumpBox.init_loop();
-        //scannerArms.init_loop();
+  @Override
+public void init_loop() {
+        if (runtime.milliseconds()  > 1000) {
+            initCounter = initCounter + 1;
+            telemetry.addData("Chassis init time: ", initCounter);
+            telemetry.update();
+            runtime.reset();
+        }
     }
 
     public void setParentMode(PARENTMODE pm) {
@@ -193,12 +177,14 @@ public class Chassis_Test extends OpMode {
         LDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        HDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         LDM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RDM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        HDM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void DriveServoMotorReset() {
@@ -208,38 +194,24 @@ public class Chassis_Test extends OpMode {
     /*
      * Code to run ONCE when the driver hits PLAY
      */
-    // @Override
-    // public void start() {
-    //  runtime.reset();
+     @Override
+     public void start() {
+        runtime.reset();
 
-    //switch (parentMode_Current) {
-     //  case PARENT_MODE_AUTO:
-    //    intakeArm.autoStart();
-    //     hanger.autoStart();
-    //break;
+        switch (parentMode_Current) {
+            case PARENT_MODE_AUTO:
+                break;
 
-    //  case PARENT_MODE_TELE:
-    //   intakeArm.teleStart();
-    //    hanger.teleStart();
-    //    break;
-    // }//
-// hanger.start();
-//   intakeArm.start();
-//    dumpBox.start();
-        //scannerArms.start();
-    // }
+            case PARENT_MODE_TELE:
+                break;
+        }
+    }
 
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
     @Override
     public void loop() {
-
-        // intakeArm.loop();
-        // hanger.loop();
-        // dumpBox.loop();
-        //scannerArms.loop();
-
         if (ChassisMode_Current == ChassisMode_Stop) {
             doStop();
         }
@@ -255,7 +227,7 @@ public class Chassis_Test extends OpMode {
         }
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
+       // telemetry.addData("Status", "Run Time: " + runtime.toString());
 
         // RobotLog.aa(TAGChassis,"Stage: "+ CurrentStage );
         RobotLog.aa(TAGChassis, "Runtime: " + runtime.seconds());
@@ -272,9 +244,8 @@ public class Chassis_Test extends OpMode {
         double totalPower = leftPower - rightPower;
         RobotLog.aa(TAGChassis, "doTeleopH: leftPower=" + leftPower + " rightPower=" + rightPower);
         HDM1.setPower(totalPower);
-
-
     }
+	
     public void doTeleop(double LDMpower, double RDMpower) {
         ChassisMode_Current = ChassisMode_Teleop;
 

@@ -1,6 +1,3 @@
-/*
- * Created by mg15 on 9/20/18.
- */
 
 package org.firstinspires.ftc.teamcode;
 
@@ -8,6 +5,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -40,7 +38,6 @@ public class Chassis extends OpMode {
     // naj set constant for Gyro KP for driving straight
     public static final double chassis_KPGyroStraight = 0.02;
     private static final String TAGChassis = "8492-Chassis";
-
     // The IMU sensor object
     BNO055IMU imu;
 
@@ -59,6 +56,7 @@ public class Chassis extends OpMode {
     private DcMotor LDM2 = null;
     private DcMotor RDM1 = null;
     private DcMotor RDM2 = null;
+    private DcMotor HDM1 = null;
     private double TargetMotorPowerLeft = 0;
     private double TargetMotorPowerRight = 0;
     private int TargetHeadingDeg = 0;
@@ -71,11 +69,11 @@ public class Chassis extends OpMode {
      */
     @Override
     public void init() {
-
         RDM1 = hardwareMap.dcMotor.get("RDM1");
         LDM1 = hardwareMap.dcMotor.get("LDM1");
         LDM2 = hardwareMap.dcMotor.get("LDM2");
         RDM2 = hardwareMap.dcMotor.get("RDM2");
+        HDM1 = hardwareMap.dcMotor.get("HDM1");
 
 
         if (LDM1 == null) {
@@ -89,6 +87,9 @@ public class Chassis extends OpMode {
         }
         if (RDM2 == null) {
             telemetry.log().add("RDM2 is null...");
+        }
+        if (HDM1 == null) {
+            telemetry.log().add("HDM is null...");
         }
 
 
@@ -112,6 +113,9 @@ public class Chassis extends OpMode {
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        HDM1.setDirection(DcMotor.Direction.FORWARD);
+        HDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
@@ -173,12 +177,14 @@ public class Chassis extends OpMode {
         LDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        HDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         LDM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RDM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        HDM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void DriveServoMotorReset() {
@@ -206,9 +212,6 @@ public class Chassis extends OpMode {
      */
     @Override
     public void loop() {
-
-
-
         if (ChassisMode_Current == ChassisMode_Stop) {
             doStop();
         }
@@ -236,7 +239,13 @@ public class Chassis extends OpMode {
 
     }
 
+    public void doTeleopH(double leftPower, double rightPower){
 
+        double totalPower = leftPower - rightPower;
+        RobotLog.aa(TAGChassis, "doTeleopH: leftPower=" + leftPower + " rightPower=" + rightPower);
+        HDM1.setPower(totalPower);
+    }
+	
     public void doTeleop(double LDMpower, double RDMpower) {
         ChassisMode_Current = ChassisMode_Teleop;
 
