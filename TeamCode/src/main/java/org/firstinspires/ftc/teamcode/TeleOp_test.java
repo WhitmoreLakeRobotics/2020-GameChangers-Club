@@ -131,6 +131,7 @@ public class TeleOp_test extends OpMode {
         // - This uses basic math to combine motions and is easier to drive straight.
         RBTChassis.doTeleop(joystickMath(-gamepad1.left_stick_y), joystickMath(-gamepad1.right_stick_y));
         RobotLog.aa(TAGTeleop, "gamepad1 " + RightMotorPower);
+        RobotLog.aa(TAGTeleop, "trigers " + gamepad1.left_trigger);
 
 
         RBTChassis.doTeleopH(joystickMath(gamepad1.left_trigger),

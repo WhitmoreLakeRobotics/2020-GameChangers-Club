@@ -116,6 +116,7 @@ public class Chassis_Test extends OpMode {
         HDM1.setDirection(DcMotor.Direction.FORWARD);
         HDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         HDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        HDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
@@ -244,6 +245,7 @@ public void init_loop() {
         double totalPower = leftPower - rightPower;
         RobotLog.aa(TAGChassis, "doTeleopH: leftPower=" + leftPower + " rightPower=" + rightPower);
         HDM1.setPower(totalPower);
+        telemetry.log().add("totalPower =" + totalPower);
     }
 	
     public void doTeleop(double LDMpower, double RDMpower) {
