@@ -10,30 +10,31 @@ package org.firstinspires.ftc.teamcode;
  */
 
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import android.app.Notification;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 
-//@TeleOp(name = "Hanger", group = "CHASSIS")  // @Autonomous(...) is the other common choice
+//@TeleOp(name = "Extender", group = "CHASSIS")  // @Autonomous(...) is the other common choice
 
-public class Hanger extends BaseHardware {
-    //Encoder positions for the HANGER
+public class Extender extends BaseHardware {
+    //Encoder positions for the EXTENDER
     public static final int RESTMODE = 0;
-    public static final int HANGERPOS_RETRACTED = 0;
+    public static final int EXTENDERPOS_RETRACTED = 0;
 
-    public static final int HANGERPOS_TOL = 40;
-    public static final int HANGERPOS_EXNTENDED = 925;  //measured on robot on Oct 11, 2018
-    public static final double HANGERPOWER_EXTEND = 1;
-    public static final double HANGERPOWER_RETRACT = -1;
-    private static final String TAGHanger = "8492-Hanger";
-    double HANGERPOWER_current = 0;
+    public static final int EXTENDERPOS_TOL = 40;
+    public static final int EXTENDERPOS_EXNTENDED = 925;  //measured on robot on Oct 11, 2018
+    public static final double EXTENDERPOWER_EXTEND = 1;
+    public static final double EXTENDERPOWER_RETRACT = -1;
+    private static final String TAGExtender = "8492-Extender";
+    double EXTENDERPOWER_current = 0;
     boolean cmdComplete = false;
     boolean underStickControl = false;
-    int hangerPosition_CURRENT = HANGERPOS_RETRACTED;
-    int hangerPosition_cmd = HANGERPOS_RETRACTED;
+    int extenderPosition_CURRENT = EXTENDERPOS_RETRACTED;
+    int extenderPosition_cmd = EXTENDERPOS_RETRACTED;
 
 
     /*    public static final int ticsPerRev = 1100;
@@ -43,12 +44,12 @@ public class Hanger extends BaseHardware {
     */
     // This is the current tick counts of the Hanger
     // This is the commanded tick counts of the Hanger
-    double HANGERStickDeadBand = .2;
+    double ExtenderStickDeadBand = .2;
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
     //set the HANGER powers... We will need different speeds for up and down.
-    private IntakeArmStates intakeArm = null;
+    private ExtenderStates intakeArm = null;
     private double initMotorPower = 0;
     private double currentMotorpower = 0.5;
 
@@ -59,9 +60,8 @@ public class Hanger extends BaseHardware {
 
 
     // declare motors
-    private DcMotor HM1 = null;
-    private DcMotor HM2 = null;
-    private DigitalChannel HangTCH = null;
+    private DcMotor EM1 = null;
+    private DigitalChannel extenderTCH = null;
 
 
     /*
@@ -78,32 +78,27 @@ public class Hanger extends BaseHardware {
          */
 
 
-        HM1 = hardwareMap.dcMotor.get("HM1");
-        HM2 = hardwareMap.dcMotor.get("HM2");
+        EM1 = hardwareMap.dcMotor.get("EM1");
 
 
-        HM1.setDirection(DcMotor.Direction.REVERSE);
-        HM2.setDirection(DcMotor.Direction.FORWARD);
+        EM1.setDirection(DcMotor.Direction.REVERSE);
 
 
-        HM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        HM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RobotLog.aa(TAGHanger, "HangerPos: " + hangerPosition_CURRENT);
-
-        HangTCH = hardwareMap.get(DigitalChannel.class, "HangTCH");
-        HangTCH.setMode(DigitalChannel.Mode.INPUT);
+        EM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RobotLog.aa(TAGExtender, "extenderPos: " + EM1);
+//do not know what digital channel is check here for errors ******
+        extenderTCH = hardwareMap.get(DigitalChannel.class, "extenderTCH");
+        extenderTCH.setMode(DigitalChannel.Mode.INPUT);
 
 
     }
 
-    public void HangMotorEncoderReset() {
+    public void extenderMotorEncoderReset() {
 
 
-        HM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        HM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        EM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        HM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        HM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        EM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /*
@@ -119,21 +114,20 @@ public class Hanger extends BaseHardware {
         // hold the robot in the 18 inch cube.
 
         double newMotorPower = 0;
-        if (HangTCH.getState()) {
-            newMotorPower = initMotorPower + (HANGERPOWER_RETRACT * .01);
-        } else {
+        if (extenderTCH.getState()) {
+            newMotorPower = initMotorPo
             //initMotorPower = initMotorPower + (HANGERPOWER_EXTEND * .01);
-            newMotorPower = initMotorPower - (HANGERPOWER_EXTEND * .01);
+            newMotorPower = initMotorPower - (EXTENDERPOWER_EXTEND * .01);wer + (EXTENDERPOWER_RETRACT * .01);
+        } else {
             if (newMotorPower < 0) {
                 newMotorPower = 0;
             }
         }
 
         if (newMotorPower != initMotorPower) {
-            telemetry.addData("initHangerPower", newMotorPower);
+            telemetry.addData("initExtenderPower", newMotorPower);
             initMotorPower = newMotorPower;
-            HM1.setPower(initMotorPower);
-            HM2.setPower(initMotorPower);
+            EM1.setPower(initMotorPower);
         }
 
     }
@@ -143,15 +137,13 @@ public class Hanger extends BaseHardware {
         runtime.reset();
         //runtime.startTime();
 
-        HM1.setPower(HANGERPOWER_RETRACT);
-        HM2.setPower(HANGERPOWER_RETRACT);
-        while (HangTCH.getState()) {
+        EM1.setPower(EXTENDERPOWER_RETRACT);
+        while (extenderTCH.getState()) {
             if (runtime.milliseconds() > 2000) {
                 break;
             }
         }
-        HM1.setPower(0);
-        HM2.setPower(0);
+        EM1.setPower(0);
 
     }
 
@@ -161,17 +153,16 @@ public class Hanger extends BaseHardware {
     @Override
     public void start() {
         // this is always called by chassis
-        HM1.setPower(0);
-        HM2.setPower(0);
+        EM1.setPower(0);
+
     }
 
     public void autoStart() {
         // This is only called by chassis when running Auto OpModes
-        initHangerTCH();
-        HM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        HM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        HM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        HM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        initExtenderTCH();
+        EM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        EM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 
@@ -187,61 +178,61 @@ public class Hanger extends BaseHardware {
     @Override
     public void loop() {
 
-        telemetry.addData("HangerPos",  hangerPosition_CURRENT);
-        RobotLog.aa(TAGHanger, "HangerPos: " + hangerPosition_CURRENT);
+        telemetry.addData("ExtenderPos",  extenderPosition_CURRENT);
+        RobotLog.aa(TAGExtender, "ExtenderPos: " + extenderPosition_CURRENT);
 
 //check if under stick control [must create process (public void ...) first]
         if (!underStickControl) {
             testInPosition();
         }
 
-        SetMotorPower(HANGERPOWER_current);
+        SetMotorPower(EXTENDERPOWER_current);
 
 
     }
 
-    public void setIntakeArm(IntakeArmStates iArm1) {
-        intakeArm = iArm1;
+    public void setIntakeArm(ExtenderStates iArm1) {
+        extenderArm = iArm1;
     }
 
     private void SetMotorPower(double newMotorPower) {
         //set the motors for the HANGER to the new power only after
         // Safety checks to prevent too low or too high
-        hangerPosition_CURRENT = HM2.getCurrentPosition();
+        extenderPosition_CURRENT = EM1.getCurrentPosition();
         double newPower = newMotorPower;
         // make sure that we do not attempt to move less than RETRACT limit
 
-        RobotLog.aa(TAGHanger, "Curr Position: " + hangerPosition_CURRENT);
-        RobotLog.aa(TAGHanger, "set pwr : " + newPower);
+        RobotLog.aa(TAGExtender, "Curr Position: " + extenderPosition_CURRENT);
+        RobotLog.aa(TAGExtender, "set pwr : " + newPower);
 
         //if were within bottom tolerance, stop
-        if ((hangerPosition_CURRENT <= (HANGERPOS_RETRACTED + HANGERPOS_TOL)) && (newPower < 0)) {
+        if ((extenderPosition_CURRENT <= (EXTENDERPOS_RETRACTED + EXTENDERPOS_TOL)) && (newPower < 0)) {
             newPower = 0;
         }
 
         // if on the switch and we are trying to retract set newPower to stop value
-        if (!HangTCH.getState() && (newPower < 0)) {
+        if (!extenderTCH.getState() && (newPower < 0)) {
             newPower = 0;
         }
 
         // make sure that we do not attempt a move greater than EXTEND limit
-        if ((hangerPosition_CURRENT >= (HANGERPOS_EXNTENDED - HANGERPOS_TOL)) && (newPower > 0)) {
+        if ((extenderPosition_CURRENT >= (EXTENDERPOS_EXNTENDED - EXTENDERPOS_TOL)) && (newPower > 0)) {
             newPower = 0;
 
         }
 
         //Interlock the intake arm and the hanger...
-        if ((intakeArm.IntakePivotPosCurrent > (IntakeArmStates.IntakePivotPost_HangerInterferance)) && newMotorPower > 0) {
+        if ((intakeArm.ExtenderPivotPosCurrent > (ExtenderArmStates.IntakePivotPost_HangerInterferance)) && newMotorPower > 0) {
             newPower = 0;
         }
 
         //only set the power to the hardware when it is being changed.
-        if (newPower != HANGERPOWER_current) {
-            HANGERPOWER_current = newPower;
+        if (newPower != EXTENDERPOWER_current) {
+            EXTENDERPOWER_current = newPower;
 
         }
-        HM1.setPower(HANGERPOWER_current);
-        HM2.setPower(HANGERPOWER_current);
+        EM1.setPower(EXTENDERPOWER_current);
+
     }
 
     private void testInPosition() {
@@ -253,9 +244,9 @@ public class Hanger extends BaseHardware {
     //driver is using stick control for Hanger
     public void cmdStickControl(double stickPos) {
 
-        if (Math.abs(stickPos) < HANGERStickDeadBand) {
+        if (Math.abs(stickPos) < ExtenderStickDeadBand) {
             if (underStickControl) {
-                HANGERPOWER_current = 0;
+                EXTENDERPOWER_current = 0;
             }
             // we are inside the deadband do nothing.
             underStickControl = false;
@@ -266,16 +257,16 @@ public class Hanger extends BaseHardware {
             double currPower = stickPos;
 
             //limit the power of the stick
-            if (stickPos > HANGERPOWER_EXTEND) {
-                currPower = HANGERPOWER_EXTEND;
+            if (stickPos > EXTENDERPOWER_EXTEND) {
+                currPower = EXTENDERPOWER_EXTEND;
             }
 
             //limit the power of the stick
-            if (stickPos < HANGERPOWER_RETRACT) {
-                currPower = HANGERPOWER_RETRACT;
+            if (stickPos < EXTENDERPOWER_RETRACT) {
+                currPower = EXTENDERPOWER_RETRACT;
             }
 
-            HANGERPOWER_current = currPower;
+            EXTENDERPOWER_current = currPower;
         }
 
     }
@@ -286,56 +277,56 @@ public class Hanger extends BaseHardware {
     public void cmd_MoveToTarget(int TargetTicks) {
         int PostionNew = TargetTicks;
         //Do not move below BOTTOM
-        RobotLog.aa(TAGHanger, "move to target: " + TargetTicks);
-        if (PostionNew <= HANGERPOS_TOL + HANGERPOS_RETRACTED) {
-            PostionNew = HANGERPOS_RETRACTED;
+        RobotLog.aa(TAGExtender, "move to target: " + TargetTicks);
+        if (PostionNew <= EXTENDERPOS_TOL + EXTENDERPOS_RETRACTED) {
+            PostionNew = EXTENDERPOS_RETRACTED;
 
 
         }
         //Do not move above MAX
-        if (PostionNew >= HANGERPOS_TOL + HANGERPOS_EXNTENDED) {
-            PostionNew = HANGERPOS_EXNTENDED;
+        if (PostionNew >= EXTENDERPOS_TOL + EXTENDERPOS_EXNTENDED) {
+            PostionNew = EXTENDERPOS_EXNTENDED;
         }
 
 
         //we are higher than we want to be and
         //not already at the bottom.
-        if ((PostionNew <= hangerPosition_CURRENT + HANGERPOS_TOL) && (HANGERPOS_RETRACTED < hangerPosition_CURRENT)) {
-            HANGERPOWER_current = HANGERPOWER_RETRACT;
+        if ((PostionNew <= extenderPosition_CURRENT + EXTENDERPOS_TOL) && (EXTENDERPOS_RETRACTED < extenderPosition_CURRENT)) {
+            EXTENDERPOWER_current = EXTENDERPOWER_RETRACT;
             cmdComplete = false;
             underStickControl = false;
         }
 
         //We are lower than we want to be and not already at the top
         //not already at the bottom.
-        if ((PostionNew >= hangerPosition_CURRENT + HANGERPOS_TOL) && (HANGERPOS_EXNTENDED > hangerPosition_CURRENT)) {
-            HANGERPOWER_current = HANGERPOWER_EXTEND;
+        if ((PostionNew >= extenderPosition_CURRENT + EXTENDERPOS_TOL) && (EXTENDERPOS_EXNTENDED > extenderPosition_CURRENT)) {
+            EXTENDERPOWER_current = EXTENDERPOWER_EXTEND;
             cmdComplete = false;
             underStickControl = false;
 
             //We need to go down to target
         }
-        RobotLog.aa(TAGHanger, "MTT end Target: " + TargetTicks + " cur: " + hangerPosition_CURRENT + " Tol: " + HANGERPOS_TOL + "Ext: " + HANGERPOS_EXNTENDED);
+        RobotLog.aa(TAGExtender, "MTT end Target: " + TargetTicks + " cur: " + extenderPosition_CURRENT + " Tol: " + EXTENDERPOS_TOL + "Ext: " + EXTENDERPOS_EXNTENDED);
 
 
     }  // cmd_MoveToTarget
 
     public boolean isExtended() {
-        return ((hangerPosition_CURRENT > (HANGERPOS_EXNTENDED - HANGERPOS_TOL)) &&
-                HangTCH.getState());
+        return ((extenderPosition_CURRENT > (EXTENDERPOS_EXNTENDED - EXTENDERPOS_TOL)) &&
+                extenderTCH.getState());
 
     }
 
     public boolean isRetracted() {
         // Need to add the switch to this method
-        return ((hangerPosition_CURRENT < (HANGERPOS_RETRACTED + (int)(HANGERPOS_TOL * 1.00))) ||
-                (!HangTCH.getState()));
+        return ((extenderPosition_CURRENT < (EXTENDERPOS_RETRACTED + (int)(EXTENDERPOS_TOL * 1.00))) ||
+                (!extenderTCH.getState()));
 
     }
 
 
     public int getHangerPos() {
-        return hangerPosition_CURRENT;
+        return extenderPosition_CURRENT;
     }
 
 
