@@ -10,8 +10,6 @@ package org.firstinspires.ftc.teamcode;
  */
 
 
-import android.app.Notification;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -34,8 +32,10 @@ public class Extender extends BaseHardware {
     boolean cmdComplete = false;
     boolean underStickControl = false;
     int extenderPosition_CURRENT = EXTENDERPOS_RETRACTED;
-    int extenderPosition_cmd = EXTENDERPOS_RETRACTED;
-
+    int extenderPosition_Start_Pos =0;
+    int extenderPosition_Pos1 =720;
+    int extenderPosition_pos2 =1440;
+    int extenderPosition_pos3 =2160;
 
     /*    public static final int ticsPerRev = 1100;
         public static final double wheelDistPerRev = 4 * 3.14159;
@@ -60,7 +60,7 @@ public class Extender extends BaseHardware {
 
 
     // declare motors
-    private DcMotor EM1 = null;
+    private DcMotor EXT1 = null;
     private DigitalChannel extenderTCH = null;
 
 
@@ -78,14 +78,14 @@ public class Extender extends BaseHardware {
          */
 
 
-        EM1 = hardwareMap.dcMotor.get("EM1");
+        EXT1 = hardwareMap.dcMotor.get("EXT1");
 
 
-        EM1.setDirection(DcMotor.Direction.REVERSE);
+        EXT1.setDirection(DcMotor.Direction.REVERSE);
 
 
-        EM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RobotLog.aa(TAGExtender, "extenderPos: " + EM1);
+        EXT1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RobotLog.aa(TAGExtender, "extenderPos: " + EXT1);
 //do not know what digital channel is check here for errors ******
         extenderTCH = hardwareMap.get(DigitalChannel.class, "extenderTCH");
         extenderTCH.setMode(DigitalChannel.Mode.INPUT);
@@ -96,9 +96,9 @@ public class Extender extends BaseHardware {
     public void extenderMotorEncoderReset() {
 
 
-        EM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        EXT1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        EM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        EXT1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /*
@@ -115,9 +115,9 @@ public class Extender extends BaseHardware {
 
         double newMotorPower = 0;
         if (extenderTCH.getState()) {
-            newMotorPower = initMotorPo
+            newMotorPower = initMotorPower;
             //initMotorPower = initMotorPower + (HANGERPOWER_EXTEND * .01);
-            newMotorPower = initMotorPower - (EXTENDERPOWER_EXTEND * .01);wer + (EXTENDERPOWER_RETRACT * .01);
+            //newMotorPower = initMotorPower - (EXTENDERPOWER_EXTEND * .01); + (EXTENDERPOWER_RETRACT * .01);
         } else {
             if (newMotorPower < 0) {
                 newMotorPower = 0;
@@ -127,7 +127,7 @@ public class Extender extends BaseHardware {
         if (newMotorPower != initMotorPower) {
             telemetry.addData("initExtenderPower", newMotorPower);
             initMotorPower = newMotorPower;
-            EM1.setPower(initMotorPower);
+            EXT1.setPower(initMotorPower);
         }
 
     }
@@ -137,13 +137,13 @@ public class Extender extends BaseHardware {
         runtime.reset();
         //runtime.startTime();
 
-        EM1.setPower(EXTENDERPOWER_RETRACT);
+        EXT1.setPower(EXTENDERPOWER_RETRACT);
         while (extenderTCH.getState()) {
             if (runtime.milliseconds() > 2000) {
                 break;
             }
         }
-        EM1.setPower(0);
+        EXT1.setPower(0);
 
     }
 
@@ -153,18 +153,18 @@ public class Extender extends BaseHardware {
     @Override
     public void start() {
         // this is always called by chassis
-        EM1.setPower(0);
+        EXT1.setPower(0);
 
     }
 
     public void autoStart() {
         // This is only called by chassis when running Auto OpModes
         initExtenderTCH();
-        EM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        EXT1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        EM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        EXT1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-
+    private void initExtenderTCH(){}
 
     public void teleStart() {
         // This is only called by chassis when running Tele Modes
@@ -191,22 +191,20 @@ public class Extender extends BaseHardware {
 
     }
 
-    public void setIntakeArm(ExtenderStates iArm1) {
-        extenderArm = iArm1;
-    }
+
 
     private void SetMotorPower(double newMotorPower) {
         //set the motors for the HANGER to the new power only after
         // Safety checks to prevent too low or too high
-        extenderPosition_CURRENT = EM1.getCurrentPosition();
+        extenderPosition_CURRENT = EXT1.getCurrentPosition();
         double newPower = newMotorPower;
         // make sure that we do not attempt to move less than RETRACT limit
 
         RobotLog.aa(TAGExtender, "Curr Position: " + extenderPosition_CURRENT);
         RobotLog.aa(TAGExtender, "set pwr : " + newPower);
 
-        //if were within bottom tolerance, stop
-        if ((extenderPosition_CURRENT <= (EXTENDERPOS_RETRACTED + EXTENDERPOS_TOL)) && (newPower < 0)) {
+        //if were within start tolerance, stop
+        if ((extenderPosition_CURRENT <= (extenderPosition_Start_Pos + EXTENDERPOS_TOL)) && (newPower < 0)) {
             newPower = 0;
         }
 
@@ -215,24 +213,38 @@ public class Extender extends BaseHardware {
             newPower = 0;
         }
 
-        // make sure that we do not attempt a move greater than EXTEND limit
-        if ((extenderPosition_CURRENT >= (EXTENDERPOS_EXNTENDED - EXTENDERPOS_TOL)) && (newPower > 0)) {
+        // make sure that we do stop at possition 1
+        if ((extenderPosition_CURRENT >= (extenderPosition_Pos1 - EXTENDERPOS_TOL)) && (newPower > 0)) {
             newPower = 0;
 
         }
-
-        //Interlock the intake arm and the hanger...
-        if ((intakeArm.ExtenderPivotPosCurrent > (ExtenderArmStates.IntakePivotPost_HangerInterferance)) && newMotorPower > 0) {
+        // make sure that we do stop at possition 1
+        if ((extenderPosition_CURRENT <= (extenderPosition_Pos1 - EXTENDERPOS_TOL)) && (newPower < 0)) {
             newPower = 0;
         }
+        // make sure that we do stop at possition 2
+        if ((extenderPosition_CURRENT >= (extenderPosition_pos2 - EXTENDERPOS_TOL)) && (newPower > 0)) {
+            newPower = 0;
 
-        //only set the power to the hardware when it is being changed.
+        }
+        // make sure that we do stop at possition 2
+        if ((extenderPosition_CURRENT <= (extenderPosition_pos2 - EXTENDERPOS_TOL)) && (newPower < 0)) {
+            newPower = 0;
+        }
+        // make sure that we do stop at possition 3
+        if ((extenderPosition_CURRENT >= (extenderPosition_pos3 - EXTENDERPOS_TOL)) && (newPower > 0)) {
+            newPower = 0;
+
+        }
+        // make sure that we do stop at possition 3
+        if ((extenderPosition_CURRENT <= (extenderPosition_pos3 - EXTENDERPOS_TOL)) && (newPower < 0)) {
+            newPower = 0;
+        }
+            //only set the power to the hardware when it is being changed.
         if (newPower != EXTENDERPOWER_current) {
             EXTENDERPOWER_current = newPower;
-
+            EXT1.setPower(EXTENDERPOWER_current);
         }
-        EM1.setPower(EXTENDERPOWER_current);
-
     }
 
     private void testInPosition() {
@@ -338,4 +350,20 @@ public class Extender extends BaseHardware {
         SetMotorPower(0);
 
     }
+    public enum ExtenderStates{
+        START_POS,
+        RET_TO_START_POS,
+        EXT_TO_POS1,
+        RET_TO_POS1,
+        POS1,
+        EXT_TO_POS2,
+        RET_TO_POS2,
+        POS2,
+        EXT_TO_POS3,
+        RET_TO_POS3,
+        POS3,
+        UNKNOWN,
+
+    }
+
 }
