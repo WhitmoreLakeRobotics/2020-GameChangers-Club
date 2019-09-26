@@ -41,6 +41,9 @@ public class Chassis_Test extends OpMode {
     // The IMU sensor object
     BNO055IMU imu;
 
+
+    public Extender subExtender = new Extender();
+
     // naj set constant for turning Tolerance in degrees
     // State used for updating telemetry
     Orientation angles;
@@ -51,7 +54,7 @@ public class Chassis_Test extends OpMode {
     private int ChassisMode_Current = ChassisMode_Stop;
     private boolean cmdComplete = true;
     private int cmdStartTime_mS = 0;
-   private PARENTMODE parentMode_Current = null;
+    private PARENTMODE parentMode_Current = null;
     private DcMotor LDM1 = null;
     private DcMotor LDM2 = null;
     private DcMotor RDM1 = null;
@@ -64,6 +67,7 @@ public class Chassis_Test extends OpMode {
 
 
     private double maxPower = 0;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -135,7 +139,9 @@ public class Chassis_Test extends OpMode {
         imu.initialize(parameters);
         telemetry.addData("Chassis", "Initialized");
 
-
+        subExtender.telemetry = telemetry;
+        subExtender.hardwareMap = hardwareMap;
+        subExtender.init();
 
         runtime.reset();
     }
@@ -143,19 +149,20 @@ public class Chassis_Test extends OpMode {
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
-  @Override
-public void init_loop() {
-        if (runtime.milliseconds()  > 1000) {
+    @Override
+    public void init_loop() {
+        if (runtime.milliseconds() > 1000) {
             initCounter = initCounter + 1;
             telemetry.addData("Chassis init time: ", initCounter);
             telemetry.update();
             runtime.reset();
         }
+        subExtender.init_loop();
     }
 
     public void setParentMode(PARENTMODE pm) {
-    parentMode_Current = pm;
-      }
+        parentMode_Current = pm;
+    }
 
     private void setMotorMode(DcMotor.RunMode newMode) {
 
@@ -195,8 +202,8 @@ public void init_loop() {
     /*
      * Code to run ONCE when the driver hits PLAY
      */
-     @Override
-     public void start() {
+    @Override
+    public void start() {
         runtime.reset();
 
         switch (parentMode_Current) {
@@ -206,6 +213,7 @@ public void init_loop() {
             case PARENT_MODE_TELE:
                 break;
         }
+        subExtender.start();
     }
 
     /*
@@ -213,6 +221,8 @@ public void init_loop() {
      */
     @Override
     public void loop() {
+        subExtender.loop();
+
         if (ChassisMode_Current == ChassisMode_Stop) {
             doStop();
         }
@@ -228,7 +238,7 @@ public void init_loop() {
         }
 
         // Show the elapsed game time and wheel power.
-       // telemetry.addData("Status", "Run Time: " + runtime.toString());
+        // telemetry.addData("Status", "Run Time: " + runtime.toString());
 
         // RobotLog.aa(TAGChassis,"Stage: "+ CurrentStage );
         RobotLog.aa(TAGChassis, "Runtime: " + runtime.seconds());
@@ -240,14 +250,14 @@ public void init_loop() {
 
     }
 
-    public void doTeleopH(double leftPower, double rightPower){
+    public void doTeleopH(double leftPower, double rightPower) {
 
         double totalPower = leftPower - rightPower;
         RobotLog.aa(TAGChassis, "doTeleopH: leftPower=" + leftPower + " rightPower=" + rightPower);
         HDM1.setPower(totalPower);
         telemetry.log().add("totalPower =" + totalPower);
     }
-	
+
     public void doTeleop(double LDMpower, double RDMpower) {
         ChassisMode_Current = ChassisMode_Teleop;
 
@@ -256,10 +266,10 @@ public void init_loop() {
         double rPower = RDMpower;
 
         if (lPower < -maxPower) {
-               lPower = -maxPower;
+            lPower = -maxPower;
         }
 
-        if (lPower >  maxPower) {
+        if (lPower > maxPower) {
             lPower = maxPower;
         }
 
@@ -267,7 +277,7 @@ public void init_loop() {
             rPower = -maxPower;
         }
 
-        if (rPower >  maxPower) {
+        if (rPower > maxPower) {
             rPower = maxPower;
         }
 
@@ -412,7 +422,6 @@ public void init_loop() {
     }
 
 
-
     public double getEncoderInches() {
         // create method to get inches driven in auton
         // read the values from the encoders
@@ -461,18 +470,17 @@ public void init_loop() {
         RDM1.setPower(0);
         RDM2.setPower(0);
         ChassisMode_Current = ChassisMode_Stop;
-        // hanger.stop();
+        subExtender.stop();
         //  intakeArm.stop();
         // dumpBox.stop();
         //scannerArms.stop();
     }
-    public void setMaxPower(double newMax){
+
+    public void setMaxPower(double newMax) {
 
         maxPower = newMax;
 
     }
-
-
 
 
     public int gyroNormalize(int heading) {
@@ -600,9 +608,9 @@ public void init_loop() {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 
- public static enum PARENTMODE {
-PARENT_MODE_AUTO,
-       PARENT_MODE_TELE
+    public static enum PARENTMODE {
+        PARENT_MODE_AUTO,
+        PARENT_MODE_TELE
     }
 
 }

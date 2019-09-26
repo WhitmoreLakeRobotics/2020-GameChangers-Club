@@ -80,7 +80,6 @@ public class TeleOp_test extends OpMode {
         RBTChassis.setMaxPower(powerNormal);
         RBTChassis.init();
 
-
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
@@ -138,8 +137,13 @@ public class TeleOp_test extends OpMode {
                 joystickMath(gamepad1.right_trigger));
 
 
+        RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
 
 
+        if (gamepad2.a) {RBTChassis.subExtender.cmd_MoveToStart();}
+        if (gamepad2.b) {RBTChassis.subExtender.cmd_MoveToPos1();}
+        if (gamepad2.x) {RBTChassis.subExtender.cmd_MoveToPos3();}
+        if (gamepad2.y) {RBTChassis.subExtender.cmd_MoveToPos2();}
 
         if (gamepad1.left_bumper) {
             RBTChassis.setMaxPower(powerMax);
