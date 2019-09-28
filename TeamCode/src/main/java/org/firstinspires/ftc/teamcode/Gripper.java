@@ -24,7 +24,7 @@ public class Gripper extends BaseHardware {
     private int GripperMoveTime = 1250;
 
     // Define the hardware
-    private Servo gripperSvo = null;
+    private Servo gripperSvo = hardwareMap.servo.get("GSVR1");
     private double gripperSvoPos_start = 0;
     private double gripperSvoPos_open = 0;
     private double gripperSvoPos_close = 0;
