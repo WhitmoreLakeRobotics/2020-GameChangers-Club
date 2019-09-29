@@ -25,14 +25,14 @@ public class Chassis_Test2 extends OpMode {
     public static final int chassis_GyroHeadingTol = 3;
 
 
-   public enum ChassisMode {
-       STOP,
-       DRIVE,
-       DRIVEH,
-       TURN,
-       IDLE,
-       TELEOP,
-   }
+    public enum ChassisMode {
+        STOP,
+        DRIVE,
+        DRIVEH,
+        TURN,
+        IDLE,
+        TELEOP,
+    }
 
 
     public static final int ticsPerRev = 1120;
@@ -42,12 +42,13 @@ public class Chassis_Test2 extends OpMode {
 
     public static final int ticsPerRevCoreHex = 288;
     public static final double gearRatioH = 1 / 1;
-    public static final double ticsPerInchH = ticsPerRevCoreHex / wheelDistPerRev /gearRatioH;
+    public static final double ticsPerInchH = ticsPerRevCoreHex / wheelDistPerRev / gearRatioH;
 
     public static final double Chassis_DriveTolerInchesH = .25;
     public static final double Chassis_DriveTolerInches = .25;
     // naj set constant for Gyro KP for driving straight
     public static final double chassis_KPGyroStraight = 0.02;
+    public static final double chassis_KPGyroStraightH = 0.1;
     private static final String TAGChassis = "8492-Chassis";
     // The IMU sensor object
     BNO055IMU imu;
@@ -250,7 +251,7 @@ public class Chassis_Test2 extends OpMode {
         }
 
 
-        if (ChassisMode_Current == ChassisMode.DRIVEH){
+        if (ChassisMode_Current == ChassisMode.DRIVEH) {
             doDriveH();
         }
 
@@ -382,7 +383,7 @@ public class Chassis_Test2 extends OpMode {
         RobotLog.aa(TAGChassis, "Target: " + TargetHeadingDeg);
 
         double delta = -deltaHeading(gyroNormalize(getGyroHeading()), TargetHeadingDeg);
-        double steeringPower = (delta * chassis_KPGyroStraight);
+        double steeringPower = (delta * chassis_KPGyroStraightH);
 
         RobotLog.aa(TAGChassis, "delta: " + delta);
         RobotLog.aa(TAGChassis, "steeringpower: " + steeringPower);
@@ -412,8 +413,6 @@ public class Chassis_Test2 extends OpMode {
         }
 
     }    // doDriveH()
-
-
 
 
     private void doTurn() {
@@ -546,7 +545,6 @@ public class Chassis_Test2 extends OpMode {
         return inches;
 
     }
-
 
 
     // create command to be called from auton to reset encoders at end of auton
