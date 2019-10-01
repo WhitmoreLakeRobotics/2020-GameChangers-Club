@@ -54,7 +54,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 //@Disabled
 public class TeleOp_test extends OpMode {
     private static final String TAGTeleop = "8492-Teleop";
-    Chassis_Test RBTChassis = new Chassis_Test();
+    Chassis_Test2 RBTChassis = new Chassis_Test2();
     // Declare OpMode members.
     boolean gamepad2_a_pressed = false;
     boolean gamepad2_b_pressed = false;
@@ -74,7 +74,7 @@ public class TeleOp_test extends OpMode {
     @Override
     public void init() {
         telemetry.addData("TeleOp_test", "Initialized");
-        RBTChassis.setParentMode(Chassis_Test.PARENTMODE.PARENT_MODE_TELE);
+        RBTChassis.setParentMode(Chassis_Test2.PARENTMODE.PARENT_MODE_TELE);
         RBTChassis.hardwareMap = hardwareMap;
         RBTChassis.telemetry = telemetry;
         RBTChassis.setMaxPower(powerNormal);
@@ -132,10 +132,13 @@ public class TeleOp_test extends OpMode {
         RobotLog.aa(TAGTeleop, "gamepad1 " + RightMotorPower);
         RobotLog.aa(TAGTeleop, "trigers " + gamepad1.left_trigger);
 
-
-        RBTChassis.doTeleopH(joystickMath(gamepad1.left_trigger),
-                joystickMath(gamepad1.right_trigger));
-
+        if (gamepad1.left_trigger >0 || gamepad1.right_trigger >0) {
+            RBTChassis.doTeleopH(joystickMath(gamepad1.left_trigger),
+                    joystickMath(gamepad1.right_trigger));
+        }
+        else{
+            RBTChassis.stop_h();
+        }
 
         RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
 

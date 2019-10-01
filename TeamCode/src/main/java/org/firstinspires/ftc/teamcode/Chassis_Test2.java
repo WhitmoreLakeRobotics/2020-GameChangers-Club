@@ -270,7 +270,7 @@ public class Chassis_Test2 extends OpMode {
     }
 
     public void doTeleopH(double leftPower, double rightPower) {
-
+        ChassisMode_Current = ChassisMode.TELEOP;
         double totalPower = leftPower - rightPower;
         RobotLog.aa(TAGChassis, "doTeleopH: leftPower=" + leftPower + " rightPower=" + rightPower);
         HDM1.setPower(totalPower);
@@ -314,7 +314,9 @@ public class Chassis_Test2 extends OpMode {
 
 
     }
-
+public void stop_h() {
+        HDM1.setPower(0);
+    }
     private void doStop() {
         RobotLog.aa(TAGChassis, "doStop:");
         TargetMotorPowerLeft = 0;
@@ -480,8 +482,8 @@ public class Chassis_Test2 extends OpMode {
         }
         TargetHeadingDeg = headingDeg;
         RobotLog.aa(TAGChassis, "cmdDriveH: " + DrivePower);
-        TargetMotorPowerLeft = 0;
-        TargetMotorPowerRight = 0;
+        //TargetMotorPowerLeft = 0;
+        //TargetMotorPowerRight = 0;
         TargetMotorPowerH = DrivePower;
         TargetDistanceInchesH = targetDistanceInches;
         TargetDistanceInches = 0;
