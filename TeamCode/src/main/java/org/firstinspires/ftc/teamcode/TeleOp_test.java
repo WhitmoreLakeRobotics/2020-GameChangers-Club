@@ -35,20 +35,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
-/**
- * This file contains an example of an iterative (Non-Linear) "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- * <p>
- * This particular OpMode just executes a basic Tank Drive Teleop_test for a two wheeled robot
- * It includes all the skeletal structure that all iterative OpModes contain.
- * <p>
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
-
 //@TeleOp_testp(name = "Teleop-TestChassis", group = "TeleOp_test")
 @TeleOp(name = "Teleop-TestChassis", group = "TeleOp")
 //@Disabled
@@ -67,7 +53,7 @@ public class TeleOp_test extends OpMode {
 
 
     private double powerMax = 8;
-
+    //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -90,17 +76,16 @@ public class TeleOp_test extends OpMode {
 
 
     }
-
+    //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
     @Override
     public void init_loop() {
         RBTChassis.init_loop();
-
-
     }
 
+    //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits PLAY
      */
@@ -109,9 +94,9 @@ public class TeleOp_test extends OpMode {
         Runtime.getRuntime();
         RBTChassis.start();
         RBTChassis.setMotorMode_RUN_WITHOUT_ENCODER();
-
     }
 
+    //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
@@ -120,55 +105,47 @@ public class TeleOp_test extends OpMode {
         RBTChassis.loop();
 
 
-        // Setup a variable for each drive wheel to save power level for telemetry
-
-
-        // Choose to drive using either Tank Mode, or POV Mode
-        // Comment out the method that's not used.  The default below is POV.
-
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
-        RBTChassis.doTeleop(joystickMath(-gamepad1.left_stick_y), joystickMath(-gamepad1.right_stick_y));
         RobotLog.aa(TAGTeleop, "gamepad1 " + RightMotorPower);
         RobotLog.aa(TAGTeleop, "trigers " + gamepad1.left_trigger);
 
-        if (gamepad1.left_trigger >0 || gamepad1.right_trigger >0) {
+        // if the driver has any triggers pulled this means H drive only drive the H wheels
+        // as straightly as possible
+        if (gamepad1.left_trigger > 0 || gamepad1.right_trigger > 0) {
             RBTChassis.doTeleopH(joystickMath(gamepad1.left_trigger),
                     joystickMath(gamepad1.right_trigger));
         }
-        else{
-            RBTChassis.stop_h();
+        // stop the H drive and give joystick values to the other wheels.
+        else {
+            RBTChassis.doStopH();
+            RBTChassis.doTeleop(joystickMath(-gamepad1.left_stick_y), joystickMath(-gamepad1.right_stick_y));
         }
 
         RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
 
+        if (gamepad2.a) {
+            RBTChassis.subExtender.cmd_MoveToStart();
+        }
+        if (gamepad2.b) {
+            RBTChassis.subExtender.cmd_MoveToPos1();
+        }
+        if (gamepad2.x) {
+            RBTChassis.subExtender.cmd_MoveToPos3();
+        }
+        if (gamepad2.y) {
+            RBTChassis.subExtender.cmd_MoveToPos2();
+        }
 
-        if (gamepad2.a) {RBTChassis.subExtender.cmd_MoveToStart();}
-        if (gamepad2.b) {RBTChassis.subExtender.cmd_MoveToPos1();}
-        if (gamepad2.x) {RBTChassis.subExtender.cmd_MoveToPos3();}
-        if (gamepad2.y) {RBTChassis.subExtender.cmd_MoveToPos2();}
-
+        // Bumpers high and lower Powers for the wheels
         if (gamepad1.left_bumper) {
             RBTChassis.setMaxPower(powerMax);
         }
 
-        if (gamepad1.right_bumper){
+        if (gamepad1.right_bumper) {
             RBTChassis.setMaxPower(powerNormal);
         }
-        // Tank Mode uses one
-        // stick to control each wheel.
-        // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        // leftPower  = -gamepad1.left_stick_y ;
-        // rightPower = -gamepad1.right_stick_y ;
-
-        // Send calculated power to wheels
-
-
-        // Show the elapsed game time and wheel power.
-        //telemetry.addData("Status", "Run Time: " + Runtime.toString());
-
     }
 
+    //*********************************************************************************************
     /*
      * Code to run ONCE after the driver hits STOP
      */
@@ -179,6 +156,7 @@ public class TeleOp_test extends OpMode {
 
     }
 
+    //*********************************************************************************************
     public double joystickMath(double joyValue) {
         int sign = 1;
         double retValue = 0;
@@ -186,9 +164,7 @@ public class TeleOp_test extends OpMode {
             sign = -1;
         }
         return Math.abs(Math.pow(joyValue, 2)) * sign;
-
-
     }
-
+    //*********************************************************************************************
 }
 

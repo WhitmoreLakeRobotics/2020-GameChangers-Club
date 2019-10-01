@@ -24,7 +24,6 @@ public class Chassis_Test2 extends OpMode {
     //for truning this is the tolerance of trun in degrees
     public static final int chassis_GyroHeadingTol = 3;
 
-
     public enum ChassisMode {
         STOP,
         DRIVE,
@@ -82,6 +81,7 @@ public class Chassis_Test2 extends OpMode {
 
     private double maxPower = 0;
 
+    //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -159,7 +159,7 @@ public class Chassis_Test2 extends OpMode {
 
         runtime.reset();
     }
-
+    //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
@@ -173,11 +173,11 @@ public class Chassis_Test2 extends OpMode {
         }
         subExtender.init_loop();
     }
-
+    //*********************************************************************************************
     public void setParentMode(PARENTMODE pm) {
         parentMode_Current = pm;
     }
-
+    //*********************************************************************************************
     private void setMotorMode(DcMotor.RunMode newMode) {
 
         LDM1.setMode(newMode);
@@ -185,13 +185,13 @@ public class Chassis_Test2 extends OpMode {
         LDM2.setMode(newMode);
         RDM2.setMode(newMode);
     }
-
+    //*********************************************************************************************
     public void setMotorMode_RUN_WITHOUT_ENCODER() {
 
         setMotorMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
-
+    //*********************************************************************************************
     public void DriveMotorEncoderReset() {
 
         LDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -207,11 +207,11 @@ public class Chassis_Test2 extends OpMode {
         RDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         HDM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-
+    //*********************************************************************************************
     public void DriveServoMotorReset() {
 
     }
-
+    //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits PLAY
      */
@@ -228,7 +228,7 @@ public class Chassis_Test2 extends OpMode {
         }
         subExtender.start();
     }
-
+    //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
@@ -268,27 +268,31 @@ public class Chassis_Test2 extends OpMode {
 
 
     }
-
+    //*********************************************************************************************
     public void doTeleopH(double leftPower, double rightPower) {
-        ChassisMode_Current = ChassisMode.TELEOP;
+
+        if (ChassisMode_Current != ChassisMode.DRIVEH) {
+            ChassisMode_Current = ChassisMode.DRIVEH;
+            TargetHeadingDeg = getGyroHeading();
+            TargetDistanceInchesH = 288;
+            DriveMotorEncoderReset();
+        }
+
         double totalPower = leftPower - rightPower;
+
         RobotLog.aa(TAGChassis, "doTeleopH: leftPower=" + leftPower + " rightPower=" + rightPower);
-        HDM1.setPower(totalPower);
-
-        LDM1.setPower(totalPower);
-        LDM2.setPower(-totalPower);
-
-        RDM1.setPower(-totalPower);
-        RDM2.setPower(totalPower);
-
         telemetry.log().add("totalPower =" + totalPower);
-    }
+        TargetMotorPowerH = totalPower;
 
+    }
+    //*********************************************************************************************
     public void doTeleop(double LDMpower, double RDMpower) {
         ChassisMode_Current = ChassisMode.TELEOP;
 
         double lPower = LDMpower;
         double rPower = RDMpower;
+
+
 
         if (lPower < -maxPower) {
             lPower = -maxPower;
@@ -314,27 +318,30 @@ public class Chassis_Test2 extends OpMode {
 
 
     }
-public void stop_h() {
+    //*********************************************************************************************
+    public void doStopH() {
         HDM1.setPower(0);
+        TargetDistanceInchesH = 0;
+        TargetMotorPowerH = 0;
+        ChassisMode_Current = ChassisMode.IDLE;
     }
+
+    //*********************************************************************************************
     private void doStop() {
         RobotLog.aa(TAGChassis, "doStop:");
         TargetMotorPowerLeft = 0;
         TargetMotorPowerRight = 0;
-        TargetMotorPowerH = 0;
         TargetDistanceInches = 0;
-        TargetDistanceInchesH = 0;
-
         LDM1.setPower(TargetMotorPowerLeft);
         LDM2.setPower(TargetMotorPowerLeft);
         RDM1.setPower(TargetMotorPowerRight);
         RDM2.setPower(TargetMotorPowerRight);
-        HDM1.setPower(TargetMotorPowerH);
+        doStopH();
         ChassisMode_Current = ChassisMode.IDLE;
 
     }
 
-
+    //*********************************************************************************************
     private void doDrive() {
         // insert adjustments to drive straight using gyro
         RobotLog.aa(TAGChassis, "curr heading: " + gyroNormalize(getGyroHeading()));
@@ -347,20 +354,8 @@ public void stop_h() {
         RobotLog.aa(TAGChassis, "delta: " + delta);
         RobotLog.aa(TAGChassis, "leftpower: " + leftPower + " right " + rightPower);
 
-
-        if (leftPower < -1) {
-            leftPower = -1;
-        }
-        if (rightPower < -1) {
-            rightPower = -1;
-        }
-
-        if (leftPower > 1) {
-            leftPower = 1;
-        }
-        if (rightPower > 1) {
-            rightPower = 1;
-        }
+        leftPower = capMotorPower(leftPower);
+        rightPower = capMotorPower(rightPower);
 
         LDM1.setPower(leftPower);
         LDM2.setPower(leftPower);
@@ -378,9 +373,10 @@ public void stop_h() {
         }
 
     }    // doDrive()
-
+    //*********************************************************************************************
     private void doDriveH() {
-        // insert adjustments to drive straight using gyro
+
+        // insert adjustments to drive straight using gyro for both TeleOp and Auto
         RobotLog.aa(TAGChassis, "curr heading: " + gyroNormalize(getGyroHeading()));
         RobotLog.aa(TAGChassis, "Target: " + TargetHeadingDeg);
 
@@ -390,19 +386,13 @@ public void stop_h() {
         RobotLog.aa(TAGChassis, "delta: " + delta);
         RobotLog.aa(TAGChassis, "steeringpower: " + steeringPower);
 
+        LDM1.setPower(capMotorPower((+1.0 * TargetMotorPowerH) - steeringPower));
+        LDM2.setPower(capMotorPower((-1.0 * TargetMotorPowerH) + steeringPower));
 
-        if (steeringPower < -1) {
-            steeringPower = -1;
-        }
+        RDM1.setPower(capMotorPower((-1.0 * TargetMotorPowerH) + steeringPower));
+        RDM2.setPower(capMotorPower((+1.0 * TargetMotorPowerH) - steeringPower));
 
-        if (steeringPower > 1) {
-            steeringPower = 1;
-        }
-
-        LDM1.setPower(-steeringPower);
-        LDM2.setPower(-steeringPower);
-        RDM1.setPower(steeringPower);
-        RDM2.setPower(steeringPower);
+        HDM1.setPower(TargetMotorPowerH);
 
         //check if we've gone far enough, if so stop and mark task complete
         double inchesTraveled = Math.abs(getEncoderInchesH());
@@ -415,8 +405,20 @@ public void stop_h() {
         }
 
     }    // doDriveH()
+    //*********************************************************************************************
+    private double capMotorPower(double motorPower) {
+        // cap the motor power between -1 and +1.
+        double retValue = motorPower;
 
-
+        if (motorPower > 1.0) {
+            retValue = 1.0;
+        }
+        if (motorPower < -1.0) {
+            retValue = -1.0;
+        }
+        return retValue;
+    }
+    //*********************************************************************************************
     private void doTurn() {
         /*
          *   executes the logic of a single scan of turning the robot to a new heading
@@ -434,7 +436,7 @@ public void stop_h() {
             doStop();
         }
     }
-
+    //*********************************************************************************************
     public int deltaHeading(int currHeading, int targetHeading) {
         int returnValue = 0;
         if (currHeading >= 0 && targetHeading >= 0) {
@@ -449,13 +451,13 @@ public void stop_h() {
 
         return returnValue;
     }
-
+    //*********************************************************************************************
     // create method to return complete bolean
     public boolean getcmdComplete() {
 
         return (cmdComplete);
     }
-
+    //*********************************************************************************************
     // create command to be called from auton to drive straight
     public void cmdDrive(double DrivePower, int headingDeg, double targetDistanceInches) {
 
@@ -472,7 +474,7 @@ public void stop_h() {
         doDrive();
     }
 
-
+    //*********************************************************************************************
     // create command to be called from auton to drive straight
     public void cmdDriveH(double DrivePower, int headingDeg, double targetDistanceInches) {
 
@@ -482,15 +484,13 @@ public void stop_h() {
         }
         TargetHeadingDeg = headingDeg;
         RobotLog.aa(TAGChassis, "cmdDriveH: " + DrivePower);
-        //TargetMotorPowerLeft = 0;
-        //TargetMotorPowerRight = 0;
         TargetMotorPowerH = DrivePower;
         TargetDistanceInchesH = targetDistanceInches;
         TargetDistanceInches = 0;
         DriveMotorEncoderReset();
         doDriveH();
     }
-
+    //*********************************************************************************************
     public void cmdTurn(double LSpeed, double RSpeed, int headingDeg) {
         //can only be called one time per movement of the chassis
         ChassisMode_Current = ChassisMode.TURN;
@@ -506,7 +506,7 @@ public void stop_h() {
         doTurn();
     }
 
-
+    //*********************************************************************************************
     public double getEncoderInches() {
         // create method to get inches driven in auton
         // read the values from the encoders
@@ -529,7 +529,7 @@ public void stop_h() {
         return inches;
 
     }
-
+    //*********************************************************************************************
     public double getEncoderInchesH() {
         // create method to get inches driven in auton
         // read the values from the encoders
@@ -547,8 +547,7 @@ public void stop_h() {
         return inches;
 
     }
-
-
+    //*********************************************************************************************
     // create command to be called from auton to reset encoders at end of auton
 
     public int getGyroHeading() {
@@ -564,6 +563,7 @@ public void stop_h() {
         return -1 * (int) (angles.firstAngle);
     }
 
+    //*********************************************************************************************
     /*
      * Code to run ONCE after the driver hits STOP
      */
@@ -579,14 +579,14 @@ public void stop_h() {
         // dumpBox.stop();
         //scannerArms.stop();
     }
-
+    //*********************************************************************************************
     public void setMaxPower(double newMax) {
 
         maxPower = newMax;
 
     }
 
-
+    //*********************************************************************************************
     public int gyroNormalize(int heading) {
         // takes the full turns out of heading
         // gives us values from 0 to 180 for the right side of the robot
@@ -604,7 +604,7 @@ public void stop_h() {
 
         return (degrees);
     }
-
+    //*********************************************************************************************
     public boolean gyroInTol(int currHeading, int desiredHeading, int tol) {
 
         int upperTol = gyroNormalize(desiredHeading + tol);
@@ -650,7 +650,7 @@ public void stop_h() {
         }
         return (retValue);
     }  // end gyroInTol()
-
+    //*********************************************************************************************
     void composeTelemetry() {
 
         // At the beginning of each telemetry update, grab a bunch of data
@@ -711,10 +711,9 @@ public void stop_h() {
     String formatDegrees(double degrees) {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
-
+    //*********************************************************************************************
     public static enum PARENTMODE {
         PARENT_MODE_AUTO,
         PARENT_MODE_TELE
     }
-
 }
