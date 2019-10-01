@@ -387,10 +387,10 @@ public class Chassis_Test2 extends OpMode {
         RobotLog.aa(TAGChassis, "steeringpower: " + steeringPower);
 
         LDM1.setPower(capMotorPower((+1.0 * TargetMotorPowerH) - steeringPower));
-        LDM2.setPower(capMotorPower((-1.0 * TargetMotorPowerH) + steeringPower));
+        LDM2.setPower(capMotorPower((-1.0 * TargetMotorPowerH) - steeringPower));
 
         RDM1.setPower(capMotorPower((-1.0 * TargetMotorPowerH) + steeringPower));
-        RDM2.setPower(capMotorPower((+1.0 * TargetMotorPowerH) - steeringPower));
+        RDM2.setPower(capMotorPower((+1.0 * TargetMotorPowerH) + steeringPower));
 
         HDM1.setPower(TargetMotorPowerH);
 
