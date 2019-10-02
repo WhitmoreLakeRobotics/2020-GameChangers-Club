@@ -50,9 +50,8 @@ public class TeleOp_test extends OpMode {
     private double RightMotorPower = 0;
 
     private double powerNormal = .5;
-
-
-    private double powerMax = 8;
+    private double powerMax = .8;
+    private final double DEADBAND_TRIGGER = .05;
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits INIT
@@ -110,7 +109,7 @@ public class TeleOp_test extends OpMode {
 
         // if the driver has any triggers pulled this means H drive only drive the H wheels
         // as straightly as possible
-        if (gamepad1.left_trigger > 0 || gamepad1.right_trigger > 0) {
+        if (gamepad1.left_trigger > DEADBAND_TRIGGER || gamepad1.right_trigger > DEADBAND_TRIGGER) {
             RBTChassis.doTeleopH(joystickMath(gamepad1.left_trigger),
                     joystickMath(gamepad1.right_trigger));
         }

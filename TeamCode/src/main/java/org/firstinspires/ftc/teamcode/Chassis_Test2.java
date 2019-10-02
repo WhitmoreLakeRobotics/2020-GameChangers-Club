@@ -29,18 +29,18 @@ public class Chassis_Test2 extends OpMode {
         DRIVE,
         DRIVEH,
         TURN,
-        IDLE,
         TELEOP,
+        TELEOPH
     }
 
 
     public static final int ticsPerRev = 1120;
     public static final double wheelDistPerRev = 4 * 3.14159;
-    public static final double gearRatio = 80 / 80;
+    public static final double gearRatio = 80.0 / 80.0;
     public static final double ticsPerInch = ticsPerRev / wheelDistPerRev / gearRatio;
 
     public static final int ticsPerRevCoreHex = 288;
-    public static final double gearRatioH = 1 / 1;
+    public static final double gearRatioH = 1.0 / 1.0;
     public static final double ticsPerInchH = ticsPerRevCoreHex / wheelDistPerRev / gearRatioH;
 
     public static final double Chassis_DriveTolerInchesH = .25;
@@ -71,15 +71,15 @@ public class Chassis_Test2 extends OpMode {
     private DcMotor RDM1 = null;
     private DcMotor RDM2 = null;
     private DcMotor HDM1 = null;
-    private double TargetMotorPowerLeft = 0;
-    private double TargetMotorPowerRight = 0;
-    private double TargetMotorPowerH = 0;
+    private double TargetMotorPowerLeft = 0.0;
+    private double TargetMotorPowerRight = 0.0;
+    private double TargetMotorPowerH = 0.0;
 
     private int TargetHeadingDeg = 0;
-    private double TargetDistanceInches = 0;
-    private double TargetDistanceInchesH = 0;
+    private double TargetDistanceInches = 0.0;
+    private double TargetDistanceInchesH = 0.0;
 
-    private double maxPower = 0;
+    private double maxPower = 1.0;
 
     //*********************************************************************************************
     /*
@@ -159,6 +159,7 @@ public class Chassis_Test2 extends OpMode {
 
         runtime.reset();
     }
+
     //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -173,10 +174,12 @@ public class Chassis_Test2 extends OpMode {
         }
         subExtender.init_loop();
     }
+
     //*********************************************************************************************
     public void setParentMode(PARENTMODE pm) {
         parentMode_Current = pm;
     }
+
     //*********************************************************************************************
     private void setMotorMode(DcMotor.RunMode newMode) {
 
@@ -185,12 +188,14 @@ public class Chassis_Test2 extends OpMode {
         LDM2.setMode(newMode);
         RDM2.setMode(newMode);
     }
+
     //*********************************************************************************************
     public void setMotorMode_RUN_WITHOUT_ENCODER() {
 
         setMotorMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
+
     //*********************************************************************************************
     public void DriveMotorEncoderReset() {
 
@@ -205,12 +210,15 @@ public class Chassis_Test2 extends OpMode {
         RDM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         HDM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
     //*********************************************************************************************
     public void DriveServoMotorReset() {
 
     }
+
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits PLAY
@@ -228,6 +236,7 @@ public class Chassis_Test2 extends OpMode {
         }
         subExtender.start();
     }
+
     //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
@@ -236,46 +245,51 @@ public class Chassis_Test2 extends OpMode {
     public void loop() {
         subExtender.loop();
 
+        // Do nothing the TELEOP is driven by the TeleOp Loop
+        // if (ChassisMode_Current == ChassisMode.TELEOP) {}
+
         if (ChassisMode_Current == ChassisMode.STOP) {
             doStop();
         }
+
 
         //  check mode and do what what ever mode is current
         if (ChassisMode_Current == ChassisMode.DRIVE) {
             doDrive();
         }
 
-
         if (ChassisMode_Current == ChassisMode.TURN) {
             doTurn();
         }
 
-
         if (ChassisMode_Current == ChassisMode.DRIVEH) {
+            // drive and stop on the correct distance
             doDriveH();
         }
-
+        if (ChassisMode_Current == ChassisMode.TELEOPH) {
+            // drive with driver controlled distance
+            doSteerH();
+        }
 
         // Show the elapsed game time and wheel power.
         // telemetry.addData("Status", "Run Time: " + runtime.toString());
 
         // RobotLog.aa(TAGChassis,"Stage: "+ CurrentStage );
         RobotLog.aa(TAGChassis, "Runtime: " + runtime.seconds());
-
         double inchesTraveled = Math.abs(getEncoderInches());
         RobotLog.aa(TAGChassis, "loop targetinches: " + Math.abs(TargetDistanceInches - Chassis_DriveTolerInches));
         RobotLog.aa(TAGChassis, "inchesTraveled: " + inchesTraveled);
 
-
     }
+
     //*********************************************************************************************
     public void doTeleopH(double leftPower, double rightPower) {
 
-        if (ChassisMode_Current != ChassisMode.DRIVEH) {
-            ChassisMode_Current = ChassisMode.DRIVEH;
+        if (ChassisMode_Current != ChassisMode.TELEOPH) {
+            ChassisMode_Current = ChassisMode.TELEOPH;
             TargetHeadingDeg = getGyroHeading();
-            TargetDistanceInchesH = 288;
-            DriveMotorEncoderReset();
+            //TargetDistanceInchesH = 288;
+            //DriveMotorEncoderReset();
         }
 
         double totalPower = leftPower - rightPower;
@@ -285,49 +299,31 @@ public class Chassis_Test2 extends OpMode {
         TargetMotorPowerH = totalPower;
 
     }
+
     //*********************************************************************************************
     public void doTeleop(double LDMpower, double RDMpower) {
         ChassisMode_Current = ChassisMode.TELEOP;
 
-        double lPower = LDMpower;
-        double rPower = RDMpower;
-
-
-
-        if (lPower < -maxPower) {
-            lPower = -maxPower;
-        }
-
-        if (lPower > maxPower) {
-            lPower = maxPower;
-        }
-
-        if (rPower < -maxPower) {
-            rPower = -maxPower;
-        }
-
-        if (rPower > maxPower) {
-            rPower = maxPower;
-        }
-
-        RobotLog.aa(TAGChassis, "doTeleop: lPower=" + lPower + " rPower=" + rPower);
+        double lPower = capMotorPower(LDMpower);
+        double rPower = capMotorPower(RDMpower);
         LDM1.setPower(lPower);
         RDM1.setPower(rPower);
         LDM2.setPower(lPower);
         RDM2.setPower(rPower);
-
-
+        RobotLog.aa(TAGChassis, "doTeleop: lPower=" + lPower + " rPower=" + rPower);
     }
+
     //*********************************************************************************************
     public void doStopH() {
         HDM1.setPower(0);
         TargetDistanceInchesH = 0;
         TargetMotorPowerH = 0;
-        ChassisMode_Current = ChassisMode.IDLE;
+        ChassisMode_Current = ChassisMode.STOP;
     }
 
     //*********************************************************************************************
     private void doStop() {
+
         RobotLog.aa(TAGChassis, "doStop:");
         TargetMotorPowerLeft = 0;
         TargetMotorPowerRight = 0;
@@ -337,7 +333,7 @@ public class Chassis_Test2 extends OpMode {
         RDM1.setPower(TargetMotorPowerRight);
         RDM2.setPower(TargetMotorPowerRight);
         doStopH();
-        ChassisMode_Current = ChassisMode.IDLE;
+        ChassisMode_Current = ChassisMode.STOP;
 
     }
 
@@ -373,9 +369,9 @@ public class Chassis_Test2 extends OpMode {
         }
 
     }    // doDrive()
-    //*********************************************************************************************
-    private void doDriveH() {
 
+    //*********************************************************************************************
+    private void doSteerH() {
         // insert adjustments to drive straight using gyro for both TeleOp and Auto
         RobotLog.aa(TAGChassis, "curr heading: " + gyroNormalize(getGyroHeading()));
         RobotLog.aa(TAGChassis, "Target: " + TargetHeadingDeg);
@@ -393,31 +389,35 @@ public class Chassis_Test2 extends OpMode {
         RDM2.setPower(capMotorPower((+1.0 * TargetMotorPowerH) + steeringPower));
 
         HDM1.setPower(TargetMotorPowerH);
+    }
 
+    //*********************************************************************************************
+    private void doDriveH() {
+        doSteerH();
         //check if we've gone far enough, if so stop and mark task complete
         double inchesTraveled = Math.abs(getEncoderInchesH());
-
         if (inchesTraveled >= Math.abs(TargetDistanceInches - Chassis_DriveTolerInches)) {
             RobotLog.aa(TAGChassis, "Target Inches: " + Math.abs(TargetDistanceInches - Chassis_DriveTolerInches));
             RobotLog.aa(TAGChassis, "Inches Traveled: " + inchesTraveled);
             cmdComplete = true;
             doStop();
         }
-
     }    // doDriveH()
+
     //*********************************************************************************************
     private double capMotorPower(double motorPower) {
         // cap the motor power between -1 and +1.
         double retValue = motorPower;
 
-        if (motorPower > 1.0) {
-            retValue = 1.0;
+        if (motorPower > maxPower) {
+            retValue = maxPower;
         }
-        if (motorPower < -1.0) {
-            retValue = -1.0;
+        if (motorPower < -maxPower) {
+            retValue = -maxPower;
         }
         return retValue;
     }
+
     //*********************************************************************************************
     private void doTurn() {
         /*
@@ -436,6 +436,7 @@ public class Chassis_Test2 extends OpMode {
             doStop();
         }
     }
+
     //*********************************************************************************************
     public int deltaHeading(int currHeading, int targetHeading) {
         int returnValue = 0;
@@ -451,12 +452,14 @@ public class Chassis_Test2 extends OpMode {
 
         return returnValue;
     }
+
     //*********************************************************************************************
     // create method to return complete bolean
     public boolean getcmdComplete() {
 
         return (cmdComplete);
     }
+
     //*********************************************************************************************
     // create command to be called from auton to drive straight
     public void cmdDrive(double DrivePower, int headingDeg, double targetDistanceInches) {
@@ -476,7 +479,7 @@ public class Chassis_Test2 extends OpMode {
 
     //*********************************************************************************************
     // create command to be called from auton to drive straight
-    public void cmdDriveH(double DrivePower, int headingDeg, double targetDistanceInches) {
+    public void cmdDriveH(double DrivePower, int headingDeg, double targetDistanceInchesH) {
 
         cmdComplete = false;
         if (ChassisMode_Current != ChassisMode.DRIVEH) {
@@ -485,12 +488,13 @@ public class Chassis_Test2 extends OpMode {
         TargetHeadingDeg = headingDeg;
         RobotLog.aa(TAGChassis, "cmdDriveH: " + DrivePower);
         TargetMotorPowerH = DrivePower;
-        TargetDistanceInchesH = targetDistanceInches;
+        TargetDistanceInchesH = targetDistanceInchesH;
         TargetDistanceInches = 0;
         DriveMotorEncoderReset();
-        doDriveH();
     }
+
     //*********************************************************************************************
+
     public void cmdTurn(double LSpeed, double RSpeed, int headingDeg) {
         //can only be called one time per movement of the chassis
         ChassisMode_Current = ChassisMode.TURN;
@@ -529,6 +533,7 @@ public class Chassis_Test2 extends OpMode {
         return inches;
 
     }
+
     //*********************************************************************************************
     public double getEncoderInchesH() {
         // create method to get inches driven in auton
@@ -579,6 +584,7 @@ public class Chassis_Test2 extends OpMode {
         // dumpBox.stop();
         //scannerArms.stop();
     }
+
     //*********************************************************************************************
     public void setMaxPower(double newMax) {
 
@@ -604,6 +610,7 @@ public class Chassis_Test2 extends OpMode {
 
         return (degrees);
     }
+
     //*********************************************************************************************
     public boolean gyroInTol(int currHeading, int desiredHeading, int tol) {
 
@@ -650,6 +657,7 @@ public class Chassis_Test2 extends OpMode {
         }
         return (retValue);
     }  // end gyroInTol()
+
     //*********************************************************************************************
     void composeTelemetry() {
 
@@ -711,6 +719,7 @@ public class Chassis_Test2 extends OpMode {
     String formatDegrees(double degrees) {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
+
     //*********************************************************************************************
     public static enum PARENTMODE {
         PARENT_MODE_AUTO,
