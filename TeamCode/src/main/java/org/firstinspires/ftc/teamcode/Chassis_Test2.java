@@ -47,7 +47,7 @@ public class Chassis_Test2 extends OpMode {
     public static final double Chassis_DriveTolerInches = .25;
     // naj set constant for Gyro KP for driving straight
     public static final double chassis_KPGyroStraight = 0.02;
-    public static final double chassis_KPGyroStraightH = 0.1;
+    public static final double chassis_KPGyroStraightH = 0.05;
     private static final String TAGChassis = "8492-Chassis";
     // The IMU sensor object
     BNO055IMU imu;
@@ -275,10 +275,10 @@ public class Chassis_Test2 extends OpMode {
         // telemetry.addData("Status", "Run Time: " + runtime.toString());
 
         // RobotLog.aa(TAGChassis,"Stage: "+ CurrentStage );
-        RobotLog.aa(TAGChassis, "Runtime: " + runtime.seconds());
-        double inchesTraveled = Math.abs(getEncoderInches());
-        RobotLog.aa(TAGChassis, "loop targetinches: " + Math.abs(TargetDistanceInches - Chassis_DriveTolerInches));
-        RobotLog.aa(TAGChassis, "inchesTraveled: " + inchesTraveled);
+        //RobotLog.aa(TAGChassis, "Runtime: " + runtime.seconds());
+        //double inchesTraveled = Math.abs(getEncoderInches());
+        //RobotLog.aa(TAGChassis, "loop targetinches: " + Math.abs(TargetDistanceInches - Chassis_DriveTolerInches));
+        //RobotLog.aa(TAGChassis, "inchesTraveled: " + inchesTraveled);
 
     }
 
@@ -376,8 +376,8 @@ public class Chassis_Test2 extends OpMode {
         RobotLog.aa(TAGChassis, "curr heading: " + gyroNormalize(getGyroHeading()));
         RobotLog.aa(TAGChassis, "Target: " + TargetHeadingDeg);
 
-        double delta = -deltaHeading(gyroNormalize(getGyroHeading()), TargetHeadingDeg);
-        double steeringPower = (delta * chassis_KPGyroStraightH);
+        double delta =- deltaHeading(gyroNormalize(getGyroHeading()), TargetHeadingDeg);
+        double steeringPower = (TargetMotorPowerH * delta * chassis_KPGyroStraightH);
 
         RobotLog.aa(TAGChassis, "delta: " + delta);
         RobotLog.aa(TAGChassis, "steeringpower: " + steeringPower);
