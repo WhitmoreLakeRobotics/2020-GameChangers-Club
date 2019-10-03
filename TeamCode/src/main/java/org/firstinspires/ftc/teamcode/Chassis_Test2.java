@@ -296,7 +296,7 @@ public class Chassis_Test2 extends OpMode {
 
         RobotLog.aa(TAGChassis, "doTeleopH: leftPower=" + leftPower + " rightPower=" + rightPower);
         telemetry.log().add("totalPower =" + totalPower);
-        TargetMotorPowerH = totalPower;
+        TargetMotorPowerH = totalPower / 2.0;
 
     }
 
@@ -376,7 +376,7 @@ public class Chassis_Test2 extends OpMode {
         RobotLog.aa(TAGChassis, "curr heading: " + gyroNormalize(getGyroHeading()));
         RobotLog.aa(TAGChassis, "Target: " + TargetHeadingDeg);
 
-        double delta =- deltaHeading(gyroNormalize(getGyroHeading()), TargetHeadingDeg);
+        double delta = -deltaHeading(gyroNormalize(getGyroHeading()), TargetHeadingDeg);
         double steeringPower = (TargetMotorPowerH * delta * chassis_KPGyroStraightH);
 
         RobotLog.aa(TAGChassis, "delta: " + delta);
