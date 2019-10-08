@@ -458,7 +458,7 @@ public class Chassis_Test2 extends OpMode {
     public boolean getcmdComplete() {
 
         return (cmdComplete);
-    }
+}
 
     //*********************************************************************************************
     // create command to be called from auton to drive straight
