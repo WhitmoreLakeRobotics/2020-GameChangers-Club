@@ -90,6 +90,9 @@ public class SkyStoneNavigationWebcam extends OpMode {
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     private static final boolean PHONE_IS_PORTRAIT = false;
+    // Load the data sets for the trackable objects. These particular data
+    // sets are stored in the 'assets' part of our application.
+
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -139,9 +142,9 @@ public class SkyStoneNavigationWebcam extends OpMode {
     private float phoneYRotate = 0;
     private float phoneZRotate = 0;
 
-    private VuforiaTrackables targetsSkyStone = null;
+   // private VuforiaTrackables targetsSkyStone = null;
     private List<VuforiaTrackable> allTrackables = null;
-
+    private VuforiaTrackables targetsSkyStone = null;
     //@Override public void runOpMode() {
 
     @Override
@@ -171,10 +174,7 @@ public class SkyStoneNavigationWebcam extends OpMode {
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
-        // Load the data sets for the trackable objects. These particular data
-        // sets are stored in the 'assets' part of our application.
-        VuforiaTrackables targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
-
+        targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
         VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
         stoneTarget.setName("Stone Target");
         VuforiaTrackable blueRearBridge = targetsSkyStone.get(1);
