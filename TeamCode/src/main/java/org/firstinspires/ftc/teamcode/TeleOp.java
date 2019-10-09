@@ -33,8 +33,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
-//@TeleOp_testp(name = "Teleop-TestChassis", group = "TeleOp_test")
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Teleop-TestChassis", group = "TeleOp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Teleop", group = "TeleOp")
 //@Disabled
 public class TeleOp extends OpMode {
     private static final String TAGTeleop = "8492-Teleop";

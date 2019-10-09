@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+  <Camera vid="Logitech" pid="0x081B">
+      <Calibration
+          size="640 480"
+          focalLength="821.993f, 821.993f"
+          principalPoint="330.489f, 248.997f"
+          distortionCoefficients="-0.018522, 1.03979, 0, 0, -3.3171, 0, 0, 0"
+          />
+      <Calibration
+          size="640 360"
+          focalLength="715.307f, 715.307f"
+          principalPoint="319.759f, 188.917f"
+          distortionCoefficients="-0.0258948, 1.06258, 0, 0, -3.40245, 0, 0, 0"
+          />
+  </Camera>
+
+    <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="DQ17NF44" parentModuleAddress="2">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <RevRobotics40HDHexMotor name="LDM1" port="0" />
+            <NeveRest40Gearmotor name="RDM1" port="1" />
+            <NeveRest40Gearmotor name="RDM2" port="2" />
+            <RevRobotics40HDHexMotor name="LDM2" port="3" />
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+        </LynxModule>
+        <LynxModule name="Expansion Hub 3" port="3">
+            <RevRoboticsCoreHexMotor name="HDM1" port="0" />
+            <RevRoboticsCoreHexMotor name="EXT1" port="1" />
+            <Servo name="GSVR1" port="0" />
+            <DigitalDevice name="extenderTCH" port="0" />
+            <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>
