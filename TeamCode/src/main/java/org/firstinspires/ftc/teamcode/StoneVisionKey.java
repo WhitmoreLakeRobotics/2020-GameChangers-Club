@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-public class MineralVisionKey {
+public class StoneVisionKey {
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
