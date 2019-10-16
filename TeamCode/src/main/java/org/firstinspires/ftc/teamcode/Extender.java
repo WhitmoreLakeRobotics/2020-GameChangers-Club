@@ -1,13 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-/* Hanger controls all actions involving hanging from the Lander:
-    - locking motors in break mode for initial hanger
-    - moving the latch mechanism
-    - lowering the chassis to the floor
-    - retracking the hanger into the chassis
-    - reversing this for the end game
-
- */
+/* Extender controls the extending slide on the robot
+    - locking motors in brake mode for initial hanger
+*/
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,6 +22,7 @@ public class Extender extends BaseHardware {
     public static final double EXTENDERPOWER_INIT = -.125;
     public static final double ExtenderStickDeadBand = .2;
     private static final String TAGExtender = "8492-Extender";
+    private Settings.PARENTMODE parentMode_Current = null;
     double EXTENDERPOWER_desired = 0;
     double EXTENDERPOWER_current = 0;
     boolean cmdComplete = false;
@@ -73,22 +69,18 @@ public class Extender extends BaseHardware {
          * step (using the FTC Robot Controller app on the phone).
          */
 
-
         EXT1 = hardwareMap.dcMotor.get("EXT1");
-
-
         EXT1.setDirection(DcMotor.Direction.REVERSE);
-
-
         EXT1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         RobotLog.aa(TAGExtender, "extenderPos: " + EXT1);
         //do not know what digital channel is check here for errors ******
         extenderTCH = hardwareMap.get(DigitalChannel.class, "extenderTCH");
         extenderTCH.setMode(DigitalChannel.Mode.INPUT);
 
-
     }
 
+    /*
     public void extenderMotorEncoderReset() {
 
 
@@ -96,7 +88,8 @@ public class Extender extends BaseHardware {
 
         EXT1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-
+*/
+    //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
@@ -105,6 +98,12 @@ public class Extender extends BaseHardware {
         //initPowerHang();
     }
 
+    //*********************************************************************************************
+    public void setParentMode(Settings.PARENTMODE pm) {
+        parentMode_Current = pm;
+    }
+
+    //*********************************************************************************************
     private void initHangerTCH() {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
@@ -117,6 +116,7 @@ public class Extender extends BaseHardware {
         EXT1.setPower(0);
     }
 
+    //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits PLAY
      */
@@ -124,13 +124,24 @@ public class Extender extends BaseHardware {
     public void start() {
         // this is always called by chassis
         EXT1.setPower(0);
+        switch (parentMode_Current) {
+            case PARENT_MODE_AUTO:
+                autoStart();
+                break;
+            case PARENT_MODE_TELE:
+                teleStart();
+                break;
+            default:
+                break;
+        }
     }
 
+    //*********************************************************************************************
     public void autoStart() {
         // This is only called by chassis when running Auto OpModes
         initExtenderTCH();
         EXT1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        EXT1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        EXT1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     // call this to make sure that the extender is on the switch at match start
@@ -194,7 +205,7 @@ public class Extender extends BaseHardware {
 
         if (ExtenderStates.STICK_CONTROL == extenderStateCurrent) {
             // if under stick control then do not move less then start_pos
-            if ( extenderPosition_CURRENT < extenderPosition_Start_Pos){
+            if (extenderPosition_CURRENT < extenderPosition_Start_Pos) {
                 newPower = 0;
             }
             // if under stick control then do not move greater than pos3
@@ -253,7 +264,7 @@ public class Extender extends BaseHardware {
     // somebody pressed a button or ran Auton to send command to move to a given location.
     // create new process
     private void cmd_MoveToTarget(int TargetTicks) {
-         telemetry.addData("moving", TargetTicks);
+        telemetry.addData("moving", TargetTicks);
         if (TargetTicks > extenderPosition_CURRENT) {
             EXTENDERPOWER_desired = EXTENDERPOWER_EXTEND;
         } else if (TargetTicks < extenderPosition_CURRENT) {

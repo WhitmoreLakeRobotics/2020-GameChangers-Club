@@ -30,7 +30,7 @@ public class Chassis_Test extends OpMode {
     public static final int ChassisMode_Turn = 2;
     public static final int ChassisMode_Idle = 3;
     public static final int ChassisMode_Teleop = 4;
-    public static final int ticsPerRev = 1120;
+    public static final int ticsPerRev = Settings.REV_HD_40_MOTOR_TICKS_PER_REV;
     public static final double wheelDistPerRev = 4 * 3.14159;
     public static final double gearRatio = 80 / 80;
     public static final double ticsPerInch = ticsPerRev / wheelDistPerRev / gearRatio;
@@ -54,7 +54,7 @@ public class Chassis_Test extends OpMode {
     private int ChassisMode_Current = ChassisMode_Stop;
     private boolean cmdComplete = true;
     private int cmdStartTime_mS = 0;
-    private PARENTMODE parentMode_Current = null;
+    private Settings.PARENTMODE parentMode_Current = null;
     private DcMotor LDM1 = null;
     private DcMotor LDM2 = null;
     private DcMotor RDM1 = null;
@@ -160,8 +160,10 @@ public class Chassis_Test extends OpMode {
         subExtender.init_loop();
     }
 
-    public void setParentMode(PARENTMODE pm) {
+    public void setParentMode(Settings.PARENTMODE pm) {
+
         parentMode_Current = pm;
+        subExtender.setParentMode( pm);
     }
 
     private void setMotorMode(DcMotor.RunMode newMode) {
@@ -606,11 +608,6 @@ public class Chassis_Test extends OpMode {
 
     String formatDegrees(double degrees) {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    }
-
-    public static enum PARENTMODE {
-        PARENT_MODE_AUTO,
-        PARENT_MODE_TELE
     }
 
 }
