@@ -117,7 +117,7 @@ public class TeleOp extends OpMode {
                     CommonLogic.joyStickMath(-gamepad1.right_stick_y));
         }
 
-        RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
+       // RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
 
         if (gamepad2.a) {
             //RBTChassis.subExtender.cmd_MoveToStart();
