@@ -62,6 +62,7 @@ public class HDrive extends BaseHardware {
             telemetry.log().add("HDM1 is null...");
         }
 
+        HDM2 = hardwareMap.dcMotor.get("HDM2");
         if (HDM2 == null) {
             telemetry.log().add("HDM2 is null...");
         }
@@ -71,7 +72,7 @@ public class HDrive extends BaseHardware {
         HDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         HDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
+        // only reset things if starting in auton... Never reset them in TeleOp
         if (parentMode_Current == Settings.PARENTMODE.PARENT_MODE_AUTO) {
             // This motor performs the lift of the HDrive
             HDM2.setDirection(DcMotor.Direction.FORWARD);
@@ -101,7 +102,6 @@ public class HDrive extends BaseHardware {
 
     //*********************************************************************************************
 
-
     /*
      * Code to run ONCE when the driver hits PLAY
      */
@@ -119,7 +119,6 @@ public class HDrive extends BaseHardware {
             default:
                 break;
         }
-
     }
 
     //*********************************************************************************************
@@ -154,7 +153,7 @@ public class HDrive extends BaseHardware {
         double totalPower = leftPower - rightPower;
         totalPower = CommonLogic.CapMotorPower(totalPower, -1.0, 1.0);
         RobotLog.aa(TAGHDrive, "doTeleop: Power=" + totalPower);
-        TargetMotorPowerH = totalPower / 2.0;
+        TargetMotorPowerH = totalPower * .75;
     }
     //*********************************************************************************************
 

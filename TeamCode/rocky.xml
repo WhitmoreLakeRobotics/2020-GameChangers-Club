@@ -3,8 +3,8 @@
     <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="DQ2ANBG3" parentModuleAddress="3">
         <LynxModule name="Expansion Hub 2" port="2">
             <RevRobotics40HDHexMotor name="LDM1" port="0" />
-            <NeveRest40Gearmotor name="RDM1" port="1" />
-            <NeveRest40Gearmotor name="RDM2" port="2" />
+            <RevRobotics40HDHexMotor name="RDM1" port="1" />
+            <RevRobotics40HDHexMotor name="RDM2" port="2" />
             <RevRobotics40HDHexMotor name="LDM2" port="3" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>
