@@ -159,6 +159,7 @@ public class Chassis extends OpMode {
 
         parentMode_Current = pm;
         subHDrive.setParentMode(pm);
+        subHDrive.setParentMode(pm);
 
     }
 

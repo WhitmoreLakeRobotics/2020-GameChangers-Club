@@ -15,6 +15,9 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 public class Extender extends BaseHardware {
     //Encoder positions for the EXTENDER
+
+
+
     public static final int RESTMODE = 0;
     public static final int EXTENDERPOS_TOL = 40;
     public static final double EXTENDERPOWER_EXTEND = .375;
@@ -82,10 +85,7 @@ public class Extender extends BaseHardware {
 
     /*
     public void extenderMotorEncoderReset() {
-
-
         EXT1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         EXT1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 */
@@ -303,7 +303,6 @@ public class Extender extends BaseHardware {
             extenderStateCurrent = ExtenderStates.STICK_CONTROL;
             EXTENDERPOWER_desired = extenderThrottle;
         }
-
     }
 
     /*

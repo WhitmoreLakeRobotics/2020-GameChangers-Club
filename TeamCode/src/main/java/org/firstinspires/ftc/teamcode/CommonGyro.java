@@ -13,6 +13,12 @@ import java.util.Locale;
 
 public class CommonGyro extends BaseHardware {
 
+    public enum HDriveMode {
+        Active,
+        Idle
+    }
+
+    private Settings.PARENTMODE parentMode_Current = null;
 
     // The IMU sensor object
     BNO055IMU imu;
@@ -68,9 +74,21 @@ public class CommonGyro extends BaseHardware {
      */
     @Override
     public void loop() {
-        // go out to the hardware and update the internal value of the gyro for use in the
-        // rest of the robot software
-        updateGyroHeading();
+
+        switch (parentMode_Current) {
+            // go out to the hardware and update the internal value of the gyro for use in the
+            // rest of the robot software
+            case PARENT_MODE_AUTO: {
+                updateGyroHeading();
+                break;
+            }
+            case PARENT_MODE_TELE:
+                break;
+
+            default:
+                break;
+        }
+
     }
 
 
@@ -241,4 +259,10 @@ public class CommonGyro extends BaseHardware {
     String formatDegrees(double degrees) {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
+
+    //*********************************************************************************************
+    public void setParentMode(Settings.PARENTMODE pm) {
+        parentMode_Current = pm;
+    }
+
 }
