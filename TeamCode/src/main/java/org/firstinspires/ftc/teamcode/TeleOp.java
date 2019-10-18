@@ -109,6 +109,7 @@ public class TeleOp extends OpMode {
         if (gamepad1.left_trigger > DEADBAND_TRIGGER || gamepad1.right_trigger > DEADBAND_TRIGGER) {
             RBTChassis.subHDrive.cmdTeleop(CommonLogic.joyStickMath(gamepad1.left_trigger),
                     CommonLogic.joyStickMath(gamepad1.right_trigger));
+            RBTChassis.cmdTeleOp(0,0);
         }
         // stop the H drive and give joystick values to the other wheels.
         else {

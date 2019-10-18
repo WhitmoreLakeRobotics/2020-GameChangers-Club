@@ -22,7 +22,7 @@ public class HDrive extends BaseHardware {
     public static final int HDM2_UP_POS = 0;
 
     public static final int HDM2_DOWN_POS = (int) (TICKS_PER_REV / 2);
-
+    public static final int HDM2_TOL = 21;
 
     public static final double wheelDistPerRev = 3.0 * 3.14159;
     public static final double gearRatio = 80 / 80;
@@ -47,7 +47,7 @@ public class HDrive extends BaseHardware {
     private double TargetDistanceInchesH = 0;
 
 
-    private static double HLiftPower = .5;
+    private static double HLiftPower = 1.0;
 
     private double maxPower = 1.0;
 
@@ -191,21 +191,22 @@ public class HDrive extends BaseHardware {
             HDM2.setPower(HLiftPower);
             HDM2.setTargetPosition(HDM2_UP_POS);
         }
+        if(HDM2.getCurrentPosition() >HDM2_DOWN_POS- HDM2_TOL) {
+            // If this is just a change of speed then change the speed
+            if (TargetMotorPowerH != PrevMotorPowerH) {
+                HDM1.setPower(TargetMotorPowerH);
+                PrevMotorPowerH = TargetMotorPowerH;
+            }
 
-        // If this is just a change of speed then change the speed
-        if (TargetMotorPowerH != PrevMotorPowerH) {
-            HDM1.setPower(TargetMotorPowerH);
-            PrevMotorPowerH = TargetMotorPowerH;
-        }
-
-        //check if we've gone far enough, if so stop and mark task complete
-        if (HdriveMode_Current == HDriveMode.Drive) {
-            double inchesTraveled = Math.abs(getEncoderInches());
-            if (inchesTraveled >= Math.abs(TargetDistanceInchesH - Chassis_DriveTolerInches)) {
-                RobotLog.aa(TAGHDrive, "Target Inches: " + Math.abs(TargetDistanceInchesH - Chassis_DriveTolerInches));
-                RobotLog.aa(TAGHDrive, "Inches Traveled: " + inchesTraveled);
-                cmdComplete = true;
-                doStop();
+            //check if we've gone far enough, if so stop and mark task complete
+            if (HdriveMode_Current == HDriveMode.Drive) {
+                double inchesTraveled = Math.abs(getEncoderInches());
+                if (inchesTraveled >= Math.abs(TargetDistanceInchesH - Chassis_DriveTolerInches)) {
+                    RobotLog.aa(TAGHDrive, "Target Inches: " + Math.abs(TargetDistanceInchesH - Chassis_DriveTolerInches));
+                    RobotLog.aa(TAGHDrive, "Inches Traveled: " + inchesTraveled);
+                    cmdComplete = true;
+                    doStop();
+                }
             }
         }
     }    // doDrive()
