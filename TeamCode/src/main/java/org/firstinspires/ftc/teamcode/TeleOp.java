@@ -48,7 +48,7 @@ public class TeleOp extends OpMode {
 
     private double powerNormal = .5;
     private double powerMax = .8;
-    private final double DEADBAND_TRIGGER = .05;
+    private final double DEADBAND_TRIGGER = .1;
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits INIT
@@ -101,8 +101,8 @@ public class TeleOp extends OpMode {
         RBTChassis.loop();
 
 
-        RobotLog.aa(TAGTeleop, "gamepad1 " + RightMotorPower);
-        RobotLog.aa(TAGTeleop, "trigers " + gamepad1.left_trigger);
+        //RobotLog.aa(TAGTeleop, "gamepad1 " + RightMotorPower);
+        //RobotLog.aa(TAGTeleop, "trigers " + gamepad1.left_trigger);
 
         // if the driver has any triggers pulled this means H drive only drive the H wheels
         // as straightly as possible

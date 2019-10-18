@@ -14,7 +14,8 @@ public class HDrive extends BaseHardware {
         Stop,
         Drive,
         Unknown,
-        TeleOp
+        TeleOp,
+        Idle
     }
 
     public static final int TICKS_PER_REV = Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
@@ -35,7 +36,6 @@ public class HDrive extends BaseHardware {
     private ElapsedTime runtime = new ElapsedTime();
     private int initCounter = 0;
     //current mode of operation for Chassis
-    private HDriveMode HdriveMode_Target = HDriveMode.Unknown;
     private HDriveMode HdriveMode_Current = HDriveMode.Unknown;
     private boolean cmdComplete = true;
     private int cmdStartTime_mS = 0;
@@ -73,16 +73,17 @@ public class HDrive extends BaseHardware {
         HDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // only reset things if starting in auton... Never reset them in TeleOp
-        if (parentMode_Current == Settings.PARENTMODE.PARENT_MODE_AUTO) {
+        if (parentMode_Current == Settings.PARENTMODE.PARENT_MODE_TELE) {
             // This motor performs the lift of the HDrive
             HDM2.setDirection(DcMotor.Direction.FORWARD);
             HDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             HDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            HDM2.setTargetPosition(HDM2_UP_POS);
             HDM2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
         runtime.reset();
-        HdriveMode_Target = HDriveMode.Stop;
+        HdriveMode_Current = HDriveMode.Idle;
     }
 
     //*********************************************************************************************
@@ -128,7 +129,7 @@ public class HDrive extends BaseHardware {
     @Override
     public void loop() {
 
-        switch (HdriveMode_Target) {
+        switch (HdriveMode_Current) {
             case Stop:
                 doStop();
                 break;
@@ -149,40 +150,46 @@ public class HDrive extends BaseHardware {
     //*********************************************************************************************
     public void cmdTeleop(double leftPower, double rightPower) {
 
-        HdriveMode_Target = HDriveMode.TeleOp;
+        HdriveMode_Current = HDriveMode.TeleOp;
         double totalPower = leftPower - rightPower;
         totalPower = CommonLogic.CapMotorPower(totalPower, -1.0, 1.0);
         RobotLog.aa(TAGHDrive, "doTeleop: Power=" + totalPower);
-        TargetMotorPowerH = totalPower * .75;
+        TargetMotorPowerH = totalPower * 1.0;
+        telemetry.log().add(String.format ("TargetMotorPowerH= %.2f" , TargetMotorPowerH));;
     }
     //*********************************************************************************************
 
     public void doStop() {
-        RobotLog.aa(TAGHDrive, "doStop:");
-        TargetDistanceInchesH = 0;
-        TargetMotorPowerH = 0;
 
-        // If we were driving then raise the wheels
-        if (PrevMotorPowerH != 0) {
+        RobotLog.aa(TAGHDrive, "doStop:");
+        if (HdriveMode_Current == HDriveMode.Stop) {
+            TargetDistanceInchesH = 0;
+            TargetMotorPowerH = 0;
+
+            // If we were driving then raise the wheels
             HDM2.setTargetPosition(HDM2_UP_POS);
             HDM2.setPower(HLiftPower);
-        }
 
-        if (TargetMotorPowerH != PrevMotorPowerH) {
             HDM1.setPower(TargetMotorPowerH);
-            HdriveMode_Target = HDriveMode.Stop;
             PrevMotorPowerH = TargetMotorPowerH;
+            HdriveMode_Current = HDriveMode.Idle;
+
         }
     }
+
 
     //*********************************************************************************************
 
     private void doDrive() {
 
         // if we were stopped then lower the drive wheels
-        if (PrevMotorPowerH == 0) {
+        if (TargetMotorPowerH != 0) {
             HDM2.setPower(HLiftPower);
             HDM2.setTargetPosition(HDM2_DOWN_POS);
+        }
+        else {
+            HDM2.setPower(HLiftPower);
+            HDM2.setTargetPosition(HDM2_UP_POS);
         }
 
         // If this is just a change of speed then change the speed
@@ -192,7 +199,7 @@ public class HDrive extends BaseHardware {
         }
 
         //check if we've gone far enough, if so stop and mark task complete
-        if (HdriveMode_Target.Drive == HDriveMode.Drive) {
+        if (HdriveMode_Current == HDriveMode.Drive) {
             double inchesTraveled = Math.abs(getEncoderInches());
             if (inchesTraveled >= Math.abs(TargetDistanceInchesH - Chassis_DriveTolerInches)) {
                 RobotLog.aa(TAGHDrive, "Target Inches: " + Math.abs(TargetDistanceInchesH - Chassis_DriveTolerInches));
@@ -214,8 +221,8 @@ public class HDrive extends BaseHardware {
 
     public void cmdDrive(double DrivePower, double targetDistanceInches) {
         cmdComplete = false;
-        if (HdriveMode_Target != HDriveMode.Drive) {
-            HdriveMode_Target = HDriveMode.Drive;
+        if (HdriveMode_Current != HDriveMode.Drive) {
+            HdriveMode_Current = HDriveMode.Drive;
         }
         RobotLog.aa(TAGHDrive, "cmdDrive: " + DrivePower);
         TargetMotorPowerH = DrivePower;
@@ -225,8 +232,8 @@ public class HDrive extends BaseHardware {
     //*********************************************************************************************
 
     public void cmdStop() {
-        TargetMotorPowerH = 0;
-        HdriveMode_Target = HDriveMode.Stop;
+        //TargetMotorPowerH = 0;
+        HdriveMode_Current = HDriveMode.Stop;
     }
 
     //*********************************************************************************************
@@ -242,7 +249,7 @@ public class HDrive extends BaseHardware {
     @Override
     public void stop() {
         HDM1.setPower(0);
-        HdriveMode_Target = HDriveMode.Stop;
+        HdriveMode_Current = HDriveMode.Stop;
         HDM2.setPower(0);
     }
 
