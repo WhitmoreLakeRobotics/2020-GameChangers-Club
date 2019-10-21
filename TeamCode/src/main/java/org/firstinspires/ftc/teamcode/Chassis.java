@@ -37,7 +37,6 @@ public class Chassis extends OpMode {
     public static final double wheelDistPerRev = 2 * 3.14159;
     public static final double gearRatio = 80.0 / 40.0;
     public static final double ticsPerInch = ticsPerRev / wheelDistPerRev / gearRatio;
-
     public static final double Chassis_DriveTolerInches = .25;
     // naj set constant for Gyro KP for driving straight
     public static final double chassis_KPGyroStraight = 0.02;

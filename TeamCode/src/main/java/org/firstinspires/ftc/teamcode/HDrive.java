@@ -155,7 +155,8 @@ public class HDrive extends BaseHardware {
         totalPower = CommonLogic.CapMotorPower(totalPower, -1.0, 1.0);
         RobotLog.aa(TAGHDrive, "doTeleop: Power=" + totalPower);
         TargetMotorPowerH = totalPower * 1.0;
-        telemetry.log().add(String.format ("TargetMotorPowerH= %.2f" , TargetMotorPowerH));;
+        telemetry.log().add(String.format("TargetMotorPowerH= %.2f", TargetMotorPowerH));
+        ;
     }
     //*********************************************************************************************
 
@@ -186,12 +187,12 @@ public class HDrive extends BaseHardware {
         if (TargetMotorPowerH != 0) {
             HDM2.setPower(HLiftPower);
             HDM2.setTargetPosition(HDM2_DOWN_POS);
-        }
-        else {
+        } else {
             HDM2.setPower(HLiftPower);
             HDM2.setTargetPosition(HDM2_UP_POS);
         }
-        if(HDM2.getCurrentPosition() >HDM2_DOWN_POS- HDM2_TOL) {
+
+        if (CommonLogic.inRange(HDM2.getCurrentPosition(), HDM2_DOWN_POS, HDM2_TOL)) {
             // If this is just a change of speed then change the speed
             if (TargetMotorPowerH != PrevMotorPowerH) {
                 HDM1.setPower(TargetMotorPowerH);
@@ -214,6 +215,7 @@ public class HDrive extends BaseHardware {
     //*********************************************************************************************
     // create method to return complete bolean
     public boolean getcmdComplete() {
+
         return (cmdComplete);
     }
 

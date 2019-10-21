@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Gripper extends BaseHardware {
 
-    private static final String TAGIntakeArm = "8492-ScannerArm";
+    private static final String TAGIntakeArm = "8492-GripperServo";
 
     /* Declare OpMode members. */
 
@@ -25,9 +25,9 @@ public class Gripper extends BaseHardware {
 
     // Define the hardware
     private Servo gripperSvo = hardwareMap.servo.get("GSVR1");
-    private double gripperSvoPos_start = 0;
-    private double gripperSvoPos_open = 0;
-    private double gripperSvoPos_close = 0;
+    private double gripperSvoPos_start = 0.0;
+    private double gripperSvoPos_open = 0.0;
+    private double gripperSvoPos_close = 1.0;
 
 
 
@@ -95,8 +95,6 @@ public class Gripper extends BaseHardware {
                     }
                     break;
                 }
-
-
 
                 default: {
                     break;

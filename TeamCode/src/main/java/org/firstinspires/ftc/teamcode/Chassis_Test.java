@@ -5,7 +5,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -25,33 +24,35 @@ public class Chassis_Test extends OpMode {
     //for truning this is the tolerance of trun in degrees
     public static final int chassis_GyroHeadingTol = 3;
 
-    public static final int ChassisMode_Stop = 0;
-    public static final int ChassisMode_Drive = 1;
-    public static final int ChassisMode_Turn = 2;
-    public static final int ChassisMode_Idle = 3;
-    public static final int ChassisMode_Teleop = 4;
+    public enum ChassisMode {
+        STOP,
+        DRIVE,
+        TURN,
+        TELEOP,
+        UNKNOWN
+    }
+
+
     public static final int ticsPerRev = Settings.REV_HD_40_MOTOR_TICKS_PER_REV;
-    public static final double wheelDistPerRev = 4 * 3.14159;
-    public static final double gearRatio = 80 / 80;
+    public static final double wheelDistPerRev = 4.0 * 3.14159;
+    public static final double gearRatio = 80.0 / 80.0;
     public static final double ticsPerInch = ticsPerRev / wheelDistPerRev / gearRatio;
     public static final double Chassis_DriveTolerInches = .25;
     // naj set constant for Gyro KP for driving straight
     public static final double chassis_KPGyroStraight = 0.02;
     private static final String TAGChassis = "8492-Chassis";
-    // The IMU sensor object
-    BNO055IMU imu;
 
 
-    public Extender subExtender = new Extender();
+    //public Extender subExtender = new Extender();
+    public CommonGyro subGyro = new CommonGyro();
+    public HDrive subHDrive = new HDrive();
 
     // naj set constant for turning Tolerance in degrees
-    // State used for updating telemetry
-    Orientation angles;
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private int initCounter = 0;
     //current mode of operation for Chassis
-    private int ChassisMode_Current = ChassisMode_Stop;
+    private ChassisMode ChassisMode_Current = ChassisMode.UNKNOWN;
     private boolean cmdComplete = true;
     private int cmdStartTime_mS = 0;
     private Settings.PARENTMODE parentMode_Current = null;
@@ -59,25 +60,26 @@ public class Chassis_Test extends OpMode {
     private DcMotor LDM2 = null;
     private DcMotor RDM1 = null;
     private DcMotor RDM2 = null;
-    private DcMotor HDM1 = null;
-    private double TargetMotorPowerLeft = 0;
-    private double TargetMotorPowerRight = 0;
+
+    private double TargetMotorPowerLeft = 0.0;
+    private double TargetMotorPowerRight = 0.0;
+
     private int TargetHeadingDeg = 0;
-    private double TargetDistanceInches = 0;
+    private double TargetDistanceInches = 0.0;
 
+    private double maxPower = 1.0;
 
-    private double maxPower = 0;
-
+    //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
+
         RDM1 = hardwareMap.dcMotor.get("RDM1");
         LDM1 = hardwareMap.dcMotor.get("LDM1");
         LDM2 = hardwareMap.dcMotor.get("LDM2");
         RDM2 = hardwareMap.dcMotor.get("RDM2");
-        HDM1 = hardwareMap.dcMotor.get("HDM1");
 
 
         if (LDM1 == null) {
@@ -91,9 +93,6 @@ public class Chassis_Test extends OpMode {
         }
         if (RDM2 == null) {
             telemetry.log().add("RDM2 is null...");
-        }
-        if (HDM1 == null) {
-            telemetry.log().add("HDM is null...");
         }
 
 
@@ -117,55 +116,53 @@ public class Chassis_Test extends OpMode {
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        HDM1.setDirection(DcMotor.Direction.FORWARD);
-        HDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        HDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        HDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // Set up the parameters with which we will use our IMU. Note that integration
-        // algorithm here just reports accelerations to the logcat log; it doesn't actually
-        // provide positional information.
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
         telemetry.addData("Chassis", "Initialized");
 
-        subExtender.telemetry = telemetry;
-        subExtender.hardwareMap = hardwareMap;
-        subExtender.init();
+       // subExtender.telemetry = telemetry;
+        //subExtender.hardwareMap = hardwareMap;
+        //subExtender.init();
 
+        subGyro.telemetry = telemetry;
+        subGyro.hardwareMap = hardwareMap;
+        subGyro.init();
+
+        subHDrive.telemetry = telemetry;
+        subHDrive.hardwareMap = hardwareMap;
+        subHDrive.init();
+
+        ChassisMode_Current = ChassisMode.STOP;
         runtime.reset();
     }
 
+    //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
     @Override
     public void init_loop() {
+
         if (runtime.milliseconds() > 1000) {
             initCounter = initCounter + 1;
             telemetry.addData("Chassis init time: ", initCounter);
             telemetry.update();
             runtime.reset();
         }
-        subExtender.init_loop();
+      //  subExtender.init_loop();
+        subGyro.init_loop();
+        subHDrive.init_loop();
+
     }
 
+    //*********************************************************************************************
     public void setParentMode(Settings.PARENTMODE pm) {
 
         parentMode_Current = pm;
-        subExtender.setParentMode( pm);
+        subHDrive.setParentMode(pm);
+        subGyro.setParentMode(pm);
+
     }
 
+    //*********************************************************************************************
     private void setMotorMode(DcMotor.RunMode newMode) {
 
         LDM1.setMode(newMode);
@@ -174,12 +171,12 @@ public class Chassis_Test extends OpMode {
         RDM2.setMode(newMode);
     }
 
+    //*********************************************************************************************
     public void setMotorMode_RUN_WITHOUT_ENCODER() {
-
         setMotorMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
     }
 
+    //*********************************************************************************************
     public void DriveMotorEncoderReset() {
 
         LDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -187,20 +184,12 @@ public class Chassis_Test extends OpMode {
         LDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         RDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        HDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         LDM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RDM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         LDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        HDM1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-
-    public void DriveServoMotorReset() {
-
-    }
-
+    //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits PLAY
      */
@@ -215,125 +204,100 @@ public class Chassis_Test extends OpMode {
             case PARENT_MODE_TELE:
                 break;
         }
-        subExtender.start();
+       // subExtender.start();
+        subGyro.start();
+        subHDrive.start();
     }
 
+    //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
     @Override
     public void loop() {
-        subExtender.loop();
+       // subExtender.loop();
+        subGyro.loop();
+        subHDrive.loop();
 
-        if (ChassisMode_Current == ChassisMode_Stop) {
-            doStop();
+        switch (ChassisMode_Current) {
+
+            case STOP:
+                doStop();
+                break;
+
+            case DRIVE:
+                doDrive();
+                break;
+
+
+            case TURN:
+                doTurn();
+                break;
+
+            case TELEOP:
+                doTeleop();
+                break;
+
+            default:
+                break;
+
+
         }
-
-        //  check mode and do what what ever mode is current
-        if (ChassisMode_Current == ChassisMode_Drive) {
-            doDrive();
-        }
-
-
-        if (ChassisMode_Current == ChassisMode_Turn) {
-            doTurn();
-        }
-
         // Show the elapsed game time and wheel power.
         // telemetry.addData("Status", "Run Time: " + runtime.toString());
 
         // RobotLog.aa(TAGChassis,"Stage: "+ CurrentStage );
-        RobotLog.aa(TAGChassis, "Runtime: " + runtime.seconds());
-
-        double inchesTraveled = Math.abs(getEncoderInches());
-        RobotLog.aa(TAGChassis, "loop targetinches: " + Math.abs(TargetDistanceInches - Chassis_DriveTolerInches));
-        RobotLog.aa(TAGChassis, "inchesTraveled: " + inchesTraveled);
-
+        //RobotLog.aa(TAGChassis, "Runtime: " + runtime.seconds());
+        //double inchesTraveled = Math.abs(getEncoderInches());
+        //RobotLog.aa(TAGChassis, "loop targetinches: " + Math.abs(TargetDistanceInches - Chassis_DriveTolerInches));
+        //RobotLog.aa(TAGChassis, "inchesTraveled: " + inchesTraveled);
 
     }
 
-    public void doTeleopH(double leftPower, double rightPower) {
+    //*********************************************************************************************
+    public void doTeleop() {
+        ChassisMode_Current = ChassisMode.TELEOP;
 
-        double totalPower = leftPower - rightPower;
-        RobotLog.aa(TAGChassis, "doTeleopH: leftPower=" + leftPower + " rightPower=" + rightPower);
-        HDM1.setPower(totalPower);
-        telemetry.log().add("totalPower =" + totalPower);
-    }
-
-    public void doTeleop(double LDMpower, double RDMpower) {
-        ChassisMode_Current = ChassisMode_Teleop;
-
-
-        double lPower = LDMpower;
-        double rPower = RDMpower;
-
-        if (lPower < -maxPower) {
-            lPower = -maxPower;
-        }
-
-        if (lPower > maxPower) {
-            lPower = maxPower;
-        }
-
-        if (rPower < -maxPower) {
-            rPower = -maxPower;
-        }
-
-        if (rPower > maxPower) {
-            rPower = maxPower;
-        }
-
-        RobotLog.aa(TAGChassis, "doTeleop: lPower=" + lPower + " rPower=" + rPower);
+        double lPower = CommonLogic.CapMotorPower(TargetMotorPowerLeft, -maxPower, maxPower);
+        double rPower = CommonLogic.CapMotorPower(TargetMotorPowerRight, -maxPower, maxPower);
         LDM1.setPower(lPower);
         RDM1.setPower(rPower);
         LDM2.setPower(lPower);
         RDM2.setPower(rPower);
-
-
+        RobotLog.aa(TAGChassis, "doTeleop: lPower=" + lPower + " rPower=" + rPower);
     }
 
+    //*********************************************************************************************
     private void doStop() {
+
         RobotLog.aa(TAGChassis, "doStop:");
         TargetMotorPowerLeft = 0;
         TargetMotorPowerRight = 0;
         TargetDistanceInches = 0;
-
         LDM1.setPower(TargetMotorPowerLeft);
         LDM2.setPower(TargetMotorPowerLeft);
         RDM1.setPower(TargetMotorPowerRight);
         RDM2.setPower(TargetMotorPowerRight);
-
-        ChassisMode_Current = ChassisMode_Idle;
+        ChassisMode_Current = ChassisMode.STOP;
 
     }
 
-
+    //*********************************************************************************************
     private void doDrive() {
+
         // insert adjustments to drive straight using gyro
-        RobotLog.aa(TAGChassis, "curr heading: " + gyroNormalize(getGyroHeading()));
+        RobotLog.aa(TAGChassis, "curr heading: " + subGyro.gyroNormalize(subGyro.getGyroHeading()));
         RobotLog.aa(TAGChassis, "Target: " + TargetHeadingDeg);
 
-        double delta = -deltaHeading(gyroNormalize(getGyroHeading()), TargetHeadingDeg);
+        double delta = -subGyro.deltaHeading(subGyro.gyroNormalize(subGyro.getGyroHeading()), TargetHeadingDeg);
         double leftPower = TargetMotorPowerLeft - (delta * chassis_KPGyroStraight);
         double rightPower = TargetMotorPowerRight + (delta * chassis_KPGyroStraight);
 
         RobotLog.aa(TAGChassis, "delta: " + delta);
         RobotLog.aa(TAGChassis, "leftpower: " + leftPower + " right " + rightPower);
 
-
-        if (leftPower < -1) {
-            leftPower = -1;
-        }
-        if (rightPower < -1) {
-            rightPower = -1;
-        }
-
-        if (leftPower > 1) {
-            leftPower = 1;
-        }
-        if (rightPower > 1) {
-            rightPower = 1;
-        }
+        leftPower = CommonLogic.CapMotorPower(leftPower, - maxPower, maxPower);
+        rightPower = CommonLogic.CapMotorPower(rightPower, -maxPower, maxPower);
 
         LDM1.setPower(leftPower);
         LDM2.setPower(leftPower);
@@ -352,52 +316,39 @@ public class Chassis_Test extends OpMode {
 
     }    // doDrive()
 
-
+    //*********************************************************************************************
     private void doTurn() {
         /*
          *   executes the logic of a single scan of turning the robot to a new heading
          */
 
-        int currHeading = gyroNormalize(getGyroHeading());
+        int currHeading = subGyro.gyroNormalize(subGyro.getGyroHeading());
         RobotLog.aa(TAGChassis, "Turn currHeading: " + currHeading + " target: " + TargetHeadingDeg);
         RobotLog.aa(TAGChassis, "Runtime: " + runtime.seconds());
 
-        if (gyroInTol(currHeading, TargetHeadingDeg, chassis_GyroHeadingTol)) {
+        if (subGyro.gyroInTol(currHeading, TargetHeadingDeg, chassis_GyroHeadingTol)) {
             RobotLog.aa(TAGChassis, "Complete currHeading: " + currHeading);
             //We are there stop
             cmdComplete = true;
-            ChassisMode_Current = ChassisMode_Stop;
+            ChassisMode_Current = ChassisMode.STOP;
             doStop();
         }
     }
 
-    public int deltaHeading(int currHeading, int targetHeading) {
-        int returnValue = 0;
-        if (currHeading >= 0 && targetHeading >= 0) {
-            returnValue = targetHeading - currHeading;
-        } else if (currHeading >= 0 && targetHeading <= 0) {
-            returnValue = targetHeading + currHeading;
-        } else if (currHeading <= 0 && targetHeading >= 0) {
-            returnValue = -1 * (targetHeading + currHeading);
-        } else if (currHeading <= 0 && targetHeading <= 0) {
-            returnValue = (targetHeading - currHeading);
-        }
-
-        return returnValue;
-    }
-
-    // create method to return complete bolean
+    //*********************************************************************************************
+    // create method to return complete boolean
     public boolean getcmdComplete() {
 
         return (cmdComplete);
     }
 
+    //*********************************************************************************************
     // create command to be called from auton to drive straight
     public void cmdDrive(double DrivePower, int headingDeg, double targetDistanceInches) {
 
         cmdComplete = false;
-        if (ChassisMode_Current != ChassisMode_Drive) {
-            ChassisMode_Current = ChassisMode_Drive;
+        if (ChassisMode_Current != ChassisMode.DRIVE) {
+            ChassisMode_Current = ChassisMode.DRIVE;
         }
         TargetHeadingDeg = headingDeg;
         RobotLog.aa(TAGChassis, "cmdDrive: " + DrivePower);
@@ -405,12 +356,15 @@ public class Chassis_Test extends OpMode {
         TargetMotorPowerRight = DrivePower;
         TargetDistanceInches = targetDistanceInches;
         DriveMotorEncoderReset();
-        doDrive();
+        ChassisMode_Current = ChassisMode.DRIVE;
+        //doDrive();
     }
 
+    //*********************************************************************************************
     public void cmdTurn(double LSpeed, double RSpeed, int headingDeg) {
+
         //can only be called one time per movement of the chassis
-        ChassisMode_Current = ChassisMode_Turn;
+        ChassisMode_Current = ChassisMode.TURN;
         TargetHeadingDeg = headingDeg;
         RobotLog.aa(TAGChassis, "cmdTurn target: " + TargetHeadingDeg);
 
@@ -423,7 +377,16 @@ public class Chassis_Test extends OpMode {
         doTurn();
     }
 
+    //*********************************************************************************************
 
+    public void cmdTeleOp (double lSpeed, double rSpeed){
+        cmdComplete = false;
+        ChassisMode_Current = ChassisMode.TELEOP;
+        TargetMotorPowerLeft = lSpeed;
+        TargetMotorPowerRight = rSpeed;
+    }
+
+    //*********************************************************************************************
     public double getEncoderInches() {
         // create method to get inches driven in auton
         // read the values from the encoders
@@ -447,21 +410,7 @@ public class Chassis_Test extends OpMode {
 
     }
 
-    // create command to be called from auton to reset encoders at end of auton
-
-    public int getGyroHeading() {
-        //Read the gyro and return its reading in degrees
-
-        //this should pull heading angle from onboard IMU Gyro
-        //https://ftcforum.usfirst.org/forum/ftc-technology/49904-help-with-rev-expansion-hub-integrated-gyro
-        //hint: composeTelemetry() also captures this information below.
-
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        //return formatAngle(angles.angleUnit, angles.firstAngle);
-        return -1 * (int) (angles.firstAngle);
-    }
-
+    //*********************************************************************************************
     /*
      * Code to run ONCE after the driver hits STOP
      */
@@ -471,143 +420,15 @@ public class Chassis_Test extends OpMode {
         LDM2.setPower(0);
         RDM1.setPower(0);
         RDM2.setPower(0);
-        ChassisMode_Current = ChassisMode_Stop;
-        subExtender.stop();
-        //  intakeArm.stop();
-        // dumpBox.stop();
-        //scannerArms.stop();
+        ChassisMode_Current = ChassisMode.STOP;
+        //subExtender.stop();
+        subGyro.stop();
+        subHDrive.stop();
     }
 
+    //*********************************************************************************************
     public void setMaxPower(double newMax) {
-
-        maxPower = newMax;
-
+        maxPower = Math.abs(newMax);
     }
-
-
-    public int gyroNormalize(int heading) {
-        // takes the full turns out of heading
-        // gives us values from 0 to 180 for the right side of the robot
-        // and values from 0 to -179 degrees for the left side of the robot
-
-        int degrees = heading % 360;
-
-        if (degrees > 180) {
-            degrees = degrees - 360;
-        }
-
-        if (degrees < -179) {
-            degrees = degrees + 360;
-        }
-
-        return (degrees);
-    }
-
-    public boolean gyroInTol(int currHeading, int desiredHeading, int tol) {
-
-        int upperTol = gyroNormalize(desiredHeading + tol);
-        int lowerTol = gyroNormalize(desiredHeading - tol);
-        int normalCurr = gyroNormalize(currHeading);
-
-        float signumUpperTol = Math.signum(upperTol);
-        float signumLowerTol = Math.signum(lowerTol);
-
-        boolean retValue = false;
-        // works for all positive numbers direction values
-        if (signumUpperTol > 0 && signumLowerTol > 0) {
-            if ((normalCurr >= lowerTol) && (normalCurr <= upperTol)) {
-                retValue = true;
-            }
-        }
-
-        // works for negative values
-        else if (signumUpperTol < 0 && signumLowerTol < 0) {
-            if ((normalCurr >= lowerTol) && (normalCurr <= upperTol)) {
-                retValue = true;
-            }
-        }
-        // mixed values -tol to + tol  This happens at 180 degrees
-        else if ((signumUpperTol < 0) && (signumLowerTol > 0)) {
-            // System.out.println("upperTol " + upperTol + " Current " +
-            // normalCurr + " lowerTol " + lowerTol);
-            if ((Math.abs(normalCurr) >= Math.abs(lowerTol)) &&
-                    (Math.abs(normalCurr) >= Math.abs(upperTol))) {
-                retValue = true;
-            }
-
-        }
-        // mixed values -tol to + tol  This happens at 0 degrees
-        else if ((signumUpperTol > 0) && (signumLowerTol < 0)) {
-            // System.out.println("upperTol " + upperTol + " Current " +
-            // normalCurr + " lowerTol " + lowerTol);
-            if ((Math.abs(normalCurr) <= Math.abs(lowerTol)) &&
-                    (Math.abs(normalCurr) <= Math.abs(upperTol))) {
-                retValue = true;
-            }
-
-        }
-        return (retValue);
-    }  // end gyroInTol()
-
-    void composeTelemetry() {
-
-        // At the beginning of each telemetry update, grab a bunch of data
-        // from the IMU that we will then display in separate lines.
-        telemetry.addAction(new Runnable() {
-            @Override
-            public void run() {
-                // Acquiring the angles is relatively expensive; we don't want
-                // to do that in each of the three items that need that info, as that's
-                // three times the necessary expense.
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            }
-        });
-
-        telemetry.addLine()
-                .addData("status", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return imu.getSystemStatus().toShortString();
-                    }
-                })
-                .addData("calib", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return imu.getCalibrationStatus().toString();
-                    }
-                });
-
-        telemetry.addLine()
-                .addData("heading", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return formatAngle(angles.angleUnit, angles.firstAngle);
-                    }
-                })
-                .addData("roll", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return formatAngle(angles.angleUnit, angles.secondAngle);
-                    }
-                })
-                .addData("pitch", new Func<String>() {
-                    @Override
-                    public String value() {
-                        return formatAngle(angles.angleUnit, angles.thirdAngle);
-                    }
-                });
-    }
-
-    String formatAngle(AngleUnit angleUnit, double angle) {
-        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
-
-    //----------------------------------------------------------------------------------------------
-    // Formatting
-    //----------------------------------------------------------------------------------------------
-
-    String formatDegrees(double degrees) {
-        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    }
-
+    //*********************************************************************************************
 }

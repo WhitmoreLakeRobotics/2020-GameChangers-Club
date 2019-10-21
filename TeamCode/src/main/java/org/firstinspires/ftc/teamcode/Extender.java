@@ -16,8 +16,6 @@ import com.qualcomm.robotcore.util.RobotLog;
 public class Extender extends BaseHardware {
     //Encoder positions for the EXTENDER
 
-
-
     public static final int RESTMODE = 0;
     public static final int EXTENDERPOS_TOL = 40;
     public static final double EXTENDERPOWER_EXTEND = .375;
@@ -32,9 +30,9 @@ public class Extender extends BaseHardware {
     boolean underStickControl = false;
 
     int extenderPosition_Start_Pos = 0;
-    int extenderPosition_Pos1 = 720;
-    int extenderPosition_Pos2 = 1440;
-    int extenderPosition_Pos3 = 2160;
+    int extenderPosition_Pos1 = 95;
+    int extenderPosition_Pos2 = 190;
+    int extenderPosition_Pos3 = 288;
     int extenderPosition_CURRENT = extenderPosition_Start_Pos;
 
     ExtenderStates extenderStateCurrent = ExtenderStates.UNKNOWN;
@@ -83,12 +81,6 @@ public class Extender extends BaseHardware {
 
     }
 
-    /*
-    public void extenderMotorEncoderReset() {
-        EXT1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        EXT1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-*/
     //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -100,11 +92,13 @@ public class Extender extends BaseHardware {
 
     //*********************************************************************************************
     public void setParentMode(Settings.PARENTMODE pm) {
+
         parentMode_Current = pm;
     }
 
     //*********************************************************************************************
-    private void initHangerTCH() {
+
+    private void initExtenderTCH() {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
         EXT1.setPower(EXTENDERPOWER_INIT);
@@ -144,16 +138,14 @@ public class Extender extends BaseHardware {
         EXT1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    // call this to make sure that the extender is on the switch at match start
-    private void initExtenderTCH() {
-
-    }
+    //*********************************************************************************************
 
     public void teleStart() {
         // This is only called by chassis when running Tele Modes
 
     }
 
+    //*********************************************************************************************
 
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
@@ -162,6 +154,7 @@ public class Extender extends BaseHardware {
     public void loop() {
         SetMotorPower(EXTENDERPOWER_desired);
     }
+    //*********************************************************************************************
 
     private void SetMotorPower(double newMotorPower) {
         // Safety checks to prevent too low or too high
@@ -229,6 +222,7 @@ public class Extender extends BaseHardware {
             EXT1.setPower(EXTENDERPOWER_desired);
         }
     }
+    //*********************************************************************************************
 
     private boolean testInPosition(int currPos, int desiredPos) {
 
@@ -241,26 +235,36 @@ public class Extender extends BaseHardware {
         if ((currPos <= (desiredPos + EXTENDERPOS_TOL)) && (EXTENDERPOWER_current < 0)) {
             retValue = true;
         }
+        cmdComplete = retValue;
         return (retValue);
     }
 
+    //*********************************************************************************************
+    public boolean getCommandComplete() {
+        return cmdComplete;
+    }
+
+    //*********************************************************************************************
 
     public boolean isInStartPos() {
         return testInPosition(extenderPosition_CURRENT, extenderPosition_Start_Pos);
     }
+    //*********************************************************************************************
 
     public boolean isInPos1() {
         return testInPosition(extenderPosition_Pos1, extenderPosition_Pos1);
     }
+    //*********************************************************************************************
 
     public boolean isInPos2() {
         return testInPosition(extenderPosition_CURRENT, extenderPosition_Pos2);
     }
+    //*********************************************************************************************
 
     public boolean isInPos3() {
         return testInPosition(extenderPosition_CURRENT, extenderPosition_Pos3);
     }
-
+    //*********************************************************************************************
     // somebody pressed a button or ran Auton to send command to move to a given location.
     // create new process
     private void cmd_MoveToTarget(int TargetTicks) {
@@ -274,27 +278,33 @@ public class Extender extends BaseHardware {
         }
     }  // cmd_MoveToTarget
 
+    //*********************************************************************************************
 
     public void cmd_MoveToStart() {
         extenderStateCurrent = ExtenderStates.MOVE_TO_START_POS;
         cmd_MoveToTarget(extenderPosition_Start_Pos);
     }
 
+    //*********************************************************************************************
+
     public void cmd_MoveToPos1() {
         extenderStateCurrent = ExtenderStates.MOVING_TO_POS1;
         cmd_MoveToTarget(extenderPosition_Pos1);
     }
+    //*********************************************************************************************
 
     public void cmd_MoveToPos2() {
         extenderStateCurrent = ExtenderStates.MOVING_TO_POS2;
         cmd_MoveToTarget(extenderPosition_Pos2);
     }
+    //*********************************************************************************************
 
 
     public void cmd_MoveToPos3() {
         extenderStateCurrent = ExtenderStates.MOVING_TO_POS3;
         cmd_MoveToTarget(extenderPosition_Pos3);
     }
+    //*********************************************************************************************
 
 
     public void cmd_stickControl(double extenderThrottle) {
@@ -304,6 +314,7 @@ public class Extender extends BaseHardware {
             EXTENDERPOWER_desired = extenderThrottle;
         }
     }
+    //*********************************************************************************************
 
     /*
      * Code to run ONCE after the driver hits STOP
@@ -314,6 +325,7 @@ public class Extender extends BaseHardware {
         EXTENDERPOWER_desired = 0;
         SetMotorPower(EXTENDERPOWER_desired);
     }
+    //*********************************************************************************************
 
     public enum ExtenderStates {
         START_POS,
@@ -327,5 +339,6 @@ public class Extender extends BaseHardware {
         UNKNOWN,
         STICK_CONTROL
     }
+    //*********************************************************************************************
 
 }
