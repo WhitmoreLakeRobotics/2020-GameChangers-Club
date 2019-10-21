@@ -9,10 +9,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
 //@TeleOp_testp(name = "Teleop-TestChassis", group = "TeleOp_test")
-@TeleOp(name = "Teleop-TestChassis", group = "TeleOp")
+@TeleOp(name = "Tele_Op-Test", group = "TeleOp")
 //@Disabled
 public class TeleOp_test extends OpMode {
-    private static final String TAGTeleop = "8492-Teleop";
+    private static final String TAGTeleop = "8492-Tele_Op_test";
     Chassis_Test RBTChassis = new Chassis_Test();
     // Declare OpMode members.
     boolean gamepad2_a_pressed = false;
@@ -31,7 +31,7 @@ public class TeleOp_test extends OpMode {
      */
     @Override
     public void init() {
-        telemetry.addData("TeleOp_test", "Initialized");
+        telemetry.addData("Tele_Op_test", "Initialized");
         RBTChassis.setParentMode(Settings.PARENTMODE.PARENT_MODE_TELE);
         RBTChassis.hardwareMap = hardwareMap;
         RBTChassis.telemetry = telemetry;

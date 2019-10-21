@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 /* LIFTER controls the extending slide on the robot
-    - locking motors in brake mode for initial hanger
+
 */
 
 
@@ -17,7 +17,7 @@ public class Lifter extends BaseHardware {
 
     //Encoder positions for the LIFTER
 
-    public static final int LIFTERPOS_TOL = 40;
+    public static final int LIFTERPOS_TOL = 29;
     public static final double LIFTERPOWER_UP = .375;
     public static final double LIFTERPOWER_DOWN = -.375;
     public static final double LIFTERPOWER_INIT = -.125;
@@ -63,15 +63,14 @@ public class Lifter extends BaseHardware {
         LIFTERTCH = hardwareMap.get(DigitalChannel.class, "LIFTERTCH");
         LIFTERTCH.setMode(DigitalChannel.Mode.INPUT);
 
-
         LIFTER_POSITIONS_TICKS[0] = 0;
-        LIFTER_POSITIONS_TICKS[1] = 100;
-        LIFTER_POSITIONS_TICKS[2] = 200;
-        LIFTER_POSITIONS_TICKS[3] = 300;
-        LIFTER_POSITIONS_TICKS[4] = 400;
-        LIFTER_POSITIONS_TICKS[5] = 500;
-        LIFTER_POSITIONS_TICKS[6] = 600;
-        LIFTER_POSITIONS_TICKS[7] = 700;
+        LIFTER_POSITIONS_TICKS[1] = 1* Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
+        LIFTER_POSITIONS_TICKS[2] = 2* Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
+        LIFTER_POSITIONS_TICKS[3] = 3* Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
+        LIFTER_POSITIONS_TICKS[4] = 4* Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
+        LIFTER_POSITIONS_TICKS[5] = 5* Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
+        LIFTER_POSITIONS_TICKS[6] = 6* Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
+        LIFTER_POSITIONS_TICKS[7] = 7* Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
 
     }
 
@@ -92,7 +91,8 @@ public class Lifter extends BaseHardware {
 
     //*********************************************************************************************
 
-    private void initLifterTCH() {
+    /*private void initLifterTCH() {
+
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
         LFT1.setPower(LIFTERPOWER_INIT);
@@ -102,7 +102,7 @@ public class Lifter extends BaseHardware {
             }
         }
         LFT1.setPower(0);
-    }
+    }*/
 
     //*********************************************************************************************
     /*
@@ -131,12 +131,10 @@ public class Lifter extends BaseHardware {
 
     public void autoStart() {
         // This is only called by chassis when running Auto OpModes
-
-        initLifterTCH();
+        //initLifterTCH();
         LFT1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LFT1.setTargetPosition(LIFTER_POSITIONS_TICKS[0]);
         LFT1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
     }
 
     //*********************************************************************************************
@@ -155,18 +153,8 @@ public class Lifter extends BaseHardware {
     @Override
     public void loop() {
         CurrentTickCount = LFT1.getCurrentPosition();
-        SetPosition();
     }
 
-    //*********************************************************************************************
-
-    private void SetPosition () {
-
-        if (! LFT1.isBusy()) {
-
-        }
-
-    }
     //*********************************************************************************************
 
     private boolean testInPosition(int currPos, int desiredPos) {
@@ -174,35 +162,60 @@ public class Lifter extends BaseHardware {
         boolean retValue = false;
 
         if (CommonLogic.inRange( currPos, desiredPos, LIFTERPOS_TOL) && LFT1.isBusy() == false){
-            cmdComplete = retValue;
+            retValue = true;
+            cmdComplete = true;
         }
 
         return (retValue);
     }
 
     //*********************************************************************************************
+    public boolean isInPos (int index) {
+        boolean retValue = false;
+
+        if ((index >= LOW_INDEX) && (index <= HIGH_INDEX)) {
+            retValue = testInPosition(CurrentTickCount, LIFTER_POSITIONS_TICKS[index]);
+        }
+
+        return retValue;
+    }
+
+    //*********************************************************************************************
+
     public boolean getCommandComplete() {
         return cmdComplete;
     }
 
     //*********************************************************************************************
+    public void setPosition (int index) {
 
+        if ((index >= LOW_INDEX) && (index <= HIGH_INDEX)){
+            LFT1.setTargetPosition(LIFTER_POSITIONS_TICKS[index]);
+        }
+    }
+
+    //*********************************************************************************************
     public void incPositionIndex (){
 
        if (CurrentIndex < HIGH_INDEX) {
-           CurrentIndex++;
+           if (! LFT1.isBusy()) {
+               CurrentIndex++;
+               LFT1.setTargetPosition(LIFTER_POSITIONS_TICKS[CurrentIndex]);
+           }
        }
-
     }
 
+    //*********************************************************************************************
     public void decPositionIndex () {
         if (CurrentIndex > LOW_INDEX) {
-            CurrentIndex--;
+            if (! LFT1.isBusy()) {
+                CurrentIndex--;
+                LFT1.setTargetPosition(LIFTER_POSITIONS_TICKS[CurrentIndex]);
+            }
         }
     }
 
     public void stop () {
         LFT1.setPower(0);
     }
-
 }

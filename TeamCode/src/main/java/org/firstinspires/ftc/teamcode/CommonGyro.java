@@ -82,8 +82,8 @@ public class CommonGyro extends BaseHardware {
                 updateGyroHeading();
                 break;
             }
-            case PARENT_MODE_TELE:
-                break;
+            //case PARENT_MODE_TELE:
+            //    break;
 
             default:
                 break;

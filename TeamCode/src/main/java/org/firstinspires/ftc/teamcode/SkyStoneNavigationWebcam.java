@@ -163,6 +163,9 @@ public class SkyStoneNavigationWebcam extends OpMode {
          //VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.useExtendedTracking = true;
+        parameters.secondsUsbPermissionTimeout=10000;
+
 
         /**
          * We also indicate which camera on the RC we wish to use.
@@ -173,6 +176,7 @@ public class SkyStoneNavigationWebcam extends OpMode {
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
+
         VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
         stoneTarget.setName("Stone Target");
         VuforiaTrackable blueRearBridge = targetsSkyStone.get(1);
@@ -319,6 +323,7 @@ public class SkyStoneNavigationWebcam extends OpMode {
         for (VuforiaTrackable trackable : allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
         }
+
     }
 
     @Override
@@ -328,11 +333,7 @@ public class SkyStoneNavigationWebcam extends OpMode {
 
 
     public void start() {
-        targetsSkyStone.activate();
-    }
-
-
-    // WARNING:
+	// WARNING:
     // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
     // This sequence is used to enable the new remote DS Camera Preview feature to be used with this sample.
     // CONSEQUENTLY do not put any driving commands in this loop.
@@ -343,6 +344,11 @@ public class SkyStoneNavigationWebcam extends OpMode {
     // Note: To use the remote camera preview:
     // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
     // Tap the preview window to receive a fresh image.
+        targetsSkyStone.activate();
+
+    }
+
+
 
 
     public void loop() {
