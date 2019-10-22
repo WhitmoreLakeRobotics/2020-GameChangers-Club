@@ -110,13 +110,23 @@ public class Tele_Op extends OpMode {
 
         // Bumpers high and lower Powers for the wheels
         if (gamepad1.left_bumper) {
-            //RBTChassis.setMaxPower(powerMax);
+            RBTChassis.setMaxPower(powerMax);
         }
 
         if (gamepad1.right_bumper) {
+            RBTChassis.setMaxPower(powerNormal);
+        }
+        // Bumpers close and open the gripper
+        if (gamepad2.left_bumper) {
+            //RBTChassis.gripper.open(gripper.open);
+        }
+
+        if (gamepad2.right_bumper) {
             //RBTChassis.setMaxPower(powerNormal);
         }
     }
+
+
 
     //*********************************************************************************************
     /*
