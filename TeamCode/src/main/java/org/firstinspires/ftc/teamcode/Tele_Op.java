@@ -24,6 +24,7 @@ public class Tele_Op extends OpMode {
     private double powerNormal = .5;
     private double powerMax = .8;
     private final double DEADBAND_TRIGGER = .1;
+
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits INIT
@@ -47,6 +48,7 @@ public class Tele_Op extends OpMode {
 
 
     }
+
     //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -84,7 +86,7 @@ public class Tele_Op extends OpMode {
         if (gamepad1.left_trigger > DEADBAND_TRIGGER || gamepad1.right_trigger > DEADBAND_TRIGGER) {
             RBTChassis.subHDrive.cmdTeleop(CommonLogic.joyStickMath(gamepad1.left_trigger),
                     CommonLogic.joyStickMath(gamepad1.right_trigger));
-            RBTChassis.cmdTeleOp(0,0);
+            RBTChassis.cmdTeleOp(0, 0);
         }
         // stop the H drive and give joystick values to the other wheels.
         else {
@@ -93,7 +95,7 @@ public class Tele_Op extends OpMode {
                     CommonLogic.joyStickMath(-gamepad1.right_stick_y));
         }
 
-       // RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
+        // RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
 
         if (gamepad2.a) {
             //RBTChassis.subExtender.cmd_MoveToStart();
@@ -118,14 +120,18 @@ public class Tele_Op extends OpMode {
         }
         // Bumpers close and open the gripper
         if (gamepad2.left_bumper) {
-            //RBTChassis.gripper.open(gripper.open);
+            if (!RBTChassis.subGripper.getIsClosed()) {
+                RBTChassis.subGripper.cmd_close();
+            }
         }
 
         if (gamepad2.right_bumper) {
-            //RBTChassis.setMaxPower(powerNormal);
+            if (!RBTChassis.subGripper.getIsOpen()) {
+                RBTChassis.subGripper.cmd_open();
+            }
         }
-    }
 
+    }
 
 
     //*********************************************************************************************

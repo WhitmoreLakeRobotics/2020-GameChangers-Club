@@ -43,9 +43,10 @@ public class Chassis extends OpMode {
     private static final String TAGChassis = "8492-Chassis";
 
 
-    //public Extender subExtender = new Extender();
+    public Extender subExtender = new Extender();
     public CommonGyro subGyro = new CommonGyro();
     public HDrive subHDrive = new HDrive();
+    public Gripper subGripper = new Gripper();
 
     // naj set constant for turning Tolerance in degrees
     // Declare OpMode members.
@@ -118,9 +119,9 @@ public class Chassis extends OpMode {
 
         telemetry.addData("Chassis", "Initialized");
 
-       // subExtender.telemetry = telemetry;
-        //subExtender.hardwareMap = hardwareMap;
-        //subExtender.init();
+        subExtender.telemetry = telemetry;
+        subExtender.hardwareMap = hardwareMap;
+        subExtender.init();
 
         subGyro.telemetry = telemetry;
         subGyro.hardwareMap = hardwareMap;
@@ -129,6 +130,10 @@ public class Chassis extends OpMode {
         subHDrive.telemetry = telemetry;
         subHDrive.hardwareMap = hardwareMap;
         subHDrive.init();
+
+        subGripper.telemetry = telemetry;
+        subGripper.hardwareMap = hardwareMap;
+        subGripper.init();
 
         ChassisMode_Current = ChassisMode.STOP;
         runtime.reset();
@@ -147,9 +152,10 @@ public class Chassis extends OpMode {
             telemetry.update();
             runtime.reset();
         }
-      //  subExtender.init_loop();
+        subExtender.init_loop();
         subGyro.init_loop();
         subHDrive.init_loop();
+        subGripper.init_loop();
 
     }
 
@@ -159,7 +165,7 @@ public class Chassis extends OpMode {
         parentMode_Current = pm;
         subHDrive.setParentMode(pm);
         subGyro.setParentMode(pm);
-
+        //subGripper.setParentMode();
     }
 
     //*********************************************************************************************
@@ -204,9 +210,10 @@ public class Chassis extends OpMode {
             case PARENT_MODE_TELE:
                 break;
         }
-       // subExtender.start();
+        subExtender.start();
         subGyro.start();
         subHDrive.start();
+        subGripper.start();
     }
 
     //*********************************************************************************************
@@ -215,9 +222,10 @@ public class Chassis extends OpMode {
      */
     @Override
     public void loop() {
-       // subExtender.loop();
+        subExtender.loop();
         subGyro.loop();
         subHDrive.loop();
+        subGripper.loop();
 
         switch (ChassisMode_Current) {
 
@@ -421,9 +429,10 @@ public class Chassis extends OpMode {
         RDM1.setPower(0);
         RDM2.setPower(0);
         ChassisMode_Current = ChassisMode.STOP;
-        //subExtender.stop();
+        subExtender.stop();
         subGyro.stop();
         subHDrive.stop();
+        subGripper.stop();
     }
 
     //*********************************************************************************************
