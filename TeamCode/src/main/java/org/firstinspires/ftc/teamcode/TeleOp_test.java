@@ -131,7 +131,29 @@ public class TeleOp_test extends OpMode {
             }
         }
 
+        if (gamepad2.dpad_right) {
+            if (!RBTChassis.subGrabbers.getIsDown()) {
+                RBTChassis.subGrabbers.cmdMoveDownRight();
+            }
+        }
 
+        if (gamepad2.dpad_up) {
+            if (!RBTChassis.subGrabbers.getIsUpRight()){
+                RBTChassis.subGrabbers.cmdMoveUpRight();
+            }
+        }
+
+        if (gamepad2.dpad_left) {
+            if (!RBTChassis.subGrabbers.getIsUpLeft()) {
+                RBTChassis.subGrabbers.cmdMoveUpLeft();
+            }
+        }
+
+        if (gamepad2.dpad_down) {
+            if (!RBTChassis.subGrabbers.getIsDown()){
+                RBTChassis.subGrabbers.cmdMoveDownLeft();
+            }
+        }
 
 
     }

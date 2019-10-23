@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //@TeleOp(name = "GrabberArms", group = "CHASSIS")  // @Autonomous(...) is the other common choice
 
 public class GrabberArms extends BaseHardware {
-    private  static final String TAGIntakeArm = "8492-GrabberArms";
+    private static final String TAGIntakeArm = "8492-GrabberArms";
     private GrabberArm ArmRight = new GrabberArm();
     private GrabberArm ArmLeft = new GrabberArm();
 
@@ -76,7 +76,7 @@ public class GrabberArms extends BaseHardware {
         ArmLeft.loop();
     }
 
-    public void cmdMoveAllDown(){
+    public void cmdMoveAllDown() {
         ArmRight.cmd_moveDown();
         ArmLeft.cmd_moveDown();
     }
@@ -102,12 +102,24 @@ public class GrabberArms extends BaseHardware {
         ArmRight.cmd_moveDown();
     }
 
-    public void cmdMoveStartLeft() {ArmLeft.cmd_moveStart();}
+    public void cmdMoveStartLeft() {
+        ArmLeft.cmd_moveStart();
+    }
 
-    public void cmdMoveStartRight() {ArmRight.cmd_moveStart();}
+    public void cmdMoveStartRight() {
+        ArmRight.cmd_moveStart();
+    }
 
-    public boolean getIsDown(){
+    public boolean getIsDown() {
         return (ArmLeft.getIsDown() && ArmRight.getIsDown());
+    }
+
+    public boolean getIsDownRight() {
+        return ArmRight.getIsDown();
+    }
+
+    public boolean getIsDownLeft() {
+        return ArmLeft.getIsDown();
     }
 
     public boolean getIsUp() {

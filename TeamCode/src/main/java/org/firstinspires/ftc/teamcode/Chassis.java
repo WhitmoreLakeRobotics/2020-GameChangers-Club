@@ -47,6 +47,7 @@ public class Chassis extends OpMode {
     public CommonGyro subGyro = new CommonGyro();
     public HDrive subHDrive = new HDrive();
     public Gripper subGripper = new Gripper();
+    public GrabberArms subGrabbers = new GrabberArms();
 
     // naj set constant for turning Tolerance in degrees
     // Declare OpMode members.
@@ -135,6 +136,10 @@ public class Chassis extends OpMode {
         subGripper.hardwareMap = hardwareMap;
         subGripper.init();
 
+        subGrabbers.telemetry = telemetry;
+        subGrabbers.hardwareMap = hardwareMap;
+        subGrabbers.init();
+
         ChassisMode_Current = ChassisMode.STOP;
         runtime.reset();
     }
@@ -156,7 +161,7 @@ public class Chassis extends OpMode {
         subGyro.init_loop();
         subHDrive.init_loop();
         subGripper.init_loop();
-
+        subGrabbers.init_loop();
     }
 
     //*********************************************************************************************
@@ -214,6 +219,7 @@ public class Chassis extends OpMode {
         subGyro.start();
         subHDrive.start();
         subGripper.start();
+        subGrabbers.start();
     }
 
     //*********************************************************************************************
@@ -226,6 +232,7 @@ public class Chassis extends OpMode {
         subGyro.loop();
         subHDrive.loop();
         subGripper.loop();
+        subGrabbers.loop();
 
         switch (ChassisMode_Current) {
 
@@ -433,6 +440,7 @@ public class Chassis extends OpMode {
         subGyro.stop();
         subHDrive.stop();
         subGripper.stop();
+        subGrabbers.stop();
     }
 
     //*********************************************************************************************

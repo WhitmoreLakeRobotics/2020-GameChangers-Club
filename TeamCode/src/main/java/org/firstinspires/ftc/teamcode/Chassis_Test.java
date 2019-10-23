@@ -47,6 +47,7 @@ public class Chassis_Test extends OpMode {
     public CommonGyro subGyro = new CommonGyro();
     public HDrive subHDrive = new HDrive();
     public Gripper subGripper = new Gripper();
+    public GrabberArms subGrabbers = new GrabberArms();
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -134,6 +135,10 @@ public class Chassis_Test extends OpMode {
         subGripper.hardwareMap = hardwareMap;
         subGripper.init();
 
+        subGrabbers.telemetry = telemetry;
+        subGrabbers.hardwareMap = hardwareMap;
+        subGrabbers.init();
+
         ChassisMode_Current = ChassisMode.STOP;
         runtime.reset();
     }
@@ -155,7 +160,7 @@ public class Chassis_Test extends OpMode {
         subGyro.init_loop();
         subHDrive.init_loop();
         subGripper.init_loop();
-
+        subGrabbers.init_loop();
     }
 
     //*********************************************************************************************
@@ -213,6 +218,7 @@ public class Chassis_Test extends OpMode {
         subGyro.start();
         subHDrive.start();
         subGripper.start();
+        subGrabbers.start();
     }
 
     //*********************************************************************************************
@@ -225,6 +231,7 @@ public class Chassis_Test extends OpMode {
         subGyro.loop();
         subHDrive.loop();
         subGripper.loop();
+        subGrabbers.loop();
 
         switch (ChassisMode_Current) {
 
@@ -432,6 +439,7 @@ public class Chassis_Test extends OpMode {
         subGyro.stop();
         subHDrive.stop();
         subGripper.stop();
+        subGrabbers.stop();
     }
 
     //*********************************************************************************************
