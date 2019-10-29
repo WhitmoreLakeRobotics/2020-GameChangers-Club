@@ -49,7 +49,6 @@ public class Chassis extends OpMode {
     public Gripper subGripper = new Gripper();
     public GrabberArms subGrabbers = new GrabberArms();
 
-    // naj set constant for turning Tolerance in degrees
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private int initCounter = 0;
@@ -118,7 +117,7 @@ public class Chassis extends OpMode {
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        telemetry.addData("Chassis", "Initialized");
+
 
         subExtender.telemetry = telemetry;
         subExtender.hardwareMap = hardwareMap;
@@ -139,7 +138,7 @@ public class Chassis extends OpMode {
         subGrabbers.telemetry = telemetry;
         subGrabbers.hardwareMap = hardwareMap;
         subGrabbers.init();
-
+        telemetry.addData("Chassis", "Initialized");
         ChassisMode_Current = ChassisMode.STOP;
         runtime.reset();
     }
@@ -170,7 +169,14 @@ public class Chassis extends OpMode {
         parentMode_Current = pm;
         subHDrive.setParentMode(pm);
         subGyro.setParentMode(pm);
-        //subGripper.setParentMode();
+        subExtender.setParentMode(pm);
+    }
+
+    //*********************************************************************************************
+
+    private void setChassis (){
+        subExtender.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
+        subHDrive.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
     }
 
     //*********************************************************************************************
@@ -218,7 +224,7 @@ public class Chassis extends OpMode {
         subExtender.start();
         subGyro.start();
         subHDrive.start();
-        subGripper.start();
+        //subGripper.start();
         subGrabbers.start();
     }
 

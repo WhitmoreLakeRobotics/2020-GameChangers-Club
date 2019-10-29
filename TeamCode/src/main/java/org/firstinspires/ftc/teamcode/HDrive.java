@@ -40,6 +40,7 @@ public class HDrive extends BaseHardware {
     private boolean cmdComplete = true;
     private int cmdStartTime_mS = 0;
     private Settings.PARENTMODE parentMode_Current = null;
+    private Settings.CHASSIS_TYPE chassisType = null;
     private DcMotor HDM1 = null;
     private DcMotor HDM2 = null;
     private double TargetMotorPowerH = 0;
@@ -100,7 +101,9 @@ public class HDrive extends BaseHardware {
         parentMode_Current = pm;
     }
 
-
+    public void setChassisType(Settings.CHASSIS_TYPE ct) {
+        chassisType = ct;
+    }
     //*********************************************************************************************
 
     /*

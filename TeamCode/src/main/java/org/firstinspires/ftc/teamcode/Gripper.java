@@ -24,7 +24,7 @@ public class Gripper extends BaseHardware {
     private int GripperMoveTime = 1250;
 
     // Define the hardware
-    private Servo gripperSvo = hardwareMap.servo.get("GSVR1");
+    private Servo gripperSvo = null;
     private double gripperSvoPos_start = 0.0;
     private double gripperSvoPos_open = 0.0;
     private double gripperSvoPos_close = 1.0;
@@ -33,7 +33,12 @@ public class Gripper extends BaseHardware {
 
     @Override
     public void init() {
+        gripperSvo = hardwareMap.servo.get("GSVR1");
+        if (gripperSvo == null) {
+            telemetry.log().add("GSVR1 is null...");
+        }
         GripperTimer = new ElapsedTime();
+        telemetry.addData("GRIPPER", "Initialized");
     }
 
     /*

@@ -43,6 +43,11 @@ public class GrabberArm extends BaseHardware {
 
     @Override
     public void init() {
+
+        if (grabSvo == null) {
+          telemetry.log().add("GrabSvoR is null...");
+        
+        }
         ScannerArmTimer = new ElapsedTime();
     }
 

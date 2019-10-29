@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
 //@TeleOp_testp(name = "Teleop-TestChassis", group = "TeleOp_test")
-@TeleOp(name = "Tele_Op-Test", group = "TeleOp")
+@TeleOp(name = "Tele-Op-Test", group = "TeleOp")
 //@Disabled
 public class TeleOp_test extends OpMode {
     private static final String TAGTeleop = "8492-Tele_Op_test";
@@ -25,6 +25,21 @@ public class TeleOp_test extends OpMode {
     private double powerNormal = .5;
     private double powerMax = .8;
     private final double DEADBAND_TRIGGER = .1;
+
+    //----------------------------------------------------------------------------------------------
+// Safety Management
+//
+// These constants manage the duration we allow for callbacks to user code to run for before
+// such code is considered to be stuck (in an infinite loop, or wherever) and consequently
+// the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
+// necessary as poorly chosen values might inadvertently compromise safety.
+//----------------------------------------------------------------------------------------------
+    protected int msStuckDetectInit     = 7000;
+    protected int msStuckDetectInitLoop = 7000;
+    protected int msStuckDetectStart    = 7000;
+    protected int msStuckDetectLoop     = 7000;
+    protected int msStuckDetectStop     = 1000;
+
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits INIT
@@ -120,15 +135,15 @@ public class TeleOp_test extends OpMode {
 
         // Bumpers close and open the gripper
         if (gamepad2.left_bumper) {
-            if (!RBTChassis.subGripper.getIsClosed()) {
-                RBTChassis.subGripper.cmd_close();
-            }
+           // if (!RBTChassis.subGripper.getIsClosed()) {
+                //RBTChassis.subGripper.cmd_close();
+            //}
         }
 
         if (gamepad2.right_bumper) {
-            if (!RBTChassis.subGripper.getIsOpen()) {
-                RBTChassis.subGripper.cmd_open();
-            }
+            //if (!RBTChassis.subGripper.getIsOpen()) {
+               // RBTChassis.subGripper.cmd_open();
+            //}
         }
 
         if (gamepad2.dpad_right) {

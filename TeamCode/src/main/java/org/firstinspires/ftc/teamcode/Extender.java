@@ -24,6 +24,7 @@ public class Extender extends BaseHardware {
     public static final double ExtenderStickDeadBand = .2;
     private static final String TAGExtender = "8492-Extender";
     private Settings.PARENTMODE parentMode_Current = null;
+    private Settings.CHASSIS_TYPE chassisType = null;
     double EXTENDERPOWER_desired = 0;
     double EXTENDERPOWER_current = 0;
     boolean cmdComplete = false;
@@ -78,6 +79,7 @@ public class Extender extends BaseHardware {
         //do not know what digital channel is check here for errors ******
         extenderTCH = hardwareMap.get(DigitalChannel.class, "extenderTCH");
         extenderTCH.setMode(DigitalChannel.Mode.INPUT);
+        telemetry.addData("Extender", "Initialized");
 
     }
 
@@ -97,14 +99,20 @@ public class Extender extends BaseHardware {
     }
 
     //*********************************************************************************************
+    public void setChassisType (Settings.CHASSIS_TYPE ct){
+        chassisType = ct;
+    }
+    //*********************************************************************************************
 
     private void initExtenderTCH() {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
         EXT1.setPower(EXTENDERPOWER_INIT);
-        while (extenderTCH.getState()) {
-            if (runtime.milliseconds() > 1500) {
-                break;
+        if (chassisType == Settings.CHASSIS_TYPE.CHASSIS_COMPETION) {
+            while (extenderTCH.getState()) {
+                if (runtime.milliseconds() > 1500) {
+                    break;
+                }
             }
         }
         EXT1.setPower(0);

@@ -15,5 +15,9 @@ public class Settings extends Object {
         PARENT_MODE_TELE
     }
 
+    public static enum CHASSIS_TYPE {
+        CHASSIS_COMPETION,
+        CHASSIS_TEST
+    }
 
 }

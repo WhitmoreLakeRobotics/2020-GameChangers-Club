@@ -41,11 +41,14 @@ public class GrabberArms extends BaseHardware {
          */
         ArmLeft.setServo(hardwareMap.servo.get("GrabSvoL"));
         ArmLeft.setPositions(grabSvoLPos_start, grabSvoLPos_up, grabSvoLPos_down);
+        ArmLeft.hardwareMap = hardwareMap;
         ArmLeft.init();
 
         ArmRight.setServo(hardwareMap.servo.get("GrabSvoR"));
         ArmRight.setPositions(grabSvoRPos_start, grabSvoRPos_up, grabSvoRPos_down);
+        ArmRight.hardwareMap = hardwareMap;
         ArmRight.init();
+        telemetry.addData("Grabber Arms", "Initialized");
 
     }
 

@@ -70,6 +70,7 @@ public class Chassis_Test extends OpMode {
 
     private double maxPower = 1.0;
 
+
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits INIT
@@ -117,7 +118,8 @@ public class Chassis_Test extends OpMode {
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        telemetry.addData("Chassis", "Initialized");
+
+
 
         subExtender.telemetry = telemetry;
         subExtender.hardwareMap = hardwareMap;
@@ -135,12 +137,16 @@ public class Chassis_Test extends OpMode {
         subGripper.hardwareMap = hardwareMap;
         subGripper.init();
 
+
         subGrabbers.telemetry = telemetry;
         subGrabbers.hardwareMap = hardwareMap;
         subGrabbers.init();
 
+        telemetry.addData("Chassis_Test", "Initialized");
         ChassisMode_Current = ChassisMode.STOP;
         runtime.reset();
+
+
     }
 
     //*********************************************************************************************
@@ -159,7 +165,7 @@ public class Chassis_Test extends OpMode {
         subExtender.init_loop();
         subGyro.init_loop();
         subHDrive.init_loop();
-        subGripper.init_loop();
+        //subGripper.init_loop();
         subGrabbers.init_loop();
     }
 
@@ -169,6 +175,14 @@ public class Chassis_Test extends OpMode {
         parentMode_Current = pm;
         subHDrive.setParentMode(pm);
         subGyro.setParentMode(pm);
+        subExtender.setParentMode(pm);
+    }
+
+    //*********************************************************************************************
+
+    private void setChassis (){
+        subExtender.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
+        subHDrive.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
 
     }
 
@@ -217,7 +231,7 @@ public class Chassis_Test extends OpMode {
         subExtender.start();
         subGyro.start();
         subHDrive.start();
-        subGripper.start();
+        //subGripper.start();
         subGrabbers.start();
     }
 
@@ -230,7 +244,7 @@ public class Chassis_Test extends OpMode {
         subExtender.loop();
         subGyro.loop();
         subHDrive.loop();
-        subGripper.loop();
+        //subGripper.loop();
         subGrabbers.loop();
 
         switch (ChassisMode_Current) {
@@ -438,7 +452,7 @@ public class Chassis_Test extends OpMode {
         subExtender.stop();
         subGyro.stop();
         subHDrive.stop();
-        subGripper.stop();
+        //subGripper.stop();
         subGrabbers.stop();
     }
 
