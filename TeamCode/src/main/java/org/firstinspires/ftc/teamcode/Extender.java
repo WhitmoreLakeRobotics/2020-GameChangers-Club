@@ -108,7 +108,7 @@ public class Extender extends BaseHardware {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
         EXT1.setPower(EXTENDERPOWER_INIT);
-        if (chassisType == Settings.CHASSIS_TYPE.CHASSIS_COMPETION) {
+        if (chassisType == Settings.CHASSIS_TYPE.CHASSIS_COMPETITION) {
             while (extenderTCH.getState()) {
                 if (runtime.milliseconds() > 1500) {
                     break;

@@ -8,10 +8,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
-//@TeleOp_testp(name = "Teleop-TestChassis", group = "TeleOp_test")
-@TeleOp(name = "Tele-Op-Test", group = "TeleOp")
+
+@TeleOp(name = "Tele_Op_Test", group = "TeleOp")
 //@Disabled
-public class TeleOp_test extends OpMode {
+public class Tele_Op_test extends OpMode {
     private static final String TAGTeleop = "8492-Tele_Op_test";
     Chassis_Test RBTChassis = new Chassis_Test();
     // Declare OpMode members.
@@ -26,20 +26,21 @@ public class TeleOp_test extends OpMode {
     private double powerMax = .8;
     private final double DEADBAND_TRIGGER = .1;
 
-    //----------------------------------------------------------------------------------------------
-// Safety Management
-//
-// These constants manage the duration we allow for callbacks to user code to run for before
-// such code is considered to be stuck (in an infinite loop, or wherever) and consequently
-// the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
-// necessary as poorly chosen values might inadvertently compromise safety.
-//----------------------------------------------------------------------------------------------
-    protected int msStuckDetectInit     = 7000;
-    protected int msStuckDetectInitLoop = 7000;
-    protected int msStuckDetectStart    = 7000;
-    protected int msStuckDetectLoop     = 7000;
-    protected int msStuckDetectStop     = 1000;
-
+    Tele_Op_test() {
+        //----------------------------------------------------------------------------------------------
+        // Safety Management
+        //
+        // These constants manage the duration we allow for callbacks to user code to run for before
+        // such code is considered to be stuck (in an infinite loop, or wherever) and consequently
+        // the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
+        // necessary as poorly chosen values might inadvertently compromise safety.
+        //----------------------------------------------------------------------------------------------
+        msStuckDetectInit = Settings.msStuckDetectInit;
+        msStuckDetectInitLoop = Settings.msStuckDetectInitLoop;
+        msStuckDetectStart = Settings.msStuckDetectStart;
+        msStuckDetectLoop = Settings.msStuckDetectLoop;
+        msStuckDetectStop = Settings.msStuckDetectStop;
+    }
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits INIT
