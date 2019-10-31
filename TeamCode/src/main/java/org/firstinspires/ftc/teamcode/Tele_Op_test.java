@@ -26,27 +26,27 @@ public class Tele_Op_test extends OpMode {
     private double powerMax = .8;
     private final double DEADBAND_TRIGGER = .1;
 
-    Tele_Op_test() {
-        //----------------------------------------------------------------------------------------------
-        // Safety Management
+    // Tele_Op_test() {
+    //----------------------------------------------------------------------------------------------
+
+//}
+    //*********************************************************************************************
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
+    @Override
+    public void init() {// Safety Management
         //
         // These constants manage the duration we allow for callbacks to user code to run for before
         // such code is considered to be stuck (in an infinite loop, or wherever) and consequently
         // the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
         // necessary as poorly chosen values might inadvertently compromise safety.
         //----------------------------------------------------------------------------------------------
-        msStuckDetectInit = Settings.msStuckDetectInit;
-        msStuckDetectInitLoop = Settings.msStuckDetectInitLoop;
-        msStuckDetectStart = Settings.msStuckDetectStart;
-        msStuckDetectLoop = Settings.msStuckDetectLoop;
-        msStuckDetectStop = Settings.msStuckDetectStop;
-    }
-    //*********************************************************************************************
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
-    @Override
-    public void init() {
+        this.msStuckDetectInit =Settings.msStuckDetectInit;
+        msStuckDetectInitLoop =Settings.msStuckDetectInitLoop;
+        msStuckDetectStart =Settings.msStuckDetectStart;
+        msStuckDetectLoop =Settings.msStuckDetectLoop;
+        msStuckDetectStop =Settings.msStuckDetectStop;
         telemetry.addData("Tele_Op_test", "Initialized");
         RBTChassis.setParentMode(Settings.PARENTMODE.PARENT_MODE_TELE);
         RBTChassis.hardwareMap = hardwareMap;
@@ -136,15 +136,15 @@ public class Tele_Op_test extends OpMode {
 
         // Bumpers close and open the gripper
         if (gamepad2.left_bumper) {
-           // if (!RBTChassis.subGripper.getIsClosed()) {
-                //RBTChassis.subGripper.cmd_close();
-            //}
+            if (!RBTChassis.subGripper.getIsClosed()) {
+                RBTChassis.subGripper.cmd_close();
+            }
         }
 
         if (gamepad2.right_bumper) {
-            //if (!RBTChassis.subGripper.getIsOpen()) {
-               // RBTChassis.subGripper.cmd_open();
-            //}
+            if (!RBTChassis.subGripper.getIsOpen()) {
+                RBTChassis.subGripper.cmd_open();
+            }
         }
 
         if (gamepad2.dpad_right) {

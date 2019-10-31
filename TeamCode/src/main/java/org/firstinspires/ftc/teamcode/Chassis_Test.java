@@ -165,7 +165,7 @@ public class Chassis_Test extends OpMode {
         subExtender.init_loop();
         subGyro.init_loop();
         subHDrive.init_loop();
-        //subGripper.init_loop();
+        subGripper.init_loop();
         subGrabbers.init_loop();
     }
 
@@ -231,7 +231,7 @@ public class Chassis_Test extends OpMode {
         subExtender.start();
         subGyro.start();
         subHDrive.start();
-        //subGripper.start();
+        subGripper.start();
         subGrabbers.start();
     }
 
@@ -244,7 +244,7 @@ public class Chassis_Test extends OpMode {
         subExtender.loop();
         subGyro.loop();
         subHDrive.loop();
-        //subGripper.loop();
+        subGripper.loop();
         subGrabbers.loop();
 
         switch (ChassisMode_Current) {
@@ -452,7 +452,7 @@ public class Chassis_Test extends OpMode {
         subExtender.stop();
         subGyro.stop();
         subHDrive.stop();
-        //subGripper.stop();
+        subGripper.stop();
         subGrabbers.stop();
     }
 

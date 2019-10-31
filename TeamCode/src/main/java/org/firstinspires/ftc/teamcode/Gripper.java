@@ -18,7 +18,7 @@ public class Gripper extends BaseHardware {
     /* Declare OpMode members. */
 
     private GRIPPER_STATES GripperState_desired = GRIPPER_STATES.UNKNOWN;
-    private GRIPPER_STATES GripperState_current =GRIPPER_STATES.UNKNOWN;
+    private GRIPPER_STATES GripperState_current = GRIPPER_STATES.UNKNOWN;
 
     private ElapsedTime GripperTimer = null;
     private int GripperMoveTime = 1250;
@@ -28,7 +28,6 @@ public class Gripper extends BaseHardware {
     private double gripperSvoPos_start = 0.0;
     private double gripperSvoPos_open = 0.0;
     private double gripperSvoPos_close = 1.0;
-
 
 
     @Override
@@ -74,7 +73,6 @@ public class Gripper extends BaseHardware {
                     GripperState_current = GRIPPER_STATES.OPENING;
                     GripperState_desired = GRIPPER_STATES.OPEN;
                     GripperTimer.reset();
-                    gripperSvo.setPosition(gripperSvoPos_open);
                     break;
                 }
 
@@ -82,19 +80,20 @@ public class Gripper extends BaseHardware {
                     GripperState_current = GRIPPER_STATES.CLOSING;
                     GripperState_desired = GRIPPER_STATES.CLOSED;
                     GripperTimer.reset();
-                    gripperSvo.setPosition(gripperSvoPos_close);
+
                     break;
                 }
 
 
-
                 case CLOSING: {
+                    gripperSvo.setPosition(gripperSvoPos_close);
                     if (GripperTimer.milliseconds() > GripperMoveTime) {
                         GripperState_current = GRIPPER_STATES.CLOSING;
                     }
                     break;
                 }
                 case OPENING: {
+                    gripperSvo.setPosition(gripperSvoPos_open);
                     if (GripperTimer.milliseconds() > GripperMoveTime) {
                         GripperState_current = GRIPPER_STATES.OPEN;
                     }
@@ -121,7 +120,6 @@ public class Gripper extends BaseHardware {
     public void cmd_close() {
         GripperState_desired = GRIPPER_STATES.CLOSING;
     }
-
 
 
     public boolean getIsOpen() {
