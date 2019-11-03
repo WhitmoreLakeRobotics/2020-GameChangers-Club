@@ -8,6 +8,12 @@ public class Settings extends Object {
     public static final int REV_CORE_HEX_MOTOR_TICKS_PER_REV = 288;
     public static final int REV_HD_40_MOTOR_TICKS_PER_REV = 1120;
     public static final int REV_HD_20_MOTOR_TICKS_PER_REV = 560;
+    public static final double JOYSTICK_DEADBAND_TRIGGER = 0.1;
+    public static final double JOYSTICK_DEADBAND_STICK = 0.1;
+
+
+    public static final double CHASSIS_POWER_MAX = 1.0;
+    public static final double CHASSIS_POWER_NORMAL = 0.75;
 
     //----------------------------------------------------------------------------------------------
     // Safety Management

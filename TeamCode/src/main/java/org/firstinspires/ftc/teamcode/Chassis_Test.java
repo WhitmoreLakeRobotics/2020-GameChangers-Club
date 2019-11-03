@@ -17,7 +17,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import java.util.Locale;
 
 
-
 //@Disabled
 public class Chassis_Test extends OpMode {
 
@@ -48,6 +47,8 @@ public class Chassis_Test extends OpMode {
     public HDrive subHDrive = new HDrive();
     public Gripper subGripper = new Gripper();
     public GrabberArms subGrabbers = new GrabberArms();
+    //public PusherArms subPushers = new PusherArms();
+    //public Lifter subLifter = new Lifter();
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -119,8 +120,6 @@ public class Chassis_Test extends OpMode {
         RDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-
-
         subExtender.telemetry = telemetry;
         subExtender.hardwareMap = hardwareMap;
         subExtender.init();
@@ -141,6 +140,14 @@ public class Chassis_Test extends OpMode {
         subGrabbers.telemetry = telemetry;
         subGrabbers.hardwareMap = hardwareMap;
         subGrabbers.init();
+
+        //subPushers.telemetry = telemetry;
+        //subPushers.hardwareMap = hardwareMap;
+        //subPushers.init();
+
+        //subLifter.telemetry = telemetry;
+        //subLifter.hardwareMap = hardwareMap;
+        //subLifter.init();
 
         telemetry.addData("Chassis_Test", "Initialized");
         ChassisMode_Current = ChassisMode.STOP;
@@ -167,6 +174,8 @@ public class Chassis_Test extends OpMode {
         subHDrive.init_loop();
         subGripper.init_loop();
         subGrabbers.init_loop();
+        //subPushers.init_loop();
+        //subLifter.init_loop();
     }
 
     //*********************************************************************************************
@@ -176,14 +185,15 @@ public class Chassis_Test extends OpMode {
         subHDrive.setParentMode(pm);
         subGyro.setParentMode(pm);
         subExtender.setParentMode(pm);
+        //subLifter.setParentMode(pm);
     }
 
     //*********************************************************************************************
 
-    private void setChassis (){
+    private void setChassis() {
         subExtender.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
         subHDrive.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
-
+        //subLifter.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
     }
 
     //*********************************************************************************************
@@ -213,6 +223,7 @@ public class Chassis_Test extends OpMode {
         LDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits PLAY
@@ -233,6 +244,8 @@ public class Chassis_Test extends OpMode {
         subHDrive.start();
         subGripper.start();
         subGrabbers.start();
+        //subPushers.start();
+        //subLifter.start();
     }
 
     //*********************************************************************************************
@@ -246,6 +259,8 @@ public class Chassis_Test extends OpMode {
         subHDrive.loop();
         subGripper.loop();
         subGrabbers.loop();
+        //subPushers.loop();
+        //subLifter.loop();
 
         switch (ChassisMode_Current) {
 
@@ -324,7 +339,7 @@ public class Chassis_Test extends OpMode {
         RobotLog.aa(TAGChassis, "delta: " + delta);
         RobotLog.aa(TAGChassis, "leftpower: " + leftPower + " right " + rightPower);
 
-        leftPower = CommonLogic.CapMotorPower(leftPower, - maxPower, maxPower);
+        leftPower = CommonLogic.CapMotorPower(leftPower, -maxPower, maxPower);
         rightPower = CommonLogic.CapMotorPower(rightPower, -maxPower, maxPower);
 
         LDM1.setPower(leftPower);
@@ -407,7 +422,7 @@ public class Chassis_Test extends OpMode {
 
     //*********************************************************************************************
 
-    public void cmdTeleOp (double lSpeed, double rSpeed){
+    public void cmdTeleOp(double lSpeed, double rSpeed) {
         cmdComplete = false;
         ChassisMode_Current = ChassisMode.TELEOP;
         TargetMotorPowerLeft = lSpeed;
@@ -454,6 +469,9 @@ public class Chassis_Test extends OpMode {
         subHDrive.stop();
         subGripper.stop();
         subGrabbers.stop();
+        //subPushers.stop();
+        //subLifter.stop();
+
     }
 
     //*********************************************************************************************

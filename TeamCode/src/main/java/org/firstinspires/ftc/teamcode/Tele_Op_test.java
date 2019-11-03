@@ -22,31 +22,28 @@ public class Tele_Op_test extends OpMode {
     private double LeftMotorPower = 0;
     private double RightMotorPower = 0;
 
-    private double powerNormal = .5;
-    private double powerMax = .8;
-    private final double DEADBAND_TRIGGER = .1;
+    private double powerNormal = Settings.CHASSIS_POWER_NORMAL;
+    private double powerMax = Settings.CHASSIS_POWER_MAX;
 
-    // Tele_Op_test() {
-    //----------------------------------------------------------------------------------------------
 
-//}
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {// Safety Management
-        //
+        //----------------------------------------------------------------------------------------------
         // These constants manage the duration we allow for callbacks to user code to run for before
         // such code is considered to be stuck (in an infinite loop, or wherever) and consequently
         // the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
         // necessary as poorly chosen values might inadvertently compromise safety.
         //----------------------------------------------------------------------------------------------
-        this.msStuckDetectInit =Settings.msStuckDetectInit;
-        msStuckDetectInitLoop =Settings.msStuckDetectInitLoop;
-        msStuckDetectStart =Settings.msStuckDetectStart;
-        msStuckDetectLoop =Settings.msStuckDetectLoop;
-        msStuckDetectStop =Settings.msStuckDetectStop;
+        msStuckDetectInit = Settings.msStuckDetectInit;
+        msStuckDetectInitLoop = Settings.msStuckDetectInitLoop;
+        msStuckDetectStart = Settings.msStuckDetectStart;
+        msStuckDetectLoop = Settings.msStuckDetectLoop;
+        msStuckDetectStop = Settings.msStuckDetectStop;
+
         telemetry.addData("Tele_Op_test", "Initialized");
         RBTChassis.setParentMode(Settings.PARENTMODE.PARENT_MODE_TELE);
         RBTChassis.hardwareMap = hardwareMap;
@@ -64,6 +61,7 @@ public class Tele_Op_test extends OpMode {
 
 
     }
+
     //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -92,16 +90,12 @@ public class Tele_Op_test extends OpMode {
     public void loop() {
         RBTChassis.loop();
 
-
-        //RobotLog.aa(TAGTeleop, "gamepad1 " + RightMotorPower);
-        //RobotLog.aa(TAGTeleop, "trigers " + gamepad1.left_trigger);
-
         // if the driver has any triggers pulled this means H drive only drive the H wheels
         // as straightly as possible
-        if (gamepad1.left_trigger > DEADBAND_TRIGGER || gamepad1.right_trigger > DEADBAND_TRIGGER) {
+        if (gamepad1.left_trigger > Settings.JOYSTICK_DEADBAND_TRIGGER || gamepad1.right_trigger > Settings.JOYSTICK_DEADBAND_TRIGGER) {
             RBTChassis.subHDrive.cmdTeleop(CommonLogic.joyStickMath(gamepad1.left_trigger),
                     CommonLogic.joyStickMath(gamepad1.right_trigger));
-            RBTChassis.cmdTeleOp(0,0);
+            RBTChassis.cmdTeleOp(0, 0);
         }
         // stop the H drive and give joystick values to the other wheels.
         else {
@@ -110,7 +104,66 @@ public class Tele_Op_test extends OpMode {
                     CommonLogic.joyStickMath(-gamepad1.right_stick_y));
         }
 
-        RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
+
+        if (gamepad1.a) {
+            //RBTChassis.subPushers.cmdMoveAllDown();
+        }
+
+        if (gamepad1.b) {
+            //RBTChassis.subPushers.cmdMoveAllUp();
+        }
+
+        // Bumpers high and lower Powers for the wheels
+        if (gamepad1.left_bumper) {
+            RBTChassis.setMaxPower(powerMax);
+        }
+
+        if (gamepad1.right_bumper) {
+            RBTChassis.setMaxPower(powerNormal);
+        }
+
+        // Bumpers close and open the gripper
+        if (gamepad2.left_bumper) {
+            if (RBTChassis.subGripper.getIsOpen()) {
+                RBTChassis.subGripper.cmd_close();
+            }
+        }
+
+        if (gamepad2.right_bumper) {
+            if (RBTChassis.subGripper.getIsClosed()) {
+                RBTChassis.subGripper.cmd_open();
+            }
+        }
+
+        if (gamepad1.dpad_right) {
+            if (RBTChassis.subGrabbers.getIsUpRight()) {
+                RBTChassis.subGrabbers.cmdMoveDownRight();
+            }
+        }
+
+        if (gamepad1.dpad_up) {
+            if (RBTChassis.subGrabbers.getIsDownRight()) {
+                RBTChassis.subGrabbers.cmdMoveUpRight();
+            }
+        }
+
+        if (gamepad1.dpad_left) {
+            if (RBTChassis.subGrabbers.getIsDownLeft()) {
+                RBTChassis.subGrabbers.cmdMoveUpLeft();
+            }
+        }
+
+        if (gamepad1.dpad_down) {
+            if (RBTChassis.subGrabbers.getIsUpLeft()) {
+                RBTChassis.subGrabbers.cmdMoveDownLeft();
+            }
+        }
+
+
+
+        if (Math.abs(gamepad2.right_stick_y) > Settings.JOYSTICK_DEADBAND_STICK) {
+            RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
+        }
 
         if (gamepad2.a) {
             RBTChassis.subExtender.cmd_MoveToStart();
@@ -125,52 +178,13 @@ public class Tele_Op_test extends OpMode {
             RBTChassis.subExtender.cmd_MoveToPos2();
         }
 
-        // Bumpers high and lower Powers for the wheels
-        if (gamepad1.left_bumper) {
-            RBTChassis.setMaxPower(powerMax);
-        }
-
-        if (gamepad1.right_bumper) {
-            RBTChassis.setMaxPower(powerNormal);
-        }
-
-        // Bumpers close and open the gripper
-        if (gamepad2.left_bumper) {
-            if (!RBTChassis.subGripper.getIsClosed()) {
-                RBTChassis.subGripper.cmd_close();
-            }
-        }
-
-        if (gamepad2.right_bumper) {
-            if (!RBTChassis.subGripper.getIsOpen()) {
-                RBTChassis.subGripper.cmd_open();
-            }
-        }
-
-        if (gamepad2.dpad_right) {
-            if (!RBTChassis.subGrabbers.getIsDown()) {
-                RBTChassis.subGrabbers.cmdMoveDownRight();
-            }
-        }
-
         if (gamepad2.dpad_up) {
-            if (!RBTChassis.subGrabbers.getIsUpRight()){
-                RBTChassis.subGrabbers.cmdMoveUpRight();
-            }
-        }
-
-        if (gamepad2.dpad_left) {
-            if (!RBTChassis.subGrabbers.getIsUpLeft()) {
-                RBTChassis.subGrabbers.cmdMoveUpLeft();
-            }
+            RBTChassis.subLifter.incPositionIndex();
         }
 
         if (gamepad2.dpad_down) {
-            if (!RBTChassis.subGrabbers.getIsDown()){
-                RBTChassis.subGrabbers.cmdMoveDownLeft();
-            }
+            RBTChassis.subLifter.decPositionIndex();
         }
-
 
     }
 

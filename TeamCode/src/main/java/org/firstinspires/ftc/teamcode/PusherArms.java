@@ -5,20 +5,20 @@ package org.firstinspires.ftc.teamcode;
  */
 
 
-//@TeleOp(name = "GrabberArms", group = "CHASSIS")  // @Autonomous(...) is the other common choice
+//@TeleOp(name = "pusherArms", group = "CHASSIS")  // @Autonomous(...) is the other common choice
 
-public class GrabberArms extends BaseHardware {
-    private static final String TAGIntakeArm = "8492-GrabberArms";
+public class PusherArms extends BaseHardware {
+    private static final String TAGIntakeArm = "8492-PusherArms";
     private ServoArm ArmRight = new ServoArm();
     private ServoArm ArmLeft = new ServoArm();
 
-    private double grabSvoRPos_start = .5;
-    private double grabSvoRPos_up = .4;
-    private double grabSvoRPos_down = .6;
+    private double pushSvoRPos_start = .5;
+    private double pushSvoRPos_up = .4;
+    private double pushSvoRPos_down = .6;
 
-    private double grabSvoLPos_start = .5;
-    private double grabSvoLPos_up = .4;
-    private double grabSvoLPos_down = .6;
+    private double pushSvoLPos_start = .5;
+    private double pushSvoLPos_up = .4;
+    private double pushSvoLPos_down = .6;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -26,22 +26,22 @@ public class GrabberArms extends BaseHardware {
     @Override
     public void init() {
 
-        telemetry.addData("GrabberArms", "Initialized");
+        telemetry.addData("pusherArms", "Initialized");
 
         /* eg: Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
          * step (using the FTC Robot Controller app on the phone).
          */
-        ArmLeft.setServo(hardwareMap.servo.get("GrabSvoL"));
-        ArmLeft.setPositions(grabSvoLPos_start, grabSvoLPos_up, grabSvoLPos_down);
+        ArmLeft.setServo(hardwareMap.servo.get("pushSvoL"));
+        ArmLeft.setPositions(pushSvoLPos_start, pushSvoLPos_up, pushSvoLPos_down);
         ArmLeft.hardwareMap = hardwareMap;
         ArmLeft.init();
 
-        ArmRight.setServo(hardwareMap.servo.get("GrabSvoR"));
-        ArmRight.setPositions(grabSvoRPos_start, grabSvoRPos_up, grabSvoRPos_down);
+        ArmRight.setServo(hardwareMap.servo.get("pushSvoR"));
+        ArmRight.setPositions(pushSvoRPos_start, pushSvoRPos_up, pushSvoRPos_down);
         ArmRight.hardwareMap = hardwareMap;
         ArmRight.init();
-        telemetry.addData("Grabber Arms", "Initialized");
+        telemetry.addData("pusher Arms", "Initialized");
 
     }
 

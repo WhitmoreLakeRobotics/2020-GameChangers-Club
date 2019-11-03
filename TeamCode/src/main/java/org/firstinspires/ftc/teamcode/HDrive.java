@@ -40,7 +40,7 @@ public class HDrive extends BaseHardware {
     private boolean cmdComplete = true;
     private int cmdStartTime_mS = 0;
     private Settings.PARENTMODE parentMode_Current = null;
-    private Settings.CHASSIS_TYPE chassisType = null;
+    private Settings.CHASSIS_TYPE chassistype_Current = null;
     private DcMotor HDM1 = null;
     private DcMotor HDM2 = null;
     private double TargetMotorPowerH = 0;
@@ -73,15 +73,9 @@ public class HDrive extends BaseHardware {
         HDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         HDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // only reset things if starting in auton... Never reset them in TeleOp
-        if (parentMode_Current == Settings.PARENTMODE.PARENT_MODE_TELE) {
-            // This motor performs the lift of the HDrive
-            HDM2.setDirection(DcMotor.Direction.FORWARD);
-            HDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            HDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            HDM2.setTargetPosition(HDM2_UP_POS);
-            HDM2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
+
+
+
 
         runtime.reset();
         HdriveMode_Current = HDriveMode.Idle;
@@ -102,7 +96,7 @@ public class HDrive extends BaseHardware {
     }
 
     public void setChassisType(Settings.CHASSIS_TYPE ct) {
-        chassisType = ct;
+        chassistype_Current = ct;
     }
     //*********************************************************************************************
 
@@ -115,6 +109,8 @@ public class HDrive extends BaseHardware {
 
         switch (parentMode_Current) {
             case PARENT_MODE_AUTO:
+                zeroHDrive();
+
                 break;
 
             case PARENT_MODE_TELE:
@@ -159,7 +155,7 @@ public class HDrive extends BaseHardware {
         RobotLog.aa(TAGHDrive, "doTeleop: Power=" + totalPower);
         TargetMotorPowerH = totalPower * 1.0;
         telemetry.log().add(String.format("TargetMotorPowerH= %.2f", TargetMotorPowerH));
-        ;
+
     }
     //*********************************************************************************************
 
@@ -265,4 +261,24 @@ public class HDrive extends BaseHardware {
     }
 
     //*********************************************************************************************
+
+    private void zeroHDrive () {
+
+        // only reset things if starting in auton... Never reset them in TeleOp
+        /*if (parentMode_Current == Settings.PARENTMODE.PARENT_MODE_TELE) {
+            // This motor performs the lift of the HDrive
+            HDM2.setDirection(DcMotor.Direction.FORWARD);
+            HDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            HDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            HDM2.setTargetPosition(HDM2_UP_POS);
+            HDM2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+         */
+        if (parentMode_Current == Settings.PARENTMODE.PARENT_MODE_AUTO  &&
+                chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_COMPETITION) {
+
+        }
+
+    }
 }

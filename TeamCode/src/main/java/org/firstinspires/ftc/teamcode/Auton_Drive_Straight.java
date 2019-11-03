@@ -34,10 +34,12 @@ public class Auton_Drive_Straight extends OpMode {
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
-    Auton_Drive_Straight () {
+     /*
+     * Code to run ONCE when the driver hits INIT
+     */
+    @Override
+    public void init() {
         //----------------------------------------------------------------------------------------------
-        // Safety Management
-        //
         // These constants manage the duration we allow for callbacks to user code to run for before
         // such code is considered to be stuck (in an infinite loop, or wherever) and consequently
         // the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
@@ -48,21 +50,13 @@ public class Auton_Drive_Straight extends OpMode {
         msStuckDetectStart = Settings.msStuckDetectStart;
         msStuckDetectLoop = Settings.msStuckDetectLoop;
         msStuckDetectStop = Settings.msStuckDetectStop;
-    }
 
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
-    @Override
-    public void init() {
-        telemetry.addData("Auton_Depot_Crater", "Initialized");
+
         RBTChassis.setParentMode(Settings.PARENTMODE.PARENT_MODE_AUTO);
         RBTChassis.hardwareMap = hardwareMap;
         RBTChassis.telemetry = telemetry;
         RBTChassis.init();
-        msStuckDetectStart = 10000;
-
-        // initialize chassis with hardware map
+        telemetry.addData("Auton_Drive_Straight", "Initialized");
     }
 
     /*
