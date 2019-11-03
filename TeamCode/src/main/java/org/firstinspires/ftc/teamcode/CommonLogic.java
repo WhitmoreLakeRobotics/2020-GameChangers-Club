@@ -42,4 +42,9 @@ public class CommonLogic extends Object {
 
     }
     //*********************************************************************************************
+
+    public static boolean indexCheck (int value, int low, int high){
+
+        return ( value >= low && value <= high);
+    }
 }

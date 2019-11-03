@@ -106,11 +106,11 @@ public class Tele_Op_test extends OpMode {
 
 
         if (gamepad1.a) {
-            //RBTChassis.subPushers.cmdMoveAllDown();
+            RBTChassis.subPushers.cmdMoveAllDown();
         }
 
         if (gamepad1.b) {
-            //RBTChassis.subPushers.cmdMoveAllUp();
+            RBTChassis.subPushers.cmdMoveAllUp();
         }
 
         // Bumpers high and lower Powers for the wheels

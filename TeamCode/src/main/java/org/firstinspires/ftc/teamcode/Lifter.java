@@ -50,13 +50,13 @@ public class Lifter extends BaseHardware {
          * step (using the FTC Robot Controller app on the phone).
          */
 
-        LFT1 = hardwareMap.dcMotor.get("EXT1");
+        LFT1 = hardwareMap.dcMotor.get("LFT1");
         LFT1.setDirection(DcMotor.Direction.REVERSE);
         LFT1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         RobotLog.aa(TAGLIFTER, "LIFTERPos: " + LFT1);
         //do not know what digital channel is check here for errors ******
-        LIFTERTCH = hardwareMap.get(DigitalChannel.class, "LIFTERTCH");
+        LIFTERTCH = hardwareMap.get(DigitalChannel.class, "lifterTCH");
         LIFTERTCH.setMode(DigitalChannel.Mode.INPUT);
 
         LIFTER_POSITIONS_TICKS[0] = 0;
@@ -125,6 +125,7 @@ public class Lifter extends BaseHardware {
                 autoStart();
                 break;
             case PARENT_MODE_TELE:
+                autoStart();
                 teleStart();
                 break;
             default:
@@ -206,9 +207,10 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
     public void incPositionIndex() {
         // only inc the position if we are in the current one
-        if (CurrentIndex < HIGH_INDEX) {
+        if (CommonLogic.indexCheck(CurrentIndex,LOW_INDEX,HIGH_INDEX-2)) {
             if (isInPosition(CurrentIndex)) {
                 CurrentIndex++;
+                telemetry.addData("incPositionIndex",CurrentIndex );
                 setPosition(CurrentIndex);
             }
         }
@@ -217,9 +219,10 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
     public void decPositionIndex() {
         // only dec the position if we are in the current one
-        if (CurrentIndex > LOW_INDEX) {
+        if (CommonLogic.indexCheck(CurrentIndex,LOW_INDEX+1,HIGH_INDEX-1)) {
             if (isInPosition(CurrentIndex)) {
                 CurrentIndex--;
+                telemetry.addData("decPositionIndex",CurrentIndex );
                 setPosition(CurrentIndex);
             }
         }
