@@ -94,9 +94,9 @@ public class HDrive extends BaseHardware {
     }
 
     //*********************************************************************************************
-    public void setParentMode(Settings.PARENTMODE pm) {
-        parentMode_Current = pm;
-    }
+    //public void setParentMode(Settings.PARENTMODE pm) {
+    //    parentMode_Current = pm;
+    //}
 
     public void setChassisType(Settings.CHASSIS_TYPE ct) {
         chassistype_Current = ct;
@@ -112,6 +112,7 @@ public class HDrive extends BaseHardware {
         HDM2.setPower(HLiftInitPower);
         HdriveMode_Current = HDriveMode.Initializing;
         cmdComplete = false;
+        /*
         switch (parentMode_Current) {
             case PARENT_MODE_AUTO:
                 break;
@@ -120,6 +121,8 @@ public class HDrive extends BaseHardware {
             default:
                 break;
         }
+        */
+
     }
 
     //*********************************************************************************************
@@ -146,6 +149,10 @@ public class HDrive extends BaseHardware {
                 doZeroHDrive();
                 break;
 
+            case Idle:
+                cmdComplete = true;
+                break;
+
             default:
                 break;
         }
@@ -155,19 +162,28 @@ public class HDrive extends BaseHardware {
     private void doZeroHDrive() {
 
         if (chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST) {
-            HdriveMode_Current = HDriveMode.Idle;
-            cmdComplete = true;
+            // Test Chassis will not have a switch... thus we must just
+            // complete the init of H-Drive as soon as possible.
+            completeInitializing();
         }
         else if (lifterTCH.getState()) {
-            HDM2.setPower(0);
-            HdriveMode_Current = HDriveMode.Idle;
-            HDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            HDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            HDM2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            cmdComplete = true;
+            // We can see the switch we are sure that the H -Drive is at Top-Dead-Center
+            completeInitializing();
         }
     }
 
+    //*********************************************************************************************
+    // These are the steps that will complete the init of the H-Drive
+    private void completeInitializing () {
+
+        HDM2.setPower(0);
+        HdriveMode_Current = HDriveMode.Idle;
+        HDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        HDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HDM2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        cmdComplete = true;
+
+    }
     //*********************************************************************************************
     public void cmdTeleop(double leftPower, double rightPower) {
 
@@ -200,7 +216,6 @@ public class HDrive extends BaseHardware {
 
         }
     }
-
 
     //*********************************************************************************************
 

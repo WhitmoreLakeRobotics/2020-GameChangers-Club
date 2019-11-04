@@ -95,6 +95,12 @@ public class Auton_Drive_Straight extends OpMode {
             currentStage = stage._00_preStart;
         }
 
+        // make sure the H-Drive is initialized
+        if (currentStage == stage._00_preStart) {
+            if (RBTChassis.subHDrive.getcmdComplete()) {
+                currentStage = stage._10_crawlOut;
+            }
+        }
 
         if (currentStage == stage._10_crawlOut) {
             RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 15);

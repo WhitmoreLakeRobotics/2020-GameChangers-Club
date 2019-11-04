@@ -48,6 +48,8 @@ public class Chassis extends OpMode {
     public HDrive subHDrive = new HDrive();
     public Gripper subGripper = new Gripper();
     public GrabberArms subGrabbers = new GrabberArms();
+    //public PusherArms subPushers = new PusherArms();
+    //public Lifter subLifter = new Lifter();
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -138,9 +140,20 @@ public class Chassis extends OpMode {
         subGrabbers.telemetry = telemetry;
         subGrabbers.hardwareMap = hardwareMap;
         subGrabbers.init();
+
+        //subPushers.telemetry = telemetry;
+        //subPushers.hardwareMap = hardwareMap;
+        //subPushers.init();
+
+        subLifter.telemetry = telemetry;
+        subLifter.hardwareMap = hardwareMap;
+        subLifter.init();
+
         telemetry.addData("Chassis", "Initialized");
         ChassisMode_Current = ChassisMode.STOP;
         runtime.reset();
+
+
     }
 
     //*********************************************************************************************
@@ -161,15 +174,18 @@ public class Chassis extends OpMode {
         subHDrive.init_loop();
         subGripper.init_loop();
         subGrabbers.init_loop();
+        //subPushers.init_loop();
+        //subLifter.init_loop();
     }
 
     //*********************************************************************************************
     public void setParentMode(Settings.PARENTMODE pm) {
 
         parentMode_Current = pm;
-        subHDrive.setParentMode(pm);
+        //subHDrive.setParentMode(pm);
         subGyro.setParentMode(pm);
         subExtender.setParentMode(pm);
+        //subLifter.setParentMode(pm);
     }
 
     //*********************************************************************************************
@@ -177,6 +193,7 @@ public class Chassis extends OpMode {
     private void setChassis (){
         subExtender.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
         subHDrive.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
+        //subLifter.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
     }
 
     //*********************************************************************************************
@@ -206,6 +223,7 @@ public class Chassis extends OpMode {
         LDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         RDM2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits PLAY
@@ -224,8 +242,10 @@ public class Chassis extends OpMode {
         subExtender.start();
         subGyro.start();
         subHDrive.start();
-        //subGripper.start();
+        subGripper.start();
         subGrabbers.start();
+        //subPushers.start();
+        //subLifter.start();
     }
 
     //*********************************************************************************************
@@ -239,6 +259,8 @@ public class Chassis extends OpMode {
         subHDrive.loop();
         subGripper.loop();
         subGrabbers.loop();
+        //subPushers.loop();
+        //subLifter.loop();
 
         switch (ChassisMode_Current) {
 
@@ -447,7 +469,10 @@ public class Chassis extends OpMode {
         subHDrive.stop();
         subGripper.stop();
         subGrabbers.stop();
-    }
+        //subPushers.stop();
+        //subLifter.stop();
+
+   }
 
     //*********************************************************************************************
     public void setMaxPower(double newMax) {

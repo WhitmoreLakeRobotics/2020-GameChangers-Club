@@ -136,7 +136,6 @@ public class Chassis_Test extends OpMode {
         subGripper.hardwareMap = hardwareMap;
         subGripper.init();
 
-
         subGrabbers.telemetry = telemetry;
         subGrabbers.hardwareMap = hardwareMap;
         subGrabbers.init();
@@ -182,7 +181,7 @@ public class Chassis_Test extends OpMode {
     public void setParentMode(Settings.PARENTMODE pm) {
 
         parentMode_Current = pm;
-        subHDrive.setParentMode(pm);
+        //subHDrive.setParentMode(pm);
         subGyro.setParentMode(pm);
         subExtender.setParentMode(pm);
         subLifter.setParentMode(pm);
