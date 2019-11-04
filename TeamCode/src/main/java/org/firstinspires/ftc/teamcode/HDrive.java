@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -15,7 +16,8 @@ public class HDrive extends BaseHardware {
         Drive,
         Unknown,
         TeleOp,
-        Idle
+        Idle,
+        Initializing
     }
 
     public static final int TICKS_PER_REV = Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
@@ -46,10 +48,11 @@ public class HDrive extends BaseHardware {
     private double TargetMotorPowerH = 0;
     private double PrevMotorPowerH = 0;
     private double TargetDistanceInchesH = 0;
+    private DigitalChannel lifterTCH = null;
 
 
     private static double HLiftPower = 1.0;
-
+    private static double HLiftInitPower = .625;
     private double maxPower = 1.0;
 
     //*********************************************************************************************
@@ -73,12 +76,12 @@ public class HDrive extends BaseHardware {
         HDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         HDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
-
-
+        //do not know what digital channel is check here for errors ******
+        lifterTCH = hardwareMap.get(DigitalChannel.class, "lifterTCH");
+        lifterTCH.setMode(DigitalChannel.Mode.INPUT);
 
         runtime.reset();
-        HdriveMode_Current = HDriveMode.Idle;
+
     }
 
     //*********************************************************************************************
@@ -106,16 +109,14 @@ public class HDrive extends BaseHardware {
     @Override
     public void start() {
         runtime.reset();
-
+        HDM2.setPower(HLiftInitPower);
+        HdriveMode_Current = HDriveMode.Initializing;
+        cmdComplete = false;
         switch (parentMode_Current) {
             case PARENT_MODE_AUTO:
-                zeroHDrive();
-
                 break;
-
             case PARENT_MODE_TELE:
                 break;
-
             default:
                 break;
         }
@@ -141,21 +142,44 @@ public class HDrive extends BaseHardware {
                 doDrive();
                 break;
 
+            case Initializing:
+                doZeroHDrive();
+                break;
+
             default:
                 break;
         }
     }
 
     //*********************************************************************************************
+    private void doZeroHDrive() {
+
+        if (chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST) {
+            HdriveMode_Current = HDriveMode.Idle;
+            cmdComplete = true;
+        }
+        else if (lifterTCH.getState()) {
+            HDM2.setPower(0);
+            HdriveMode_Current = HDriveMode.Idle;
+            HDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            HDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            HDM2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            cmdComplete = true;
+        }
+    }
+
+    //*********************************************************************************************
     public void cmdTeleop(double leftPower, double rightPower) {
 
-        HdriveMode_Current = HDriveMode.TeleOp;
-        double totalPower = leftPower - rightPower;
-        totalPower = CommonLogic.CapMotorPower(totalPower, -1.0, 1.0);
-        RobotLog.aa(TAGHDrive, "doTeleop: Power=" + totalPower);
-        TargetMotorPowerH = totalPower * 1.0;
-        telemetry.log().add(String.format("TargetMotorPowerH= %.2f", TargetMotorPowerH));
 
+        if (HdriveMode_Current != HdriveMode_Current.Initializing) {
+            HdriveMode_Current = HDriveMode.TeleOp;
+            double totalPower = leftPower - rightPower;
+            totalPower = CommonLogic.CapMotorPower(totalPower, -1.0, 1.0);
+            RobotLog.aa(TAGHDrive, "doTeleop: Power=" + totalPower);
+            TargetMotorPowerH = totalPower * 1.0;
+            telemetry.log().add(String.format("TargetMotorPowerH= %.2f", TargetMotorPowerH));
+        }
     }
     //*********************************************************************************************
 

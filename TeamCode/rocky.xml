@@ -6,16 +6,21 @@
             <RevRobotics40HDHexMotor name="RDM1" port="1" />
             <RevRobotics40HDHexMotor name="RDM2" port="2" />
             <RevRobotics40HDHexMotor name="LDM2" port="3" />
-            <Servo name="GrabSvoL" port="0" />
+            <Servo name="grabSvoL" port="0" />
+	    <Servo name="pushSvoR" port="1" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>
         <LynxModule name="Expansion Hub 3" port="3">
             <RevRoboticsCoreHexMotor name="HDM1" port="0" />
             <RevRoboticsCoreHexMotor name="EXT1" port="1" />
             <RevRoboticsCoreHexMotor name="HDM2" port="2" />
-            <Servo name="GrabSvoR" port="0" />
-	    <Servo name="GSVR1" port="1" />
-            <DigitalDevice name="extenderTCH" port="0" />
+	    <RevRoboticsCoreHexMotor name="LFT1" port="3" />
+            <Servo name="grabSvoR" port="0" />
+	    <Servo name="gripSvo1" port="1" />
+	    <Servo name="pushSvoR" port="2" />
+           <DigitalDevice name="extenderTCH" port="0" />
+            <DigitalDevice name="liftTCH" port="2" />
+            <DigitalDevice name="hdriveTCH" port="4" />
             <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>

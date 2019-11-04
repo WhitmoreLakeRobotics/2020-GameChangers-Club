@@ -34,7 +34,7 @@ public class Gripper extends BaseHardware {
 
     @Override
     public void init() {
-        gripperSvo = hardwareMap.servo.get("GripSvo1");
+        gripperSvo = hardwareMap.servo.get("gripSvo1");
         if (gripperSvo == null) {
             telemetry.log().add("GripSvo1 is null...");
         }
