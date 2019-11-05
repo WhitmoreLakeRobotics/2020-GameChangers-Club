@@ -27,8 +27,8 @@ public class Gripper extends BaseHardware {
     private Servo gripperSvo = null;
 
     // set neutral positions for first time running on the robot
-    private double gripperSvoPos_open = 0.4;
-    private double gripperSvoPos_close = 0.6;
+    private double gripperSvoPos_open = 0.0;
+    private double gripperSvoPos_close = 0.9;
     private double gripperSvoPos_start = gripperSvoPos_open;
 
 

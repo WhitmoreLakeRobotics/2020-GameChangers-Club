@@ -25,7 +25,15 @@ public class Tele_Op extends OpMode {
     private double powerMax = .8;
     private final double DEADBAND_TRIGGER = .1;
 
-    Tele_Op () {
+
+    //*********************************************************************************************
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
+    @Override
+    public void init() {
+
+
         //----------------------------------------------------------------------------------------------
         // Safety Management
         //
@@ -39,15 +47,8 @@ public class Tele_Op extends OpMode {
         msStuckDetectStart = Settings.msStuckDetectStart;
         msStuckDetectLoop = Settings.msStuckDetectLoop;
         msStuckDetectStop = Settings.msStuckDetectStop;
-    }
 
 
-    //*********************************************************************************************
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
-    @Override
-    public void init() {
         telemetry.addData("Tele_Op_test", "Initialized");
         RBTChassis.setParentMode(Settings.PARENTMODE.PARENT_MODE_TELE);
         RBTChassis.hardwareMap = hardwareMap;

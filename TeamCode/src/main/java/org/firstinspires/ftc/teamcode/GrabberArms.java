@@ -12,13 +12,13 @@ public class GrabberArms extends BaseHardware {
     private ServoArm ArmRight = new ServoArm();
     private ServoArm ArmLeft = new ServoArm();
 
-    private double grabSvoRPos_start = .5;
-    private double grabSvoRPos_up = .4;
-    private double grabSvoRPos_down = .6;
+    private double grabSvoRPos_start = 0.85;
+    private double grabSvoRPos_up = 0.85;
+    private double grabSvoRPos_down = 0.3;
 
-    private double grabSvoLPos_start = .5;
-    private double grabSvoLPos_up = .4;
-    private double grabSvoLPos_down = .6;
+    private double grabSvoLPos_start = .25;
+    private double grabSvoLPos_up = .25;
+    private double grabSvoLPos_down = .7;
 
     /*
      * Code to run ONCE when the driver hits INIT

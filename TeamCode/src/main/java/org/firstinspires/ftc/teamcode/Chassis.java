@@ -145,9 +145,9 @@ public class Chassis extends OpMode {
         //subPushers.hardwareMap = hardwareMap;
         //subPushers.init();
 
-        subLifter.telemetry = telemetry;
-        subLifter.hardwareMap = hardwareMap;
-        subLifter.init();
+        //subLifter.telemetry = telemetry;
+        //subLifter.hardwareMap = hardwareMap;
+        //subLifter.init();
 
         telemetry.addData("Chassis", "Initialized");
         ChassisMode_Current = ChassisMode.STOP;
