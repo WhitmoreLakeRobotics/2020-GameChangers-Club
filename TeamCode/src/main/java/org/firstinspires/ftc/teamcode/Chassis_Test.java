@@ -57,7 +57,6 @@ public class Chassis_Test extends OpMode {
     private ChassisMode ChassisMode_Current = ChassisMode.UNKNOWN;
     private boolean cmdComplete = true;
     private int cmdStartTime_mS = 0;
-    private Settings.PARENTMODE parentMode_Current = null;
     private DcMotor LDM1 = null;
     private DcMotor LDM2 = null;
     private DcMotor RDM1 = null;
@@ -119,6 +118,7 @@ public class Chassis_Test extends OpMode {
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        setChassis();
 
         subExtender.telemetry = telemetry;
         subExtender.hardwareMap = hardwareMap;
@@ -178,16 +178,6 @@ public class Chassis_Test extends OpMode {
     }
 
     //*********************************************************************************************
-    public void setParentMode(Settings.PARENTMODE pm) {
-
-        parentMode_Current = pm;
-        //subHDrive.setParentMode(pm);
-        subGyro.setParentMode(pm);
-        subExtender.setParentMode(pm);
-        subLifter.setParentMode(pm);
-    }
-
-    //*********************************************************************************************
 
     private void setChassis() {
         subExtender.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
@@ -230,14 +220,6 @@ public class Chassis_Test extends OpMode {
     @Override
     public void start() {
         runtime.reset();
-
-        switch (parentMode_Current) {
-            case PARENT_MODE_AUTO:
-                break;
-
-            case PARENT_MODE_TELE:
-                break;
-        }
         subExtender.start();
         subGyro.start();
         subHDrive.start();

@@ -52,7 +52,6 @@ public class Auton_Drive_Straight extends OpMode {
         msStuckDetectStop = Settings.msStuckDetectStop;
 
 
-        RBTChassis.setParentMode(Settings.PARENTMODE.PARENT_MODE_AUTO);
         RBTChassis.hardwareMap = hardwareMap;
         RBTChassis.telemetry = telemetry;
         RBTChassis.init();

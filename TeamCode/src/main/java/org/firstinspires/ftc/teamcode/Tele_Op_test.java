@@ -45,7 +45,7 @@ public class Tele_Op_test extends OpMode {
         msStuckDetectStop = Settings.msStuckDetectStop;
 
         telemetry.addData("Tele_Op_test", "Initialized");
-        RBTChassis.setParentMode(Settings.PARENTMODE.PARENT_MODE_TELE);
+
         RBTChassis.hardwareMap = hardwareMap;
         RBTChassis.telemetry = telemetry;
         RBTChassis.setMaxPower(powerNormal);

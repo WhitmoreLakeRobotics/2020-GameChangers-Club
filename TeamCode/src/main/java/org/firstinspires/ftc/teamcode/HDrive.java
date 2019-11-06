@@ -41,7 +41,6 @@ public class HDrive extends BaseHardware {
     private HDriveMode HdriveMode_Current = HDriveMode.Unknown;
     private boolean cmdComplete = true;
     private int cmdStartTime_mS = 0;
-    private Settings.PARENTMODE parentMode_Current = null;
     private Settings.CHASSIS_TYPE chassistype_Current = null;
     private DcMotor HDM1 = null;
     private DcMotor HDM2 = null;
@@ -49,7 +48,6 @@ public class HDrive extends BaseHardware {
     private double PrevMotorPowerH = 0;
     private double TargetDistanceInchesH = 0;
     private DigitalChannel lifterTCH = null;
-
 
     private static double HLiftPower = 1.0;
     private static double HLiftInitPower = .625;
@@ -94,34 +92,26 @@ public class HDrive extends BaseHardware {
     }
 
     //*********************************************************************************************
-    //public void setParentMode(Settings.PARENTMODE pm) {
-    //    parentMode_Current = pm;
-    //}
 
     public void setChassisType(Settings.CHASSIS_TYPE ct) {
         chassistype_Current = ct;
     }
     //*********************************************************************************************
-
     /*
      * Code to run ONCE when the driver hits PLAY
      */
     @Override
     public void start() {
         runtime.reset();
-        HDM2.setPower(HLiftInitPower);
-        HdriveMode_Current = HDriveMode.Initializing;
-        cmdComplete = false;
-        /*
-        switch (parentMode_Current) {
-            case PARENT_MODE_AUTO:
-                break;
-            case PARENT_MODE_TELE:
-                break;
-            default:
-                break;
+
+        if (isHDriveInitialized() ) {
+            completeInitializing();
         }
-        */
+        else{
+            HDM2.setPower(HLiftInitPower);
+            HdriveMode_Current = HDriveMode.Initializing;
+            cmdComplete = false;
+        }
 
     }
 
@@ -146,7 +136,10 @@ public class HDrive extends BaseHardware {
                 break;
 
             case Initializing:
-                doZeroHDrive();
+                if (isHDriveInitialized()) {
+                    // We can see the switch we are sure that the H -Drive is at Top-Dead-Center
+                    completeInitializing();
+                }
                 break;
 
             case Idle:
@@ -159,31 +152,24 @@ public class HDrive extends BaseHardware {
     }
 
     //*********************************************************************************************
-    private void doZeroHDrive() {
+    private boolean isHDriveInitialized() {
 
-        if (chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST) {
-            // Test Chassis will not have a switch... thus we must just
-            // complete the init of H-Drive as soon as possible.
-            completeInitializing();
-        }
-        else if (lifterTCH.getState()) {
-            // We can see the switch we are sure that the H -Drive is at Top-Dead-Center
-            completeInitializing();
-        }
+        // Test chassis does not have a mechinisim to hit the switch
+        return (chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST || lifterTCH.getState());
     }
 
     //*********************************************************************************************
     // These are the steps that will complete the init of the H-Drive
-    private void completeInitializing () {
+    private void completeInitializing() {
 
         HDM2.setPower(0);
-        HdriveMode_Current = HDriveMode.Idle;
         HDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         HDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         HDM2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         cmdComplete = true;
-
+        HdriveMode_Current = HDriveMode.Idle;
     }
+
     //*********************************************************************************************
     public void cmdTeleop(double leftPower, double rightPower) {
 
@@ -301,23 +287,5 @@ public class HDrive extends BaseHardware {
 
     //*********************************************************************************************
 
-    private void zeroHDrive () {
 
-        // only reset things if starting in auton... Never reset them in TeleOp
-        /*if (parentMode_Current == Settings.PARENTMODE.PARENT_MODE_TELE) {
-            // This motor performs the lift of the HDrive
-            HDM2.setDirection(DcMotor.Direction.FORWARD);
-            HDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            HDM2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            HDM2.setTargetPosition(HDM2_UP_POS);
-            HDM2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-         */
-        if (parentMode_Current == Settings.PARENTMODE.PARENT_MODE_AUTO  &&
-                chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_COMPETITION) {
-
-        }
-
-    }
 }
