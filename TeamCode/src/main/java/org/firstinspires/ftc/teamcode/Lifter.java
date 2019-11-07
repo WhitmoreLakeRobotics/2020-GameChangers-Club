@@ -24,7 +24,6 @@ public class Lifter extends BaseHardware {
     public static final double LIFTERPOWER_INIT = -.125;
     public static final double LIFTERStickDeadBand = .2;
 
-    private Settings.PARENTMODE parentMode_Current = null;
     private Settings.CHASSIS_TYPE chassisType_Current = Settings.CHASSIS_TYPE.CHASSIS_COMPETITION;
 
     private static int LOW_INDEX = 0;
@@ -80,13 +79,7 @@ public class Lifter extends BaseHardware {
     }
 
     //*********************************************************************************************
-    public void setParentMode(Settings.PARENTMODE pm) {
-
-        parentMode_Current = pm;
-    }
-
-    //*********************************************************************************************
-    public void setChassisType(Settings.CHASSIS_TYPE ct) {
+     public void setChassisType(Settings.CHASSIS_TYPE ct) {
 
         chassisType_Current = ct;
     }
@@ -120,17 +113,7 @@ public class Lifter extends BaseHardware {
         // this is always called by chassis
         LFT1.setPower(0);
 
-        switch (parentMode_Current) {
-            case PARENT_MODE_AUTO:
-                autoStart();
-                break;
-            case PARENT_MODE_TELE:
-                autoStart();
-                teleStart();
-                break;
-            default:
-                break;
-        }
+
         CurrentTickCount = LFT1.getCurrentPosition();
     }
 
@@ -161,6 +144,8 @@ public class Lifter extends BaseHardware {
     public void loop() {
 
         CurrentTickCount = LFT1.getCurrentPosition();
+        telemetry.addData("time",  CurrentTickCount);
+        telemetry.update();
     }
 
     //*********************************************************************************************

@@ -18,8 +18,6 @@ public class CommonGyro extends BaseHardware {
         Idle
     }
 
-    private Settings.PARENTMODE parentMode_Current = null;
-
     // The IMU sensor object
     BNO055IMU imu;
     // State used for updating telemetry
@@ -75,19 +73,7 @@ public class CommonGyro extends BaseHardware {
     @Override
     public void loop() {
 
-        switch (parentMode_Current) {
-            // go out to the hardware and update the internal value of the gyro for use in the
-            // rest of the robot software
-            case PARENT_MODE_AUTO: {
-                updateGyroHeading();
-                break;
-            }
-            //case PARENT_MODE_TELE:
-            //    break;
 
-            default:
-                break;
-        }
 
     }
 
@@ -260,9 +246,5 @@ public class CommonGyro extends BaseHardware {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 
-    //*********************************************************************************************
-    public void setParentMode(Settings.PARENTMODE pm) {
-        parentMode_Current = pm;
-    }
-
+    
 }

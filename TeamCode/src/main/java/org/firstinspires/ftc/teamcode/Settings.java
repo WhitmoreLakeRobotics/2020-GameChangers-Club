@@ -30,10 +30,10 @@ public class Settings extends Object {
     public static final int msStuckDetectStop = 1000;
 
     //*********************************************************************************************
-    public static enum PARENTMODE {
-        PARENT_MODE_AUTO,
-        PARENT_MODE_TELE
-    }
+    //public static enum PARENTMODE {
+    //    PARENT_MODE_AUTO,
+    //    PARENT_MODE_TELE
+    //}
 
     public static enum CHASSIS_TYPE {
         CHASSIS_COMPETITION,

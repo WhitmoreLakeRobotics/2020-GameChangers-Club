@@ -159,8 +159,6 @@ public class Tele_Op_test extends OpMode {
             }
         }
 
-
-
         if (Math.abs(gamepad2.right_stick_y) > Settings.JOYSTICK_DEADBAND_STICK) {
             RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
         }
@@ -168,12 +166,15 @@ public class Tele_Op_test extends OpMode {
         if (gamepad2.a) {
             RBTChassis.subExtender.cmd_MoveToStart();
         }
+
         if (gamepad2.b) {
             RBTChassis.subExtender.cmd_MoveToPos1();
         }
+
         if (gamepad2.x) {
             RBTChassis.subExtender.cmd_MoveToPos3();
         }
+
         if (gamepad2.y) {
             RBTChassis.subExtender.cmd_MoveToPos2();
         }

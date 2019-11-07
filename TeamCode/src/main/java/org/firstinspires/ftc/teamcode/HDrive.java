@@ -47,10 +47,10 @@ public class HDrive extends BaseHardware {
     private double TargetMotorPowerH = 0;
     private double PrevMotorPowerH = 0;
     private double TargetDistanceInchesH = 0;
-    private DigitalChannel lifterTCH = null;
+    private DigitalChannel hDriveTCH = null;
 
     private static double HLiftPower = 1.0;
-    private static double HLiftInitPower = .625;
+    private static double HLiftInitPower = .200;
     private double maxPower = 1.0;
 
     //*********************************************************************************************
@@ -75,8 +75,8 @@ public class HDrive extends BaseHardware {
         HDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //do not know what digital channel is check here for errors ******
-        lifterTCH = hardwareMap.get(DigitalChannel.class, "lifterTCH");
-        lifterTCH.setMode(DigitalChannel.Mode.INPUT);
+        hDriveTCH = hardwareMap.get(DigitalChannel.class, "hDriveTCH");
+        hDriveTCH.setMode(DigitalChannel.Mode.INPUT);
 
         runtime.reset();
 
@@ -155,7 +155,7 @@ public class HDrive extends BaseHardware {
     private boolean isHDriveInitialized() {
 
         // Test chassis does not have a mechinisim to hit the switch
-        return (chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST || lifterTCH.getState());
+        return (chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST || ! hDriveTCH.getState());
     }
 
     //*********************************************************************************************

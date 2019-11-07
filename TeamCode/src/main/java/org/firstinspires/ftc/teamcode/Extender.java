@@ -23,7 +23,7 @@ public class Extender extends BaseHardware {
     public static final double EXTENDERPOWER_INIT = -.125;
     public static final double ExtenderStickDeadBand = .2;
     private static final String TAGExtender = "8492-Extender";
-    private Settings.PARENTMODE parentMode_Current = null;
+    //private Settings.PARENTMODE parentMode_Current = null;
     private Settings.CHASSIS_TYPE chassisType = null;
     double EXTENDERPOWER_desired = 0;
     double EXTENDERPOWER_current = 0;
@@ -93,11 +93,6 @@ public class Extender extends BaseHardware {
     }
 
     //*********************************************************************************************
-    public void setParentMode(Settings.PARENTMODE pm) {
-
-        parentMode_Current = pm;
-    }
-
     //*********************************************************************************************
     public void setChassisType (Settings.CHASSIS_TYPE ct){
         chassisType = ct;
@@ -126,16 +121,7 @@ public class Extender extends BaseHardware {
     public void start() {
         // this is always called by chassis
         EXT1.setPower(0);
-        switch (parentMode_Current) {
-            case PARENT_MODE_AUTO:
-                autoStart();
-                break;
-            case PARENT_MODE_TELE:
-                teleStart();
-                break;
-            default:
-                break;
-        }
+
     }
 
     //*********************************************************************************************
