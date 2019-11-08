@@ -48,9 +48,9 @@ public class HDrive extends BaseHardware {
     private double PrevMotorPowerH = 0;
     private double TargetDistanceInchesH = 0;
     private DigitalChannel hDriveTCH = null;
-
+    private int curr_pos = 0;
     private static double HLiftPower = 1.0;
-    private static double HLiftInitPower = .200;
+    private static double HLiftInitPower = 1.0;
     private double maxPower = 1.0;
 
     //*********************************************************************************************
@@ -73,6 +73,7 @@ public class HDrive extends BaseHardware {
         HDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         HDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         HDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         //do not know what digital channel is check here for errors ******
         hDriveTCH = hardwareMap.get(DigitalChannel.class, "hDriveTCH");
@@ -104,6 +105,10 @@ public class HDrive extends BaseHardware {
     public void start() {
         runtime.reset();
 
+        HDM2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HDM2.setTargetPosition(HDM2_UP_POS);
+        HDM2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         if (isHDriveInitialized() ) {
             completeInitializing();
         }
@@ -122,6 +127,7 @@ public class HDrive extends BaseHardware {
     @Override
     public void loop() {
 
+        telemetry.addData("HdriveMode_Current", HdriveMode_Current);
         switch (HdriveMode_Current) {
             case Stop:
                 doStop();
@@ -140,6 +146,11 @@ public class HDrive extends BaseHardware {
                     // We can see the switch we are sure that the H -Drive is at Top-Dead-Center
                     completeInitializing();
                 }
+                else {
+                    curr_pos = curr_pos + 10;
+                    HDM2.setTargetPosition(curr_pos);
+                    telemetry.addData("curr_pos", curr_pos);
+                }
                 break;
 
             case Idle:
@@ -151,11 +162,14 @@ public class HDrive extends BaseHardware {
         }
     }
 
+    public HDriveMode getCurrentMode() {
+        return HdriveMode_Current;
+    }
     //*********************************************************************************************
     private boolean isHDriveInitialized() {
 
         // Test chassis does not have a mechinisim to hit the switch
-        return (chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST || ! hDriveTCH.getState());
+        return (chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST || (! hDriveTCH.getState()));
     }
 
     //*********************************************************************************************

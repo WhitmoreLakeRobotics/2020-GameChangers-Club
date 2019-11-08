@@ -27,8 +27,8 @@ public class Lifter extends BaseHardware {
     private Settings.CHASSIS_TYPE chassisType_Current = Settings.CHASSIS_TYPE.CHASSIS_COMPETITION;
 
     private static int LOW_INDEX = 0;
-    private static int HIGH_INDEX = 8;
-    private static int[] LIFTER_POSITIONS_TICKS = new int[HIGH_INDEX];
+    private static int HIGH_INDEX = 7;
+    private static int[] LIFTER_POSITIONS_TICKS = new int[HIGH_INDEX + 1];
     private int CurrentIndex = LOW_INDEX;
     private int CurrentTickCount = 0;
 
@@ -161,7 +161,7 @@ public class Lifter extends BaseHardware {
         boolean retValue = false;
 
         // given an index then see if we are in that position.
-        if ((index >= LOW_INDEX) && (index <= HIGH_INDEX)) {
+        if (CommonLogic.indexCheck(index,LOW_INDEX,HIGH_INDEX)) {
             CurrentTickCount = LFT1.getCurrentPosition();
             retValue = testInPosition(CurrentTickCount, LIFTER_POSITIONS_TICKS[index]);
         }
@@ -172,7 +172,7 @@ public class Lifter extends BaseHardware {
     // given an index set the motor to move to that position.
     public void setPosition(int index) {
         // verify that we are not stepping outside of the array
-        if ((index >= LOW_INDEX) && (index <= HIGH_INDEX)) {
+        if (CommonLogic.indexCheck(index,LOW_INDEX,HIGH_INDEX)) {
             // Make sure that we are not already at the requested position
             if (!isInPosition(index)) {
                 // If needed to go Down go slower than Up
@@ -192,7 +192,7 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
     public void incPositionIndex() {
         // only inc the position if we are in the current one
-        if (CommonLogic.indexCheck(CurrentIndex,LOW_INDEX,HIGH_INDEX-2)) {
+        if (CommonLogic.indexCheck(CurrentIndex,LOW_INDEX,HIGH_INDEX-1)) {
             if (isInPosition(CurrentIndex)) {
                 CurrentIndex++;
                 telemetry.addData("incPositionIndex",CurrentIndex );
@@ -204,7 +204,7 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
     public void decPositionIndex() {
         // only dec the position if we are in the current one
-        if (CommonLogic.indexCheck(CurrentIndex,LOW_INDEX+1,HIGH_INDEX-1)) {
+        if (CommonLogic.indexCheck(CurrentIndex,LOW_INDEX+1,HIGH_INDEX)) {
             if (isInPosition(CurrentIndex)) {
                 CurrentIndex--;
                 telemetry.addData("decPositionIndex",CurrentIndex );

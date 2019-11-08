@@ -56,16 +56,27 @@ public class SensorDigitalTouch extends LinearOpMode {
      * The lower (first) pin stays unconnected.*
      */
 
-    DigitalChannel digitalTouch;  // Hardware Device Object
-
+    DigitalChannel extenderTCH;  // Hardware Device Object
+    DigitalChannel hDriveTCH;  // Hardware Device Object
+    DigitalChannel lifterTCH;  // Hardware Device Object
     @Override
     public void runOpMode() {
 
         // get a reference to our digitalTouch object.
-        digitalTouch = hardwareMap.get(DigitalChannel.class, "extenderTCH");
-
+        extenderTCH = hardwareMap.get(DigitalChannel.class, "extenderTCH");
         // set the digital channel to input.
-        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        extenderTCH.setMode(DigitalChannel.Mode.INPUT);
+
+        // get a reference to our digitalTouch object.
+        hDriveTCH = hardwareMap.get(DigitalChannel.class, "hDriveTCH");
+        // set the digital channel to input.
+        hDriveTCH.setMode(DigitalChannel.Mode.INPUT);
+
+
+        // get a reference to our digitalTouch object.
+        lifterTCH = hardwareMap.get(DigitalChannel.class, "lifterTCH");
+        // set the digital channel to input.
+        lifterTCH.setMode(DigitalChannel.Mode.INPUT);
 
         // wait for the start button to be pressed.
         waitForStart();
@@ -76,10 +87,25 @@ public class SensorDigitalTouch extends LinearOpMode {
 
             // send the info back to driver station using telemetry function.
             // if the digital channel returns true it's HIGH and the button is unpressed.
-            if (digitalTouch.getState() == true) {
-                telemetry.addData("Digital Touch", "Is Not Pressed");
+            if (! extenderTCH.getState()) {
+                telemetry.addData("extenderTCH", "Is Pressed");
             } else {
-                telemetry.addData("Digital Touch", "Is Pressed");
+                telemetry.addData("extenderTCH", "Is Not Pressed");
+
+            }
+
+            if (! hDriveTCH.getState()) {
+                telemetry.addData("hDriveTCH", "Is Pressed");
+            } else {
+                telemetry.addData("hDriveTCH", "Is Not Pressed");
+
+            }
+
+            if (! lifterTCH.getState()) {
+                telemetry.addData("lifterTCH", "Is Pressed");
+            } else {
+                telemetry.addData("lifterTCH", "Is Not Pressed");
+
             }
 
             telemetry.update();

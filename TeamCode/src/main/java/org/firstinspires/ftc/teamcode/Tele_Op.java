@@ -95,6 +95,10 @@ public class Tele_Op extends OpMode {
     public void loop() {
         RBTChassis.loop();
 
+        //can not do anything until hDrive is zeroed and ready
+        if (RBTChassis.subHDrive.getCurrentMode() == HDrive.HDriveMode.Initializing){
+            return;
+        }
 
         //RobotLog.aa(TAGTeleop, "gamepad1 " + RightMotorPower);
         //RobotLog.aa(TAGTeleop, "trigers " + gamepad1.left_trigger);
@@ -117,16 +121,16 @@ public class Tele_Op extends OpMode {
 
 
         if (gamepad2.a) {
-            //RBTChassis.subExtender.cmd_MoveToStart();
+            RBTChassis.subExtender.cmd_MoveToStart();
         }
         if (gamepad2.b) {
-            //RBTChassis.subExtender.cmd_MoveToPos1();
+            RBTChassis.subExtender.cmd_MoveToPos1();
         }
         if (gamepad2.x) {
-            //RBTChassis.subExtender.cmd_MoveToPos3();
+            RBTChassis.subExtender.cmd_MoveToPos3();
         }
         if (gamepad2.y) {
-            //RBTChassis.subExtender.cmd_MoveToPos2();
+            RBTChassis.subExtender.cmd_MoveToPos2();
         }
 
         // Bumpers high and lower Powers for the wheels

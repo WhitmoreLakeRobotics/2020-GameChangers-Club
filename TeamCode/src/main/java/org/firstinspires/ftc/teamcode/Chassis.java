@@ -181,7 +181,7 @@ public class Chassis extends OpMode {
 
     private void setChassis (){
         subExtender.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
-        subHDrive.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
+        subHDrive.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_COMPETITION);
         subLifter.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
     }
 
@@ -271,7 +271,7 @@ public class Chassis extends OpMode {
         }
         // Show the elapsed game time and wheel power.
         // telemetry.addData("Status", "Run Time: " + runtime.toString());
-
+        telemetry.update();
         // RobotLog.aa(TAGChassis,"Stage: "+ CurrentStage );
         //RobotLog.aa(TAGChassis, "Runtime: " + runtime.seconds());
         //double inchesTraveled = Math.abs(getEncoderInches());

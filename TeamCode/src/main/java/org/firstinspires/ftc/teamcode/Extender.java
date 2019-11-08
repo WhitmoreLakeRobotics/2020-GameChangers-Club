@@ -29,6 +29,7 @@ public class Extender extends BaseHardware {
     double EXTENDERPOWER_current = 0;
     boolean cmdComplete = false;
     boolean underStickControl = false;
+    private Settings.CHASSIS_TYPE chassistype_Current = null;
 
     int extenderPosition_Start_Pos = 0;
     int extenderPosition_Pos1 = 95;
@@ -122,17 +123,20 @@ public class Extender extends BaseHardware {
         // this is always called by chassis
         EXT1.setPower(0);
 
+        if (isExtenderInitialized()) {
+            EXT1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            EXT1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
     }
 
     //*********************************************************************************************
-    public void autoStart() {
-        // This is only called by chassis when running Auto OpModes
-        initExtenderTCH();
-        EXT1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        EXT1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
 
-    //*********************************************************************************************
+    private boolean isExtenderInitialized() {
+
+        // Test chassis does not have a mechinisim to hit the switch
+        return (chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST || (! extenderTCH.getState()));
+    }
 
     public void teleStart() {
         // This is only called by chassis when running Tele Modes
