@@ -86,17 +86,21 @@ public class Auton_Drive_Straight extends OpMode {
     @Override
     public void loop() {
 
-        telemetry.addData("Auton_Depot_Cater", currentStage);
+        telemetry.addData("Auton_Drive_Straight", currentStage);
         RBTChassis.loop();
+
+        //can not do anything until hDrive is zeroed and ready
+        if (RBTChassis.subHDrive.getCurrentMode() == HDrive.HDriveMode.Initializing){
+            return;
+        }
 
         // check stage and do what's appropriate
         if (currentStage == stage._unknown) {
             currentStage = stage._00_preStart;
         }
 
-        // make sure the H-Drive is initialized
         if (currentStage == stage._00_preStart) {
-            if (RBTChassis.subHDrive.getcmdComplete()) {
+            if (RBTChassis.subHDrive.getcmdComplete()){
                 currentStage = stage._10_crawlOut;
             }
         }

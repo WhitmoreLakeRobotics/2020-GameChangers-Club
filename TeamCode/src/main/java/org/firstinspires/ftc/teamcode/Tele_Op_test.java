@@ -22,17 +22,15 @@ public class Tele_Op_test extends OpMode {
     private double LeftMotorPower = 0;
     private double RightMotorPower = 0;
 
-    private double powerNormal = Settings.CHASSIS_POWER_NORMAL;
-    private double powerMax = Settings.CHASSIS_POWER_MAX;
-
-
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
-    public void init() {// Safety Management
+    public void init() {
         //----------------------------------------------------------------------------------------------
+        // Safety Management
+        //
         // These constants manage the duration we allow for callbacks to user code to run for before
         // such code is considered to be stuck (in an infinite loop, or wherever) and consequently
         // the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
@@ -48,7 +46,7 @@ public class Tele_Op_test extends OpMode {
 
         RBTChassis.hardwareMap = hardwareMap;
         RBTChassis.telemetry = telemetry;
-        RBTChassis.setMaxPower(powerNormal);
+        RBTChassis.setMaxPower(Settings.CHASSIS_POWER_NORMAL);
         RBTChassis.init();
 
         // Initialize the hardware variables. Note that the strings used here as parameters
@@ -90,6 +88,13 @@ public class Tele_Op_test extends OpMode {
     public void loop() {
         RBTChassis.loop();
 
+        //can not do anything until hDrive is zeroed and ready
+        if (RBTChassis.subHDrive.getCurrentMode() == HDrive.HDriveMode.Initializing) {
+            return;
+        }
+
+        //***********   Gamepad 1 controls ********
+
         // if the driver has any triggers pulled this means H drive only drive the H wheels
         // as straightly as possible
         if (gamepad1.left_trigger > Settings.JOYSTICK_DEADBAND_TRIGGER || gamepad1.right_trigger > Settings.JOYSTICK_DEADBAND_TRIGGER) {
@@ -104,37 +109,24 @@ public class Tele_Op_test extends OpMode {
                     CommonLogic.joyStickMath(-gamepad1.right_stick_y));
         }
 
-
+		//***********   Pushers
         if (gamepad1.a) {
             RBTChassis.subPushers.cmdMoveAllDown();
         }
-
         if (gamepad1.b) {
             RBTChassis.subPushers.cmdMoveAllUp();
         }
 
-        // Bumpers high and lower Powers for the wheels
+        //***********  Bumpers high and lower Powers for the wheels
         if (gamepad1.left_bumper) {
-            RBTChassis.setMaxPower(powerMax);
+            RBTChassis.setMaxPower(Settings.CHASSIS_POWER_MAX);
         }
 
         if (gamepad1.right_bumper) {
-            RBTChassis.setMaxPower(powerNormal);
+            RBTChassis.setMaxPower(Settings.CHASSIS_POWER_NORMAL);
         }
 
-        // Bumpers close and open the gripper
-        if (gamepad2.left_bumper) {
-            if (RBTChassis.subGripper.getIsOpen()) {
-                RBTChassis.subGripper.cmd_close();
-            }
-        }
-
-        if (gamepad2.right_bumper) {
-            if (RBTChassis.subGripper.getIsClosed()) {
-                RBTChassis.subGripper.cmd_open();
-            }
-        }
-
+        //***********  Grabbers
         if (gamepad1.dpad_right) {
             if (RBTChassis.subGrabbers.getIsUpRight()) {
                 RBTChassis.subGrabbers.cmdMoveDownRight();
@@ -159,6 +151,21 @@ public class Tele_Op_test extends OpMode {
             }
         }
 
+        //***********   Gamepad 2 controls ********
+
+        // Bumpers close and open the gripper
+        if (gamepad2.left_bumper) {
+            if (RBTChassis.subGripper.getIsOpen()) {
+                RBTChassis.subGripper.cmd_close();
+            }
+        }
+
+        if (gamepad2.right_bumper) {
+            if (RBTChassis.subGripper.getIsClosed()) {
+                RBTChassis.subGripper.cmd_open();
+            }
+        }
+
         if (Math.abs(gamepad2.right_stick_y) > Settings.JOYSTICK_DEADBAND_STICK) {
             RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
         }
@@ -177,6 +184,10 @@ public class Tele_Op_test extends OpMode {
 
         if (gamepad2.y) {
             RBTChassis.subExtender.cmd_MoveToPos2();
+        }
+
+        if (Math.abs(gamepad2.left_stick_y) > Settings.JOYSTICK_DEADBAND_STICK) {
+            //RBTChassis.subLifter.cmd_stickControl(gamepad2.left_stick_y);
         }
 
         if (gamepad2.dpad_up) {
