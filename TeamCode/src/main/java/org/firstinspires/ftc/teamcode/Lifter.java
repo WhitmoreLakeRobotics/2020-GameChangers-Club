@@ -18,9 +18,9 @@ public class Lifter extends BaseHardware {
 
     //Encoder positions for the LIFTER
 
-    public static final int LIFTERPOS_TOL = 29;
-    public static final double LIFTERPOWER_UP = .750;
-    public static final double LIFTERPOWER_DOWN = .375;
+    public static final int LIFTERPOS_TOL = 48;
+    public static final double LIFTERPOWER_UP = 1.0;
+    public static final double LIFTERPOWER_DOWN = 1.0;
     public static final double LIFTERPOWER_INIT = -.125;
     public static final double LIFTERStickDeadBand = .2;
 
@@ -57,16 +57,21 @@ public class Lifter extends BaseHardware {
         //do not know what digital channel is check here for errors ******
         LIFTERTCH = hardwareMap.get(DigitalChannel.class, "lifterTCH");
         LIFTERTCH.setMode(DigitalChannel.Mode.INPUT);
+        int brickheight = 350;
+        int foundationheight = 226;
+        LIFTER_POSITIONS_TICKS[0] = 0;  //start
+        LIFTER_POSITIONS_TICKS[1] = 50;  //carry
+        LIFTER_POSITIONS_TICKS[2] = foundationheight; //level 1
+        LIFTER_POSITIONS_TICKS[3] = foundationheight + (1 * brickheight);  //level 2
+        LIFTER_POSITIONS_TICKS[4] = foundationheight + (2 * brickheight); //level 3
+        LIFTER_POSITIONS_TICKS[5] = foundationheight + (3 * brickheight);
+        ;  //level 4
+        LIFTER_POSITIONS_TICKS[6] = foundationheight + (3 * brickheight);  //level 5
+        LIFTER_POSITIONS_TICKS[7] = foundationheight + (3 * brickheight);  //level 6
 
-        LIFTER_POSITIONS_TICKS[0] = 0;
-        LIFTER_POSITIONS_TICKS[1] = 1 * Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
-        LIFTER_POSITIONS_TICKS[2] = 2 * Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
-        LIFTER_POSITIONS_TICKS[3] = 3 * Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
-        LIFTER_POSITIONS_TICKS[4] = 4 * Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
-        LIFTER_POSITIONS_TICKS[5] = 5 * Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
-        LIFTER_POSITIONS_TICKS[6] = 6 * Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
-        LIFTER_POSITIONS_TICKS[7] = 7 * Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
-
+        CurrentTickCount = LFT1.getCurrentPosition();
+        LFT1.setTargetPosition(CurrentTickCount);
+        LFT1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     //*********************************************************************************************
@@ -79,7 +84,7 @@ public class Lifter extends BaseHardware {
     }
 
     //*********************************************************************************************
-     public void setChassisType(Settings.CHASSIS_TYPE ct) {
+    public void setChassisType(Settings.CHASSIS_TYPE ct) {
 
         chassisType_Current = ct;
     }
@@ -113,8 +118,6 @@ public class Lifter extends BaseHardware {
         // this is always called by chassis
         LFT1.setPower(0);
 
-
-        CurrentTickCount = LFT1.getCurrentPosition();
     }
 
     //*********************************************************************************************
@@ -144,7 +147,8 @@ public class Lifter extends BaseHardware {
     public void loop() {
 
         CurrentTickCount = LFT1.getCurrentPosition();
-        telemetry.addData("time",  CurrentTickCount);
+        telemetry.addData("Lifter-Index", CurrentIndex);
+        telemetry.addData("LifterPos-Ticks", CurrentTickCount);
         telemetry.update();
     }
 
@@ -161,7 +165,7 @@ public class Lifter extends BaseHardware {
         boolean retValue = false;
 
         // given an index then see if we are in that position.
-        if (CommonLogic.indexCheck(index,LOW_INDEX,HIGH_INDEX)) {
+        if (CommonLogic.indexCheck(index, LOW_INDEX, HIGH_INDEX)) {
             CurrentTickCount = LFT1.getCurrentPosition();
             retValue = testInPosition(CurrentTickCount, LIFTER_POSITIONS_TICKS[index]);
         }
@@ -171,45 +175,46 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
     // given an index set the motor to move to that position.
     public void setPosition(int index) {
+
         // verify that we are not stepping outside of the array
-        if (CommonLogic.indexCheck(index,LOW_INDEX,HIGH_INDEX)) {
+        if (CommonLogic.indexCheck(index, LOW_INDEX, HIGH_INDEX)) {
             // Make sure that we are not already at the requested position
-            if (!isInPosition(index)) {
-                // If needed to go Down go slower than Up
-                if (CurrentTickCount > LIFTER_POSITIONS_TICKS[index]) {
-                    LFT1.setPower(LIFTERPOWER_DOWN);
-                }
-                // If needed to go Up go faster than Down
-                else {
-                    LFT1.setPower(LIFTERPOWER_UP);
-                }
-                //Set the motor to hold the new position
-                LFT1.setTargetPosition(LIFTER_POSITIONS_TICKS[index]);
+            //if (!isInPosition(index)) {
+            // If needed to go Down go slower than Up
+            if (CurrentTickCount > LIFTER_POSITIONS_TICKS[index]) {
+                LFT1.setPower(LIFTERPOWER_DOWN);
             }
+            // If needed to go Up go faster than Down
+            else {
+                LFT1.setPower(LIFTERPOWER_UP);
+            }
+            //Set the motor to hold the new position
+            LFT1.setTargetPosition(LIFTER_POSITIONS_TICKS[index]);
+            //}
         }
     }
 
     //*********************************************************************************************
     public void incPositionIndex() {
         // only inc the position if we are in the current one
-        if (CommonLogic.indexCheck(CurrentIndex,LOW_INDEX,HIGH_INDEX-1)) {
-            if (isInPosition(CurrentIndex)) {
-                CurrentIndex++;
-                telemetry.addData("incPositionIndex",CurrentIndex );
-                setPosition(CurrentIndex);
-            }
+        if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
+            //if (isInPosition(CurrentIndex)) {
+            CurrentIndex++;
+            telemetry.addData("incPositionIndex", CurrentIndex);
+            setPosition(CurrentIndex);
+            //}
         }
     }
 
     //*********************************************************************************************
     public void decPositionIndex() {
         // only dec the position if we are in the current one
-        if (CommonLogic.indexCheck(CurrentIndex,LOW_INDEX+1,HIGH_INDEX)) {
-            if (isInPosition(CurrentIndex)) {
-                CurrentIndex--;
-                telemetry.addData("decPositionIndex",CurrentIndex );
-                setPosition(CurrentIndex);
-            }
+        if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
+            //if (isInPosition(CurrentIndex)) {
+            CurrentIndex--;
+            telemetry.addData("decPositionIndex", CurrentIndex);
+            setPosition(CurrentIndex);
+            //}
         }
     }
 

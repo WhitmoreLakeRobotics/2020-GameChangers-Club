@@ -14,11 +14,28 @@ import com.qualcomm.robotcore.util.RobotLog;
 public class Tele_Op_test extends OpMode {
     private static final String TAGTeleop = "8492-Tele_Op_test";
     Chassis_Test RBTChassis = new Chassis_Test();
-    // Declare OpMode members.
-    boolean gamepad2_a_pressed = false;
-    boolean gamepad2_b_pressed = false;
-    boolean gamepad2_x_pressed = false;
-    boolean gamepad2_y_pressed = false;
+    //    // Declare OpMode members.
+    private boolean gp1_prev_a = false;
+    private boolean gp1_prev_b = false;
+    private boolean gp1_prev_x = false;
+    private boolean gp1_prev_y = false;
+    private boolean gp1_prev_right_bumper = false;
+    private boolean gp1_prev_left_bumper = false;
+    private boolean gp1_prev_dpad_up = false;
+    private boolean gp1_prev_dpad_down = false;
+    private boolean gp1_prev_dpad_left = false;
+    private boolean gp1_prev_dpad_right = false;
+
+    private boolean gp2_prev_a = false;
+    private boolean gp2_prev_b = false;
+    private boolean gp2_prev_x = false;
+    private boolean gp2_prev_y = false;
+    private boolean gp2_prev_right_bumper = false;
+    private boolean gp2_prev_left_bumper = false;
+    private boolean gp2_prev_dpad_up = false;
+    private boolean gp2_prev_dpad_down = false;
+    private boolean gp2_prev_dpad_left = false;
+    private boolean gp2_prev_dpad_right = false;
     private double LeftMotorPower = 0;
     private double RightMotorPower = 0;
 
@@ -109,43 +126,45 @@ public class Tele_Op_test extends OpMode {
                     CommonLogic.joyStickMath(-gamepad1.right_stick_y));
         }
 
-		//***********   Pushers
-        if (gamepad1.a) {
+
+        //***********   Pushers
+        if (CommonLogic.oneShot(gamepad1.a,gp1_prev_a)) {
             RBTChassis.subPushers.cmdMoveAllDown();
         }
-        if (gamepad1.b) {
+
+        if (CommonLogic.oneShot(gamepad1.b, gp1_prev_b)) {
             RBTChassis.subPushers.cmdMoveAllUp();
         }
 
-        //***********  Bumpers high and lower Powers for the wheels
-        if (gamepad1.left_bumper) {
+        // Bumpers high and lower Powers for the wheels
+        if (CommonLogic.oneShot(gamepad1.left_bumper, gp1_prev_left_bumper)) {
             RBTChassis.setMaxPower(Settings.CHASSIS_POWER_MAX);
         }
 
-        if (gamepad1.right_bumper) {
+        if (CommonLogic.oneShot(gamepad1.right_bumper, gp1_prev_right_bumper)) {
             RBTChassis.setMaxPower(Settings.CHASSIS_POWER_NORMAL);
         }
 
         //***********  Grabbers
-        if (gamepad1.dpad_right) {
+        if (CommonLogic.oneShot(gamepad1.dpad_right, gp1_prev_dpad_right)) {
             if (RBTChassis.subGrabbers.getIsUpRight()) {
                 RBTChassis.subGrabbers.cmdMoveDownRight();
             }
         }
 
-        if (gamepad1.dpad_up) {
+        if (CommonLogic.oneShot(gamepad1.dpad_up, gp1_prev_dpad_up)) {
             if (RBTChassis.subGrabbers.getIsDownRight()) {
                 RBTChassis.subGrabbers.cmdMoveUpRight();
             }
         }
 
-        if (gamepad1.dpad_left) {
+        if (CommonLogic.oneShot(gamepad1.dpad_left, gp1_prev_dpad_left)) {
             if (RBTChassis.subGrabbers.getIsDownLeft()) {
                 RBTChassis.subGrabbers.cmdMoveUpLeft();
             }
         }
 
-        if (gamepad1.dpad_down) {
+        if (CommonLogic.oneShot(gamepad1.dpad_down, gp1_prev_dpad_down)) {
             if (RBTChassis.subGrabbers.getIsUpLeft()) {
                 RBTChassis.subGrabbers.cmdMoveDownLeft();
             }
@@ -154,35 +173,35 @@ public class Tele_Op_test extends OpMode {
         //***********   Gamepad 2 controls ********
 
         // Bumpers close and open the gripper
-        if (gamepad2.left_bumper) {
+        if (CommonLogic.oneShot(gamepad2.left_bumper, gp2_prev_left_bumper)) {
             if (RBTChassis.subGripper.getIsOpen()) {
                 RBTChassis.subGripper.cmd_close();
             }
         }
 
-        if (gamepad2.right_bumper) {
+        if (CommonLogic.oneShot(gamepad2.right_bumper, gp2_prev_right_bumper)) {
             if (RBTChassis.subGripper.getIsClosed()) {
                 RBTChassis.subGripper.cmd_open();
             }
         }
 
-        if (Math.abs(gamepad2.right_stick_y) > Settings.JOYSTICK_DEADBAND_STICK) {
-            RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
-        }
+        //if (Math.abs(gamepad2.right_stick_y) > Settings.JOYSTICK_DEADBAND_STICK) {
+        //    RBTChassis.subExtender.cmd_stickControl(gamepad2.right_stick_y);
+        //}
 
-        if (gamepad2.a) {
+        if (CommonLogic.oneShot(gamepad2.a, gp2_prev_a)) {
             RBTChassis.subExtender.cmd_MoveToStart();
         }
 
-        if (gamepad2.b) {
+        if (CommonLogic.oneShot(gamepad2.b, gp2_prev_b)) {
             RBTChassis.subExtender.cmd_MoveToPos1();
         }
 
-        if (gamepad2.x) {
+        if (CommonLogic.oneShot(gamepad2.x, gp2_prev_x)) {
             RBTChassis.subExtender.cmd_MoveToPos3();
         }
 
-        if (gamepad2.y) {
+        if (CommonLogic.oneShot(gamepad2.y, gp2_prev_y)) {
             RBTChassis.subExtender.cmd_MoveToPos2();
         }
 
@@ -190,13 +209,37 @@ public class Tele_Op_test extends OpMode {
             //RBTChassis.subLifter.cmd_stickControl(gamepad2.left_stick_y);
         }
 
-        if (gamepad2.dpad_up) {
+        if (CommonLogic.oneShot(gamepad2.dpad_up, gp2_prev_dpad_up)) {
             RBTChassis.subLifter.incPositionIndex();
         }
 
-        if (gamepad2.dpad_down) {
+        if (CommonLogic.oneShot(gamepad2.dpad_down, gp2_prev_dpad_down)) {
             RBTChassis.subLifter.decPositionIndex();
         }
+
+        // Update the previous status for gamepad 1
+        gp1_prev_a = gamepad1.a;
+        gp1_prev_b = gamepad1.b;
+        gp1_prev_x = gamepad1.x;
+        gp1_prev_y = gamepad1.y;
+        gp1_prev_left_bumper = gamepad1.left_bumper;
+        gp1_prev_right_bumper = gamepad1.right_bumper;
+        gp1_prev_dpad_down = gamepad1.dpad_down;
+        gp1_prev_dpad_left = gamepad1.dpad_left;
+        gp1_prev_dpad_up= gamepad1.dpad_up;
+        gp1_prev_dpad_right = gamepad1.dpad_right;
+
+        // Update the previous status for gamepad 2
+        gp2_prev_a = gamepad2.a;
+        gp2_prev_b = gamepad2.b;
+        gp2_prev_x = gamepad2.x;
+        gp2_prev_y = gamepad2.y;
+        gp2_prev_left_bumper = gamepad2.left_bumper;
+        gp2_prev_right_bumper = gamepad2.right_bumper;
+        gp2_prev_dpad_down = gamepad2.dpad_down;
+        gp2_prev_dpad_left = gamepad2.dpad_left;
+        gp2_prev_dpad_up= gamepad2.dpad_up;
+        gp2_prev_dpad_right = gamepad2.dpad_right;
 
     }
 

@@ -12,9 +12,9 @@ public class GrabberArms extends BaseHardware {
     private ServoArm ArmRight = new ServoArm();
     private ServoArm ArmLeft = new ServoArm();
 
-    private double grabSvoRPos_start = 0.85;
-    private double grabSvoRPos_up = 0.85;
-    private double grabSvoRPos_down = 0.3;
+    private double grabSvoRPos_start = 0.5;
+    private double grabSvoRPos_up = 0.5;
+    private double grabSvoRPos_down = 0.5;
 
     private double grabSvoLPos_start = .25;
     private double grabSvoLPos_up = .25;

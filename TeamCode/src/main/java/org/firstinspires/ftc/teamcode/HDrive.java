@@ -24,7 +24,7 @@ public class HDrive extends BaseHardware {
     public static final int HDM2_UP_POS = 0;
 
     public static final int HDM2_DOWN_POS = (int) (TICKS_PER_REV / 2);
-    public static final int HDM2_TOL = 21;
+    public static final int HDM2_TOL = 56;
 
     public static final double wheelDistPerRev = 3.0 * 3.14159;
     public static final double gearRatio = 80 / 80;
@@ -194,7 +194,7 @@ public class HDrive extends BaseHardware {
             totalPower = CommonLogic.CapMotorPower(totalPower, -1.0, 1.0);
             RobotLog.aa(TAGHDrive, "doTeleop: Power=" + totalPower);
             TargetMotorPowerH = totalPower * 1.0;
-            telemetry.log().add(String.format("TargetMotorPowerH= %.2f", TargetMotorPowerH));
+            //telemetry.log().add(String.format("TargetMotorPowerH= %.2f", TargetMotorPowerH));
         }
     }
     //*********************************************************************************************

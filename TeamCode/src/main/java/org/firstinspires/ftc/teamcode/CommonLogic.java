@@ -47,4 +47,10 @@ public class CommonLogic extends Object {
 
         return ( value >= low && value <= high);
     }
+
+    public static boolean oneShot(boolean currState, boolean prevState) {
+
+        return (prevState == false && currState == true);
+    }
+
 }

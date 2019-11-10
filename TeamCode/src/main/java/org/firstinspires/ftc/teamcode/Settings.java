@@ -23,7 +23,7 @@ public class Settings extends Object {
     // the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
     // necessary as poorly chosen values might inadvertently compromise safety.
     //----------------------------------------------------------------------------------------------
-    public static final int msStuckDetectInit = 10000;
+    public static final int msStuckDetectInit = 15000;
     public static final int msStuckDetectInitLoop = 5000;
     public static final int msStuckDetectStart = 5000;
     public static final int msStuckDetectLoop = 5000;
@@ -38,6 +38,30 @@ public class Settings extends Object {
     public static enum CHASSIS_TYPE {
         CHASSIS_COMPETITION,
         CHASSIS_TEST
+    }
+
+    public static enum switch_names {
+        bumper_left,
+        bumper_right,
+        dpad_up,
+        dpad_down,
+        dpad_right,
+        dpad_left,
+        a,
+        b,
+        x,
+        y,
+        unknown
+    }
+
+    public static enum throttle_names{
+        right_stick_x,
+        right_stick_y,
+        left_stick_x,
+        left_stick_y,
+        left_trigger,
+        right_trigger,
+        unknown
     }
 
 }

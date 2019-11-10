@@ -13,12 +13,12 @@ public class PusherArms extends BaseHardware {
     private ServoArm ArmLeft = new ServoArm();
 
     private double pushSvoRPos_start = .5;
-    private double pushSvoRPos_up = .4;
-    private double pushSvoRPos_down = .6;
+    private double pushSvoRPos_up = .35;
+    private double pushSvoRPos_down = .99;
 
     private double pushSvoLPos_start = .5;
-    private double pushSvoLPos_up = .4;
-    private double pushSvoLPos_down = .6;
+    private double pushSvoLPos_up = .5;
+    private double pushSvoLPos_down = .00;
 
     /*
      * Code to run ONCE when the driver hits INIT
