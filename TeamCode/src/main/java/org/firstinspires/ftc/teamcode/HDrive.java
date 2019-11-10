@@ -74,7 +74,6 @@ public class HDrive extends BaseHardware {
         HDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         HDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
         //do not know what digital channel is check here for errors ******
         hDriveTCH = hardwareMap.get(DigitalChannel.class, "hDriveTCH");
         hDriveTCH.setMode(DigitalChannel.Mode.INPUT);
@@ -117,7 +116,6 @@ public class HDrive extends BaseHardware {
             HdriveMode_Current = HDriveMode.Initializing;
             cmdComplete = false;
         }
-
     }
 
     //*********************************************************************************************
@@ -149,7 +147,7 @@ public class HDrive extends BaseHardware {
                 else {
                     curr_pos = curr_pos + 10;
                     HDM2.setTargetPosition(curr_pos);
-                    telemetry.addData("curr_pos", curr_pos);
+                    telemetry.addData("H-Drive-Ticks", curr_pos);
                 }
                 break;
 

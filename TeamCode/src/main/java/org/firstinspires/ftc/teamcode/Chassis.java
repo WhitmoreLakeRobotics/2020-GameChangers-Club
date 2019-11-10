@@ -43,7 +43,7 @@ public class Chassis extends OpMode {
     private static final String TAGChassis = "8492-Chassis";
 
 
-    public Extender subExtender = new Extender();
+    public ExtenderMove2Pos subExtender = new ExtenderMove2Pos();
     public CommonGyro subGyro = new CommonGyro();
     public HDrive subHDrive = new HDrive();
     public Gripper subGripper = new Gripper();

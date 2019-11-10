@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-/* Extender controls all actions involving Extender
-    - locking motors in break mode for initial extender position
-    - starts with a reset of the encoders -- if needed.
-*/
+/* Extener controls the extending slide on the robot
+
+ */
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,47 +10,32 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+
+//@TeleOp(name = "LIFTER", group = "CHASSIS")  // @Autonomous(...) is the other common choice
+
 public class ExtenderMove2Pos extends BaseHardware {
-    //Encoder positions for the EXTENDER
-    public static final int EXTENDERPOS_TOL = 8;
-    public static final double EXTENDERPOWER_EXTEND = .375;
-    public static final double EXTENDERPOWER_RETRACT = -.375;
-    public static final double EXTENDERPOWER_INIT = -.125;
-    public static final double ExtenderStickDeadBand = .2;
-    private static final String TAGExtender = "8492-Extender";
-    private static final double EXTENERPOWER_Move2Start = .3;
-    double EXTENDERPOWER_desired = 0;
-    double EXTENDERPOWER_current = 0;
+    private static final String TAGLIFTER = "8492-Extener2Pos";
 
-    private final int EXTENDER_POSITION_START_POS = 0;
-    private final int EXTENDER_POSITION_Pos1 = 80;
-    private final int EXTENDER_POSITION_Pos2 = 160;
-    private final int EXTENDER_POSITION_Pos3 = 240;
+    //Encoder positions for the Extender
 
-    int extenderPosition_CURRENT = EXTENDER_POSITION_START_POS;
+    public static final int EXTENDER_POS_TOL = 48;
+    public static final double LIFTERPOWER_UP = 1.0;
+    public static final double LIFTERPOWER_DOWN = 1.0;
+    public static final double LIFTERPOWER_INIT = -.125;
+    public static final double LIFTERStickDeadBand = .2;
 
-    ExtenderStates extenderStateCurrent = ExtenderStates.UNKNOWN;
+    private Settings.CHASSIS_TYPE chassisType_Current = Settings.CHASSIS_TYPE.CHASSIS_COMPETITION;
 
-
-    /* Declare OpMode members. */
-    //private ElapsedTime runtime = new ElapsedTime();
-
-    //set the HANGER powers... We will need different speeds for up and down.
-    private ExtenderStates intakeArm = null;
-    private double initMotorPower = 0;
-    private double currentMotorpower = 0.5;
-
-// Boolean to check if movement complete
-
-
-// boolean to check if auton or stick control
-
+    private static int LOW_INDEX = 0;
+    private static int HIGH_INDEX = 3;
+    private static int[] EXTENDER_POSITIONS_TICKS = new int[HIGH_INDEX + 1];
+    private int CurrentIndex = LOW_INDEX;
+    private int CurrentTickCount = 0;
 
     // declare motors
     private DcMotor EXT1 = null;
     private DigitalChannel extenderTCH = null;
 
-    //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -65,20 +49,26 @@ public class ExtenderMove2Pos extends BaseHardware {
          * step (using the FTC Robot Controller app on the phone).
          */
 
-
         EXT1 = hardwareMap.dcMotor.get("EXT1");
         EXT1.setDirection(DcMotor.Direction.REVERSE);
         EXT1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RobotLog.aa(TAGExtender, "extenderPos: " + EXT1);
+
+        RobotLog.aa(TAGLIFTER, "extenderPos: " + EXT1);
         //do not know what digital channel is check here for errors ******
         extenderTCH = hardwareMap.get(DigitalChannel.class, "extenderTCH");
         extenderTCH.setMode(DigitalChannel.Mode.INPUT);
-    }
+        int brickheight = 35;
+        int foundationheight = 226;
+        EXTENDER_POSITIONS_TICKS[0] = 0;  //start
+        EXTENDER_POSITIONS_TICKS[1] = (int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .33);
+        EXTENDER_POSITIONS_TICKS[2] = (int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .66);
+        EXTENDER_POSITIONS_TICKS[3] = (int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .99);
 
-    public void extenderMotorEncoderReset() {
-        EXT1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        CurrentTickCount = EXT1.getCurrentPosition();
+        EXT1.setTargetPosition(CurrentTickCount);
         EXT1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
     //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -87,17 +77,11 @@ public class ExtenderMove2Pos extends BaseHardware {
     public void init_loop() {
 
     }
+
     //*********************************************************************************************
-    private void initExtenderTCH() {
-        ElapsedTime runtime = new ElapsedTime();
-        runtime.reset();
-        EXT1.setPower(EXTENDERPOWER_INIT);
-        while (extenderTCH.getState()) {
-            if (runtime.milliseconds() > 1500) {
-                break;
-            }
-        }
-        EXT1.setPower(0);
+    public void setChassisType(Settings.CHASSIS_TYPE ct) {
+
+        chassisType_Current = ct;
     }
     //*********************************************************************************************
     /*
@@ -105,210 +89,113 @@ public class ExtenderMove2Pos extends BaseHardware {
      */
     @Override
     public void start() {
+
         // this is always called by chassis
         EXT1.setPower(0);
-    }
 
-    public void autoStart() {
-        // This is only called by chassis when running Auto OpModes
-        initExtenderTCH();
-        EXT1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        EXT1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     //*********************************************************************************************
+
+    public void autoStart() {
+        // This is only called by chassis when running Auto OpModes
+        //initLifterTCH();
+        EXT1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        EXT1.setTargetPosition(EXTENDER_POSITIONS_TICKS[0]);
+        EXT1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    //*********************************************************************************************
+
     public void teleStart() {
+
         // This is only called by chassis when running Tele Modes
 
     }
 
     //*********************************************************************************************
+
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
     @Override
     public void loop() {
-        // Safety checks to prevent too low or too high
-        extenderPosition_CURRENT = EXT1.getCurrentPosition();
-        RobotLog.aa(TAGExtender, "Curr Position: " + extenderPosition_CURRENT);
 
-        switch (extenderStateCurrent) {
-            case COMMANDED_TO_START_POS: {
-                EXT1.setTargetPosition(EXTENDER_POSITION_START_POS);
-                EXT1.setPower(EXTENERPOWER_Move2Start);
-                extenderStateCurrent = ExtenderStates.MOVING_TO_START_POS;
-                break;
-            }
-
-            case MOVING_TO_START_POS: {
-                if (testInPosition(extenderPosition_CURRENT, EXTENDER_POSITION_START_POS)) {
-                    extenderStateCurrent = ExtenderStates.AT_START_POS;
-                }
-                break;
-            }
-
-            case COMMANDED_TO_POS1: {
-                EXT1.setTargetPosition(EXTENDER_POSITION_Pos1);
-                extenderStateCurrent = ExtenderStates.MOVING_TO_POS1;
-                break;
-            }
-
-            case MOVING_TO_POS1: {
-                if (testInPosition(extenderPosition_CURRENT, EXTENDER_POSITION_Pos1)) {
-                    extenderStateCurrent = ExtenderStates.AT_START_POS;
-                }
-                break;
-            }
-
-            case COMMANDED_TO_POS2: {
-                EXT1.setTargetPosition(EXTENDER_POSITION_Pos2);
-                extenderStateCurrent = ExtenderStates.MOVING_TO_POS1;
-                break;
-            }
-
-            case MOVING_TO_POS2: {
-                if (testInPosition(extenderPosition_CURRENT, EXTENDER_POSITION_Pos2)) {
-                    extenderStateCurrent = ExtenderStates.AT_START_POS;
-                }
-                break;
-            }
-
-            case COMMANDED_TO_POS3: {
-                EXT1.setTargetPosition(EXTENDER_POSITION_Pos3);
-                extenderStateCurrent = ExtenderStates.MOVING_TO_POS3;
-                break;
-            }
-
-            case MOVING_TO_POS3: {
-                if (testInPosition(extenderPosition_CURRENT, EXTENDER_POSITION_Pos3)) {
-                    extenderStateCurrent = ExtenderStates.AT_POS3;
-                }
-                break;
-            }
-
-            case STICK_CONTROL_RETRACT: {
-                if (testInPosition(extenderPosition_CURRENT, EXTENDER_POSITION_START_POS)) {
-                    EXT1.setTargetPosition(EXTENDER_POSITION_START_POS);
-                } else {
-                    EXT1.setTargetPosition(extenderPosition_CURRENT - EXTENDERPOS_TOL);
-                }
-                break;
-            }
-
-            case STICK_CONTROL_EXTEND: {
-                if (testInPosition(extenderPosition_CURRENT, EXTENDER_POSITION_Pos3)) {
-                    EXT1.setTargetPosition(EXTENDER_POSITION_Pos3);
-                } else {
-                    EXT1.setTargetPosition(extenderPosition_CURRENT + EXTENDERPOS_TOL);
-                }
-                break;
-            }
-
-            // If we are in an AT_POS_XX state then there is nothing to do... We are where we need to be
-            default: {
-                break;
-            }
-        }
+        CurrentTickCount = EXT1.getCurrentPosition();
+        telemetry.addData("Extender-Index", CurrentIndex);
+        telemetry.addData("ExtenderPos-Ticks", CurrentTickCount);
+        telemetry.update();
     }
+
     //*********************************************************************************************
+    // compare tick counts and see if we are in range for that position.
     private boolean testInPosition(int currPos, int desiredPos) {
 
-        return (CommonLogic.inRange(currPos, desiredPos, EXTENDERPOS_TOL));
-    }
-    //*********************************************************************************************
-    public boolean isInStartPos() {
-        return testInPosition(extenderPosition_CURRENT, EXTENDER_POSITION_START_POS);
-    }
-    //*********************************************************************************************
-    public boolean isInPos1() {
-        return testInPosition(EXTENDER_POSITION_Pos1, EXTENDER_POSITION_Pos1);
-    }
-    //*********************************************************************************************
-    public boolean isInPos2() {
-        return testInPosition(extenderPosition_CURRENT, EXTENDER_POSITION_Pos2);
-    }
-    //*********************************************************************************************
-    public boolean isInPos3() {
-        return testInPosition(extenderPosition_CURRENT, EXTENDER_POSITION_Pos3);
+        return CommonLogic.inRange(currPos, desiredPos, EXTENDER_POS_TOL);
     }
 
     //*********************************************************************************************
-    public void cmd_MoveToStart() {
-        // only move to start one time... IF we are there, already going there do not restart the command
-        if (extenderStateCurrent != ExtenderStates.COMMANDED_TO_START_POS &&
-                extenderStateCurrent != ExtenderStates.MOVING_TO_START_POS &&
-                extenderStateCurrent != ExtenderStates.AT_START_POS) {
-            extenderStateCurrent = ExtenderStates.COMMANDED_TO_START_POS;
+    // based on a position index... Are we at that position
+    public boolean isInPosition(int index) {
+        boolean retValue = false;
+
+        // given an index then see if we are in that position.
+        if (CommonLogic.indexCheck(index, LOW_INDEX, HIGH_INDEX)) {
+            CurrentTickCount = EXT1.getCurrentPosition();
+            retValue = testInPosition(CurrentTickCount, EXTENDER_POSITIONS_TICKS[index]);
         }
-    }
-    //*********************************************************************************************
-    public void cmd_MoveToPos1() {
-        // only move to POS1 one time... IF we are there, already going there do not restart the command
-        if (extenderStateCurrent != ExtenderStates.COMMANDED_TO_POS1 &&
-                extenderStateCurrent != ExtenderStates.MOVING_TO_POS1 &&
-                extenderStateCurrent != ExtenderStates.AT_POS1) {
-            extenderStateCurrent = ExtenderStates.COMMANDED_TO_POS1;
-        }
-    }
-    //*********************************************************************************************
-    public void cmd_MoveToPos2() {
-        // only move to POS2 one time... IF we are there, already going there do not restart the command
-        if (extenderStateCurrent != ExtenderStates.COMMANDED_TO_POS2 &&
-                extenderStateCurrent != ExtenderStates.MOVING_TO_POS2 &&
-                extenderStateCurrent != ExtenderStates.AT_POS2) {
-            extenderStateCurrent = ExtenderStates.COMMANDED_TO_POS2;
-        }
+        return retValue;
     }
 
     //*********************************************************************************************
-    public void cmd_MoveToPos3() {
-        // only move to POS2 one time... IF we are there, already going there do not restart the command
-        if (extenderStateCurrent != ExtenderStates.COMMANDED_TO_POS3 &&
-                extenderStateCurrent != ExtenderStates.MOVING_TO_POS3 &&
-                extenderStateCurrent != ExtenderStates.AT_POS3) {
-            extenderStateCurrent = ExtenderStates.COMMANDED_TO_POS3;
-        }
-    }
+    // given an index set the motor to move to that position.
+    public void setPosition(int index) {
 
-    //*********************************************************************************************
-    public void cmd_stickControl(double extenderThrottle) {
-
-        if (Math.abs(extenderThrottle) > Math.abs(ExtenderStickDeadBand)) {
-            if (extenderThrottle < 0) {
-                extenderStateCurrent = ExtenderStates.STICK_CONTROL_RETRACT;
+        // verify that we are not stepping outside of the array
+        if (CommonLogic.indexCheck(index, LOW_INDEX, HIGH_INDEX)) {
+            // Make sure that we are not already at the requested position
+            //if (!isInPosition(index)) {
+            // If needed to go Down go slower than Up
+            if (CurrentTickCount > EXTENDER_POSITIONS_TICKS[index]) {
+                EXT1.setPower(LIFTERPOWER_DOWN);
             }
-
-            if (extenderThrottle > 0) {
-                extenderStateCurrent = ExtenderStates.STICK_CONTROL_EXTEND;
+            // If needed to go Up go faster than Down
+            else {
+                EXT1.setPower(LIFTERPOWER_UP);
             }
+            //Set the motor to hold the new position
+            EXT1.setTargetPosition(EXTENDER_POSITIONS_TICKS[index]);
+            //}
         }
     }
+
     //*********************************************************************************************
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-    @Override
+    public void incPositionIndex() {
+        // only inc the position if we are in the current one
+        if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
+            //if (isInPosition(CurrentIndex)) {
+            CurrentIndex++;
+            telemetry.addData("incPositionIndex", CurrentIndex);
+            setPosition(CurrentIndex);
+            //}
+        }
+    }
+
+    //*********************************************************************************************
+    public void decPositionIndex() {
+        // only dec the position if we are in the current one
+        if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
+            //if (isInPosition(CurrentIndex)) {
+            CurrentIndex--;
+            telemetry.addData("decPositionIndex", CurrentIndex);
+            setPosition(CurrentIndex);
+            //}
+        }
+    }
+
+    //*********************************************************************************************
     public void stop() {
-        EXTENDERPOWER_current = 0;
-        EXTENDERPOWER_desired = 0;
-        EXT1.setPower(EXTENDERPOWER_desired);
-    }
-    //*********************************************************************************************
-    public enum ExtenderStates {
-        COMMANDED_TO_START_POS,
-        MOVING_TO_START_POS,
-        AT_START_POS,
-        COMMANDED_TO_POS1,
-        MOVING_TO_POS1,
-        AT_POS1,
-        COMMANDED_TO_POS2,
-        MOVING_TO_POS2,
-        AT_POS2,
-        COMMANDED_TO_POS3,
-        MOVING_TO_POS3,
-        AT_POS3,
-        STICK_CONTROL_RETRACT,
-        STICK_CONTROL_EXTEND,
-        UNKNOWN
+        EXT1.setPower(0);
+        EXT1.setTargetPosition(CurrentTickCount);
     }
 }

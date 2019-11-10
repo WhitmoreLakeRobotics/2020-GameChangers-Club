@@ -190,19 +190,19 @@ public class Tele_Op_test extends OpMode {
         //}
 
         if (CommonLogic.oneShot(gamepad2.a, gp2_prev_a)) {
-            RBTChassis.subExtender.cmd_MoveToStart();
+            RBTChassis.subExtender.setPosition(0);
         }
 
         if (CommonLogic.oneShot(gamepad2.b, gp2_prev_b)) {
-            RBTChassis.subExtender.cmd_MoveToPos1();
+            RBTChassis.subExtender.setPosition(1);
         }
 
         if (CommonLogic.oneShot(gamepad2.x, gp2_prev_x)) {
-            RBTChassis.subExtender.cmd_MoveToPos3();
+            RBTChassis.subExtender.setPosition(2);
         }
 
         if (CommonLogic.oneShot(gamepad2.y, gp2_prev_y)) {
-            RBTChassis.subExtender.cmd_MoveToPos2();
+            RBTChassis.subExtender.setPosition(3);
         }
 
         if (Math.abs(gamepad2.left_stick_y) > Settings.JOYSTICK_DEADBAND_STICK) {
