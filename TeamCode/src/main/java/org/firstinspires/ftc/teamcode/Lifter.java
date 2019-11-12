@@ -228,11 +228,11 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
 
     private int findNextIndexUP(int ticks) {
-        int retValue = 0;
+        int retValue = LOW_INDEX;
 
         for (int i = LOW_INDEX; i < HIGH_INDEX; i++) {
+            retValue = i;
             if (ticks < LIFTER_POSITIONS_TICKS[i] + LIFTERPOS_TOL) {
-                retValue = i;
                 break;
             }
         }
@@ -242,12 +242,13 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
     private int findNextIndexDown(int ticks) {
 
-        int retValue = 0;
+        int retValue = HIGH_INDEX;
         for (int i = HIGH_INDEX; i > LOW_INDEX; i--) {
+            retValue = i;
             if (ticks > (LIFTER_POSITIONS_TICKS[i] - LIFTERPOS_TOL)) {
-                retValue = i;
                 break;
             }
+
         }
         return retValue;
     }
