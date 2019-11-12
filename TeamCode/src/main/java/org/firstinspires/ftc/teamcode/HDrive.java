@@ -125,7 +125,7 @@ public class HDrive extends BaseHardware {
     @Override
     public void loop() {
 
-        telemetry.addData("HdriveMode_Current", HdriveMode_Current);
+        //telemetry.addData("HdriveMode_Current", HdriveMode_Current);
         switch (HdriveMode_Current) {
             case Stop:
                 doStop();

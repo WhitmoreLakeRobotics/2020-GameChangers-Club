@@ -18,7 +18,7 @@ public class Lifter extends BaseHardware {
 
     //Encoder positions for the LIFTER
 
-    public static final int LIFTERPOS_TOL = 48;
+    public static final int LIFTERPOS_TOL = 15;
     public static final double LIFTERPOWER_UP = 1.0;
     public static final double LIFTERPOWER_DOWN = 1.0;
     public static final double LIFTERPOWER_INIT = -.125;
@@ -198,11 +198,9 @@ public class Lifter extends BaseHardware {
     public void incPositionIndex() {
         // only inc the position if we are in the current one
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
-            //if (isInPosition(CurrentIndex)) {
-            CurrentIndex++;
+            CurrentIndex=findNextIndexUP(CurrentTickCount);
             telemetry.addData("incPositionIndex", CurrentIndex);
             setPosition(CurrentIndex);
-            //}
         }
     }
 
@@ -210,17 +208,53 @@ public class Lifter extends BaseHardware {
     public void decPositionIndex() {
         // only dec the position if we are in the current one
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
-            //if (isInPosition(CurrentIndex)) {
-            CurrentIndex--;
+            CurrentIndex=findNextIndexDown(CurrentTickCount);
             telemetry.addData("decPositionIndex", CurrentIndex);
             setPosition(CurrentIndex);
-            //}
         }
     }
 
+    //*********************************************************************************************
+
+    public void stickControl (double throttle){
+        if (throttle < 0){
+            LFT1.setTargetPosition(CurrentTickCount - 2);
+        }
+        else if (throttle > 0 ){
+            LFT1.setTargetPosition(CurrentTickCount + 2);
+        }
+    }
+
+    //*********************************************************************************************
+
+    private int findNextIndexUP(int ticks) {
+        int retValue = 0;
+
+        for (int i = LOW_INDEX; i < HIGH_INDEX; i++) {
+            if (ticks < LIFTER_POSITIONS_TICKS[i] + LIFTERPOS_TOL) {
+                retValue = i;
+                break;
+            }
+        }
+        return retValue;
+    }
+
+    //*********************************************************************************************
+    private int findNextIndexDown(int ticks) {
+
+        int retValue = 0;
+        for (int i = HIGH_INDEX; i > LOW_INDEX; i--) {
+            if (ticks > (LIFTER_POSITIONS_TICKS[i] - LIFTERPOS_TOL)) {
+                retValue = i;
+                break;
+            }
+        }
+        return retValue;
+    }
     //*********************************************************************************************
     public void stop() {
         LFT1.setPower(0);
         LFT1.setTargetPosition(CurrentTickCount);
     }
+    //*********************************************************************************************
 }

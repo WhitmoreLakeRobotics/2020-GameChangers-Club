@@ -151,8 +151,6 @@ public class Chassis extends OpMode {
         telemetry.addData("Chassis", "Initialized");
         ChassisMode_Current = ChassisMode.STOP;
         runtime.reset();
-
-
     }
 
     //*********************************************************************************************

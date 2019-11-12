@@ -83,6 +83,7 @@ public class ExtenderMove2Pos extends BaseHardware {
 
         chassisType_Current = ct;
     }
+
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits PLAY
@@ -124,7 +125,6 @@ public class ExtenderMove2Pos extends BaseHardware {
         CurrentTickCount = EXT1.getCurrentPosition();
         telemetry.addData("Extender-Index", CurrentIndex);
         telemetry.addData("ExtenderPos-Ticks", CurrentTickCount);
-        telemetry.update();
     }
 
     //*********************************************************************************************
@@ -149,6 +149,7 @@ public class ExtenderMove2Pos extends BaseHardware {
 
     //*********************************************************************************************
     // given an index set the motor to move to that position.
+
     public void setPosition(int index) {
 
         // verify that we are not stepping outside of the array
@@ -170,32 +171,69 @@ public class ExtenderMove2Pos extends BaseHardware {
     }
 
     //*********************************************************************************************
+
     public void incPositionIndex() {
         // only inc the position if we are in the current one
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
-            //if (isInPosition(CurrentIndex)) {
-            CurrentIndex++;
+            CurrentIndex = findNextIndexUP(CurrentTickCount);
             telemetry.addData("incPositionIndex", CurrentIndex);
             setPosition(CurrentIndex);
-            //}
         }
     }
 
     //*********************************************************************************************
+
     public void decPositionIndex() {
         // only dec the position if we are in the current one
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
-            //if (isInPosition(CurrentIndex)) {
-            CurrentIndex--;
+            CurrentIndex = findNextIndexDown(CurrentTickCount);
             telemetry.addData("decPositionIndex", CurrentIndex);
             setPosition(CurrentIndex);
-            //}
         }
     }
 
     //*********************************************************************************************
+
+    public void stickControl(double throttle) {
+        if (throttle < 0) {
+            EXT1.setTargetPosition(CurrentTickCount - 2);
+        } else if (throttle > 0) {
+            EXT1.setTargetPosition(CurrentTickCount + 2);
+        }
+    }
+
+    //*********************************************************************************************
+
+    private int findNextIndexUP(int ticks) {
+        int retValue = 0;
+
+        for (int i = LOW_INDEX; i < HIGH_INDEX; i++) {
+            if (ticks < EXTENDER_POSITIONS_TICKS[i] + EXTENDER_POS_TOL) {
+                break;
+            }
+            retValue = i;
+        }
+        return retValue;
+    }
+
+    //*********************************************************************************************
+
+    private int findNextIndexDown(int ticks) {
+
+        int retValue = HIGH_INDEX;
+        for (int i = HIGH_INDEX; i > LOW_INDEX; i--) {
+            if (ticks > (EXTENDER_POSITIONS_TICKS[i] - EXTENDER_POS_TOL)) {
+                break;
+            }
+            retValue = i;
+        }
+        return retValue;
+    }
+    //*********************************************************************************************
+
     public void stop() {
         EXT1.setPower(0);
         EXT1.setTargetPosition(CurrentTickCount);
     }
+    //*********************************************************************************************
 }
