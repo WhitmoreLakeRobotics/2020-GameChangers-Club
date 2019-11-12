@@ -147,15 +147,15 @@ public class Tele_Op_test extends OpMode {
 
         //***********  Grabbers
         if (CommonLogic.oneShot(gamepad1.dpad_right, gp1_prev_dpad_right)) {
-            if (RBTChassis.subGrabbers.getIsUpRight()) {
+            //if (RBTChassis.subGrabbers.getIsUpRight()) {
                 RBTChassis.subGrabbers.cmdMoveDownRight();
-            }
+            //}
         }
 
         if (CommonLogic.oneShot(gamepad1.dpad_up, gp1_prev_dpad_up)) {
-            if (RBTChassis.subGrabbers.getIsDownRight()) {
+           // if (RBTChassis.subGrabbers.getIsDownRight()) {
                 RBTChassis.subGrabbers.cmdMoveUpRight();
-            }
+            //}
         }
 
         if (CommonLogic.oneShot(gamepad1.dpad_left, gp1_prev_dpad_left)) {
@@ -197,13 +197,15 @@ public class Tele_Op_test extends OpMode {
             RBTChassis.subExtender.setPosition(1);
         }
 
-        if (CommonLogic.oneShot(gamepad2.x, gp2_prev_x)) {
-            RBTChassis.subExtender.setPosition(2);
-        }
 
         if (CommonLogic.oneShot(gamepad2.y, gp2_prev_y)) {
+            RBTChassis.subExtender.setPosition(2);
+        }
+        if (CommonLogic.oneShot(gamepad2.x, gp2_prev_x)) {
             RBTChassis.subExtender.setPosition(3);
         }
+
+
 
         if (Math.abs(gamepad2.left_stick_y) > Settings.JOYSTICK_DEADBAND_STICK) {
             //RBTChassis.subLifter.cmd_stickControl(gamepad2.left_stick_y);

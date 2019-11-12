@@ -147,7 +147,7 @@ public class HDrive extends BaseHardware {
                 else {
                     curr_pos = curr_pos + 10;
                     HDM2.setTargetPosition(curr_pos);
-                    telemetry.addData("H-Drive-Ticks", curr_pos);
+                    //telemetry.addData("H-Drive-Ticks", curr_pos);
                 }
                 break;
 

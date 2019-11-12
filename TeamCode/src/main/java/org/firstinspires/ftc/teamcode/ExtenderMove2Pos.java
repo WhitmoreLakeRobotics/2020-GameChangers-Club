@@ -60,9 +60,9 @@ public class ExtenderMove2Pos extends BaseHardware {
         int brickheight = 35;
         int foundationheight = 226;
         EXTENDER_POSITIONS_TICKS[0] = 0;  //start
-        EXTENDER_POSITIONS_TICKS[1] = (int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .33);
-        EXTENDER_POSITIONS_TICKS[2] = (int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .66);
-        EXTENDER_POSITIONS_TICKS[3] = (int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .99);
+        EXTENDER_POSITIONS_TICKS[1] = 204; //(int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .33);
+        EXTENDER_POSITIONS_TICKS[2] = 409; //(int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .66);
+        EXTENDER_POSITIONS_TICKS[3] = 620; //(int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .99);
 
         CurrentTickCount = EXT1.getCurrentPosition();
         EXT1.setTargetPosition(CurrentTickCount);
