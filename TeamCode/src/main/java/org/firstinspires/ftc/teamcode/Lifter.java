@@ -88,25 +88,7 @@ public class Lifter extends BaseHardware {
 
         chassisType_Current = ct;
     }
-    //*********************************************************************************************
 
-    private void initLifterTCH() {
-        // if their is a limit switch for zero on the lifter then zero it.
-
-        if (chassisType_Current == Settings.CHASSIS_TYPE.CHASSIS_COMPETITION) {
-            ElapsedTime runtime = new ElapsedTime();
-            runtime.reset();
-            LFT1.setPower(LIFTERPOWER_INIT);
-            while (LIFTERTCH.getState()) {
-                if (runtime.milliseconds() > 1500) {
-                    break;
-                }
-            }
-            LFT1.setPower(0);
-        }
-        // else do nothing
-
-    }
 
     //*********************************************************************************************
     /*
@@ -149,7 +131,6 @@ public class Lifter extends BaseHardware {
         CurrentTickCount = LFT1.getCurrentPosition();
         telemetry.addData("Lifter-Index", CurrentIndex);
         telemetry.addData("LifterPos-Ticks", CurrentTickCount);
-        //telemetry.update();
     }
 
     //*********************************************************************************************
@@ -174,6 +155,7 @@ public class Lifter extends BaseHardware {
 
     //*********************************************************************************************
     // given an index set the motor to move to that position.
+
     public void setPosition(int index) {
 
         // verify that we are not stepping outside of the array
@@ -190,53 +172,59 @@ public class Lifter extends BaseHardware {
             }
             //Set the motor to hold the new position
             LFT1.setTargetPosition(LIFTER_POSITIONS_TICKS[index]);
-            //}
         }
     }
 
     //*********************************************************************************************
+
     public void incPositionIndex() {
         // only inc the position if we are in the current one
-
-        //CurrentTickCount = LFT1.getCurrentPosition();
         CurrentIndex = findNextIndexUP(CurrentTickCount);
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
-            telemetry.addData("incPositionIndex", CurrentIndex);
-            setPosition(CurrentIndex);
+            if (CommonLogic.inRange(CurrentIndex, LIFTER_POSITIONS_TICKS[CurrentIndex], LIFTERPOS_TOL)) {
+                CurrentIndex++;
+            }
         }
+        setPosition(CurrentIndex);
     }
 
     //*********************************************************************************************
+
     public void decPositionIndex() {
         // only dec the position if we are in the current one
 
-        //CurrentTickCount = LFT1.getCurrentPosition();
         CurrentIndex = findNextIndexDown(CurrentTickCount);
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
-            telemetry.addData("decPositionIndex", CurrentIndex);
-            setPosition(CurrentIndex);
+            if (CommonLogic.inRange(CurrentIndex, LIFTER_POSITIONS_TICKS[CurrentIndex], LIFTERPOS_TOL)) {
+                CurrentIndex--;
+            }
         }
+        setPosition(CurrentIndex);
     }
 
     //*********************************************************************************************
 
     public void stickControl(double throttle) {
+
+
         if (throttle < 0) {
             if ((CurrentTickCount - LIFTER_STEP) > LIFTER_POSITIONS_TICKS[LOW_INDEX]) {
                 CurrentIndex = findNextIndexDown(CurrentTickCount);
-                LFT1.setTargetPosition(CurrentTickCount - 5);
+                LFT1.setTargetPosition(CurrentTickCount - LIFTER_STEP);
             }
         } else if (throttle > 0) {
             if ((CurrentTickCount + LIFTER_STEP) < LIFTER_POSITIONS_TICKS[HIGH_INDEX]) {
                 CurrentIndex = findNextIndexUP(CurrentTickCount);
-                LFT1.setTargetPosition(CurrentTickCount + 5);
+                LFT1.setTargetPosition(CurrentTickCount + LIFTER_STEP);
             }
         }
+
     }
 
     //*********************************************************************************************
 
-    private static int findNextIndexUP(int ticks) {
+    private int findNextIndexUP(int ticks) {
+
         int retValue = LOW_INDEX;
 
         for (int i = LOW_INDEX; i <= HIGH_INDEX; i++) {
@@ -249,7 +237,8 @@ public class Lifter extends BaseHardware {
     }
 
     //*********************************************************************************************
-    private static int findNextIndexDown(int ticks) {
+
+    private int findNextIndexDown(int ticks) {
 
         int retValue = HIGH_INDEX;
         for (int i = HIGH_INDEX; i >= LOW_INDEX; i--) {
@@ -262,6 +251,7 @@ public class Lifter extends BaseHardware {
     }
 
     //*********************************************************************************************
+
     public void stop() {
         LFT1.setPower(0);
         LFT1.setTargetPosition(CurrentTickCount);

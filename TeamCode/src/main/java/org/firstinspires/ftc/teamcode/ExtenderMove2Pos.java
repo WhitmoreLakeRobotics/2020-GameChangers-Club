@@ -17,8 +17,8 @@ public class ExtenderMove2Pos extends BaseHardware {
     private static final String TAGLIFTER = "8492-Extener2Pos";
 
     //Encoder positions for the Extender
-
-    public static final int EXTENDER_POS_TOL = 48;
+    public static final int EXTENDER_STEP = 10;
+    public static final int EXTENDER_POS_TOL = 15;
     public static final double LIFTERPOWER_UP = 1.0;
     public static final double LIFTERPOWER_DOWN = 1.0;
     public static final double LIFTERPOWER_INIT = -.125;
@@ -83,6 +83,7 @@ public class ExtenderMove2Pos extends BaseHardware {
 
         chassisType_Current = ct;
     }
+
 
     //*********************************************************************************************
     /*
@@ -166,7 +167,6 @@ public class ExtenderMove2Pos extends BaseHardware {
             }
             //Set the motor to hold the new position
             EXT1.setTargetPosition(EXTENDER_POSITIONS_TICKS[index]);
-            //}
         }
     }
 
@@ -174,35 +174,43 @@ public class ExtenderMove2Pos extends BaseHardware {
 
     public void incPositionIndex() {
         // only inc the position if we are in the current one
+        CurrentIndex = findNextIndexUP(CurrentTickCount);
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
-            CurrentIndex = findNextIndexUP(CurrentTickCount);
-            telemetry.addData("incPositionIndex", CurrentIndex);
-            setPosition(CurrentIndex);
+            if (CommonLogic.inRange(CurrentIndex, EXTENDER_POSITIONS_TICKS[CurrentIndex], EXTENDER_POS_TOL)) {
+                CurrentIndex++;
+            }
         }
+        setPosition(CurrentIndex);
     }
 
     //*********************************************************************************************
 
     public void decPositionIndex() {
         // only dec the position if we are in the current one
+
+        CurrentIndex = findNextIndexDown(CurrentTickCount);
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
-            CurrentIndex = findNextIndexDown(CurrentTickCount);
-            telemetry.addData("decPositionIndex", CurrentIndex);
-            setPosition(CurrentIndex);
+            if (CommonLogic.inRange(CurrentIndex, EXTENDER_POSITIONS_TICKS[CurrentIndex], EXTENDER_POS_TOL)) {
+                CurrentIndex--;
+            }
         }
+        setPosition(CurrentIndex);
     }
+
     //*********************************************************************************************
 
     public void stickControl(double throttle) {
 
 
         if (throttle < 0) {
-            if (CurrentTickCount > EXTENDER_POSITIONS_TICKS[LOW_INDEX]) {
-                EXT1.setTargetPosition(CurrentTickCount - 5);
+            if ((CurrentTickCount - EXTENDER_STEP) > EXTENDER_POSITIONS_TICKS[LOW_INDEX]) {
+                CurrentIndex = findNextIndexDown(CurrentTickCount);
+                EXT1.setTargetPosition(CurrentTickCount - EXTENDER_STEP);
             }
         } else if (throttle > 0) {
-            if (CurrentTickCount < EXTENDER_POSITIONS_TICKS[HIGH_INDEX]) {
-                EXT1.setTargetPosition(CurrentTickCount + 5);
+            if ((CurrentTickCount + EXTENDER_STEP) < EXTENDER_POSITIONS_TICKS[HIGH_INDEX]) {
+                CurrentIndex = findNextIndexUP(CurrentTickCount);
+                EXT1.setTargetPosition(CurrentTickCount + EXTENDER_STEP);
             }
         }
 
@@ -213,9 +221,10 @@ public class ExtenderMove2Pos extends BaseHardware {
     private int findNextIndexUP(int ticks) {
 
         int retValue = LOW_INDEX;
-        for (int i = LOW_INDEX; i < HIGH_INDEX; i++) {
+
+        for (int i = LOW_INDEX; i <= HIGH_INDEX; i++) {
             retValue = i;
-            if (ticks > EXTENDER_POSITIONS_TICKS[i] + EXTENDER_POS_TOL) {
+            if (ticks > EXTENDER_POSITIONS_TICKS[i] - 1) {
                 break;
             }
         }
@@ -227,14 +236,15 @@ public class ExtenderMove2Pos extends BaseHardware {
     private int findNextIndexDown(int ticks) {
 
         int retValue = HIGH_INDEX;
-        for (int i = HIGH_INDEX; i > LOW_INDEX; i--) {
+        for (int i = HIGH_INDEX; i >= LOW_INDEX; i--) {
             retValue = i;
-            if (ticks > (EXTENDER_POSITIONS_TICKS[i] - EXTENDER_POS_TOL)) {
+            if (ticks > (EXTENDER_POSITIONS_TICKS[i])) {
                 break;
             }
         }
         return retValue;
     }
+
     //*********************************************************************************************
 
     public void stop() {
