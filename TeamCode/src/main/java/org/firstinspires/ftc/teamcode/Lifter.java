@@ -17,7 +17,7 @@ public class Lifter extends BaseHardware {
     private static final String TAGLIFTER = "8492-LIFTER";
 
     //Encoder positions for the LIFTER
-
+    public static final int LIFTER_STEP = 10;
     public static final int LIFTERPOS_TOL = 15;
     public static final double LIFTERPOWER_UP = 1.0;
     public static final double LIFTERPOWER_DOWN = 1.0;
@@ -149,7 +149,7 @@ public class Lifter extends BaseHardware {
         CurrentTickCount = LFT1.getCurrentPosition();
         telemetry.addData("Lifter-Index", CurrentIndex);
         telemetry.addData("LifterPos-Ticks", CurrentTickCount);
-        telemetry.update();
+        //telemetry.update();
     }
 
     //*********************************************************************************************
@@ -197,31 +197,46 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
     public void incPositionIndex() {
         // only inc the position if we are in the current one
+
+        //CurrentTickCount = LFT1.getCurrentPosition();
+        CurrentIndex = findNextIndexUP(CurrentTickCount);
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
-            CurrentIndex=findNextIndexUP(CurrentTickCount);
             telemetry.addData("incPositionIndex", CurrentIndex);
             setPosition(CurrentIndex);
+        }
+        else {
+            int i = CurrentIndex /0;
         }
     }
 
     //*********************************************************************************************
     public void decPositionIndex() {
         // only dec the position if we are in the current one
+
+        //CurrentTickCount = LFT1.getCurrentPosition();
+        CurrentIndex = findNextIndexDown(CurrentTickCount);
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
-            CurrentIndex=findNextIndexDown(CurrentTickCount);
             telemetry.addData("decPositionIndex", CurrentIndex);
             setPosition(CurrentIndex);
+        }
+        else {
+            int i = CurrentIndex /0;
         }
     }
 
     //*********************************************************************************************
 
-    public void stickControl (double throttle){
-        if (throttle < 0){
-            LFT1.setTargetPosition(CurrentTickCount - 2);
-        }
-        else if (throttle > 0 ){
-            LFT1.setTargetPosition(CurrentTickCount + 2);
+    public void stickControl(double throttle) {
+        if (throttle < 0) {
+            if ((CurrentTickCount - LIFTER_STEP) > LIFTER_POSITIONS_TICKS[LOW_INDEX]) {
+                CurrentIndex = findNextIndexDown(CurrentTickCount);
+                LFT1.setTargetPosition(CurrentTickCount - 5);
+            }
+        } else if (throttle > 0) {
+            if ((CurrentTickCount + LIFTER_STEP) < LIFTER_POSITIONS_TICKS[HIGH_INDEX]) {
+                CurrentIndex = findNextIndexUP(CurrentTickCount);
+                LFT1.setTargetPosition(CurrentTickCount + 5);
+            }
         }
     }
 
@@ -252,6 +267,7 @@ public class Lifter extends BaseHardware {
         }
         return retValue;
     }
+
     //*********************************************************************************************
     public void stop() {
         LFT1.setPower(0);

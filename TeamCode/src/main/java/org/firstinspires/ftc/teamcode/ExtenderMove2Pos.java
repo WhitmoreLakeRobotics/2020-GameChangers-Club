@@ -194,11 +194,18 @@ public class ExtenderMove2Pos extends BaseHardware {
     //*********************************************************************************************
 
     public void stickControl(double throttle) {
+
+
         if (throttle < 0) {
-            EXT1.setTargetPosition(CurrentTickCount - 2);
+            if (CurrentTickCount > EXTENDER_POSITIONS_TICKS[LOW_INDEX]) {
+                EXT1.setTargetPosition(CurrentTickCount - 5);
+            }
         } else if (throttle > 0) {
-            EXT1.setTargetPosition(CurrentTickCount + 2);
+            if (CurrentTickCount < EXTENDER_POSITIONS_TICKS[HIGH_INDEX]) {
+                EXT1.setTargetPosition(CurrentTickCount + 5);
+            }
         }
+
     }
 
     //*********************************************************************************************
@@ -208,7 +215,7 @@ public class ExtenderMove2Pos extends BaseHardware {
         int retValue = LOW_INDEX;
         for (int i = LOW_INDEX; i < HIGH_INDEX; i++) {
             retValue = i;
-            if (ticks < EXTENDER_POSITIONS_TICKS[i] + EXTENDER_POS_TOL) {
+            if (ticks > EXTENDER_POSITIONS_TICKS[i] + EXTENDER_POS_TOL) {
                 break;
             }
         }

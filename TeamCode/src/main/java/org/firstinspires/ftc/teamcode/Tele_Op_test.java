@@ -186,7 +186,7 @@ public class Tele_Op_test extends OpMode {
         }
 
         if (Math.abs(gamepad2.right_stick_y) > Settings.JOYSTICK_DEADBAND_STICK) {
-            RBTChassis.subExtender.stickControl(gamepad2.right_stick_y);
+            RBTChassis.subExtender.stickControl(-gamepad2.right_stick_y);
         }
 
         if (CommonLogic.oneShot(gamepad2.a, gp2_prev_a)) {
@@ -206,7 +206,7 @@ public class Tele_Op_test extends OpMode {
         }
 
         if (Math.abs(gamepad2.left_stick_y) > Settings.JOYSTICK_DEADBAND_STICK) {
-            RBTChassis.subLifter.stickControl(gamepad2.left_stick_y);
+            RBTChassis.subLifter.stickControl(-gamepad2.left_stick_y);
         }
 
         if (CommonLogic.oneShot(gamepad2.dpad_up, gp2_prev_dpad_up)) {
