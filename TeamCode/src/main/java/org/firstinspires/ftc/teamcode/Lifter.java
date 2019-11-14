@@ -178,9 +178,11 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
 
     public void incPositionIndex() {
-        // only inc the position if we are in the current one
+        //The user might have been using stick control reset the index
         CurrentIndex = findNextIndexUP(CurrentTickCount);
+		//Make sure that we still have a valid index
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
+			//If we are in range then dec the index... Else we will move to the current index position
             if (CommonLogic.inRange(CurrentIndex, LIFTER_POSITIONS_TICKS[CurrentIndex], LIFTERPOS_TOL)) {
                 CurrentIndex++;
             }
@@ -191,10 +193,11 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
 
     public void decPositionIndex() {
-        // only dec the position if we are in the current one
-
+		//The user might have been using stick control reset the index
         CurrentIndex = findNextIndexDown(CurrentTickCount);
+	    //Make sure that we still have a valid index
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
+			//If we are in range then dec the index... Else we will move to the current index position
             if (CommonLogic.inRange(CurrentIndex, LIFTER_POSITIONS_TICKS[CurrentIndex], LIFTERPOS_TOL)) {
                 CurrentIndex--;
             }
@@ -209,11 +212,13 @@ public class Lifter extends BaseHardware {
 
         if (throttle < 0) {
             if ((CurrentTickCount - LIFTER_STEP) > LIFTER_POSITIONS_TICKS[LOW_INDEX]) {
+				// update the index so that it displays correctly
                 CurrentIndex = findNextIndexDown(CurrentTickCount);
                 LFT1.setTargetPosition(CurrentTickCount - LIFTER_STEP);
             }
         } else if (throttle > 0) {
             if ((CurrentTickCount + LIFTER_STEP) < LIFTER_POSITIONS_TICKS[HIGH_INDEX]) {
+				// update the index so that it displays correctly
                 CurrentIndex = findNextIndexUP(CurrentTickCount);
                 LFT1.setTargetPosition(CurrentTickCount + LIFTER_STEP);
             }
@@ -222,14 +227,17 @@ public class Lifter extends BaseHardware {
     }
 
     //*********************************************************************************************
-
+    // With the advent of stick control this means the Lifter can be anywhere long its entire range
+    // of positions.   This function searches the known positions and sets the index value to the
+    // closest one going UP.
     private int findNextIndexUP(int ticks) {
 
         int retValue = LOW_INDEX;
-
         for (int i = LOW_INDEX; i <= HIGH_INDEX; i++) {
             retValue = i;
-            if (ticks <= (LIFTER_POSITIONS_TICKS[i] - 1)) {
+            if (CommonLogic.inRange(ticks, LIFTER_POSITIONS_TICKS[i], LIFTERPOS_TOL)) {
+                break;
+            } else if (ticks <= (LIFTER_POSITIONS_TICKS[i] - 1)) {
                 break;
             }
         }
@@ -237,13 +245,17 @@ public class Lifter extends BaseHardware {
     }
 
     //*********************************************************************************************
-
+    // With the advent of stick control this means the Lifter can be anywhere long its entire range
+    // of positions.   This function searches the known positions and sets the index value to the
+    // closest one going Down.
     private int findNextIndexDown(int ticks) {
 
         int retValue = HIGH_INDEX;
         for (int i = HIGH_INDEX; i >= LOW_INDEX; i--) {
             retValue = i;
-            if (ticks >= (LIFTER_POSITIONS_TICKS[i])) {
+            if (CommonLogic.inRange(ticks, LIFTER_POSITIONS_TICKS[i], LIFTERPOS_TOL)) {
+                break;
+            } else if (ticks >= (LIFTER_POSITIONS_TICKS[i])) {
                 break;
             }
         }

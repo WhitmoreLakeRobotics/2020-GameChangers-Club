@@ -173,9 +173,11 @@ public class ExtenderMove2Pos extends BaseHardware {
     //*********************************************************************************************
 
     public void incPositionIndex() {
-        // only inc the position if we are in the current one
+        //The user might have been using stick control reset the index
         CurrentIndex = findNextIndexUP(CurrentTickCount);
+        //Make sure that we still have a valid index
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
+            //If we are in range then dec the index... Else we will move to the current index position
             if (CommonLogic.inRange(CurrentIndex, EXTENDER_POSITIONS_TICKS[CurrentIndex], EXTENDER_POS_TOL)) {
                 CurrentIndex++;
             }
@@ -186,10 +188,11 @@ public class ExtenderMove2Pos extends BaseHardware {
     //*********************************************************************************************
 
     public void decPositionIndex() {
-        // only dec the position if we are in the current one
-
+        //The user might have been using stick control reset the index
         CurrentIndex = findNextIndexDown(CurrentTickCount);
+        //Make sure that we still have a valid index
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
+            //If we are in range then dec the index... Else we will move to the current index position
             if (CommonLogic.inRange(CurrentIndex, EXTENDER_POSITIONS_TICKS[CurrentIndex], EXTENDER_POS_TOL)) {
                 CurrentIndex--;
             }
@@ -204,11 +207,13 @@ public class ExtenderMove2Pos extends BaseHardware {
 
         if (throttle < 0) {
             if ((CurrentTickCount - EXTENDER_STEP) > EXTENDER_POSITIONS_TICKS[LOW_INDEX]) {
+                // update the index so that it displays correctly
                 CurrentIndex = findNextIndexDown(CurrentTickCount);
                 EXT1.setTargetPosition(CurrentTickCount - EXTENDER_STEP);
             }
         } else if (throttle > 0) {
             if ((CurrentTickCount + EXTENDER_STEP) < EXTENDER_POSITIONS_TICKS[HIGH_INDEX]) {
+                // update the index so that it displays correctly
                 CurrentIndex = findNextIndexUP(CurrentTickCount);
                 EXT1.setTargetPosition(CurrentTickCount + EXTENDER_STEP);
             }
@@ -217,14 +222,17 @@ public class ExtenderMove2Pos extends BaseHardware {
     }
 
     //*********************************************************************************************
-
+    // With the advent of stick control this means the Extender can be anywhere long its entire range
+    // of positions.   This function searches the known positions and sets the index value to the
+    // closest one going Up.
     private int findNextIndexUP(int ticks) {
 
         int retValue = LOW_INDEX;
-
         for (int i = LOW_INDEX; i <= HIGH_INDEX; i++) {
             retValue = i;
-            if (ticks <= EXTENDER_POSITIONS_TICKS[i] - 1) {
+            if (CommonLogic.inRange(ticks, EXTENDER_POSITIONS_TICKS[i], EXTENDER_POS_TOL)) {
+                break;
+            } else if (ticks <= EXTENDER_POSITIONS_TICKS[i] - 1) {
                 break;
             }
         }
@@ -232,13 +240,17 @@ public class ExtenderMove2Pos extends BaseHardware {
     }
 
     //*********************************************************************************************
-
+    // With the advent of stick control this means the Extender can be anywhere long its entire range
+    // of positions.   This function searches the known positions and sets the index value to the
+    // closest one going Up.
     private int findNextIndexDown(int ticks) {
 
         int retValue = HIGH_INDEX;
         for (int i = HIGH_INDEX; i >= LOW_INDEX; i--) {
             retValue = i;
-            if (ticks >= (EXTENDER_POSITIONS_TICKS[i])) {
+            if (CommonLogic.inRange(ticks, EXTENDER_POSITIONS_TICKS[i], EXTENDER_POS_TOL)) {
+                break;
+            } else if (ticks >= (EXTENDER_POSITIONS_TICKS[i])) {
                 break;
             }
         }
