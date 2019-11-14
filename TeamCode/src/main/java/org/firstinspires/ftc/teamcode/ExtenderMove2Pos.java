@@ -224,7 +224,7 @@ public class ExtenderMove2Pos extends BaseHardware {
 
         for (int i = LOW_INDEX; i <= HIGH_INDEX; i++) {
             retValue = i;
-            if (ticks > EXTENDER_POSITIONS_TICKS[i] - 1) {
+            if (ticks <= EXTENDER_POSITIONS_TICKS[i] - 1) {
                 break;
             }
         }
@@ -238,7 +238,7 @@ public class ExtenderMove2Pos extends BaseHardware {
         int retValue = HIGH_INDEX;
         for (int i = HIGH_INDEX; i >= LOW_INDEX; i--) {
             retValue = i;
-            if (ticks > (EXTENDER_POSITIONS_TICKS[i])) {
+            if (ticks >= (EXTENDER_POSITIONS_TICKS[i])) {
                 break;
             }
         }
