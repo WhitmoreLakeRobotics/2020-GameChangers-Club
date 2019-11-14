@@ -204,9 +204,6 @@ public class Lifter extends BaseHardware {
             telemetry.addData("incPositionIndex", CurrentIndex);
             setPosition(CurrentIndex);
         }
-        else {
-            int i = CurrentIndex /0;
-        }
     }
 
     //*********************************************************************************************
@@ -218,9 +215,6 @@ public class Lifter extends BaseHardware {
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
             telemetry.addData("decPositionIndex", CurrentIndex);
             setPosition(CurrentIndex);
-        }
-        else {
-            int i = CurrentIndex /0;
         }
     }
 
@@ -242,12 +236,12 @@ public class Lifter extends BaseHardware {
 
     //*********************************************************************************************
 
-    private int findNextIndexUP(int ticks) {
+    private static int findNextIndexUP(int ticks) {
         int retValue = LOW_INDEX;
 
-        for (int i = LOW_INDEX; i < HIGH_INDEX; i++) {
+        for (int i = LOW_INDEX; i <= HIGH_INDEX; i++) {
             retValue = i;
-            if (ticks < LIFTER_POSITIONS_TICKS[i] + LIFTERPOS_TOL) {
+            if (ticks <= (LIFTER_POSITIONS_TICKS[i] - 1)) {
                 break;
             }
         }
@@ -255,15 +249,14 @@ public class Lifter extends BaseHardware {
     }
 
     //*********************************************************************************************
-    private int findNextIndexDown(int ticks) {
+    private static int findNextIndexDown(int ticks) {
 
         int retValue = HIGH_INDEX;
-        for (int i = HIGH_INDEX; i > LOW_INDEX; i--) {
+        for (int i = HIGH_INDEX; i >= LOW_INDEX; i--) {
             retValue = i;
-            if (ticks > (LIFTER_POSITIONS_TICKS[i] - LIFTERPOS_TOL)) {
+            if (ticks >= (LIFTER_POSITIONS_TICKS[i])) {
                 break;
             }
-
         }
         return retValue;
     }
