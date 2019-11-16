@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 
 @TeleOp(name = "Tele_Op_Test", group = "TeleOp")
-//@Disabled
+@Disabled
 public class Tele_Op_test extends OpMode {
     private static final String TAGTeleop = "8492-Tele_Op_test";
     Chassis_Test RBTChassis = new Chassis_Test();
