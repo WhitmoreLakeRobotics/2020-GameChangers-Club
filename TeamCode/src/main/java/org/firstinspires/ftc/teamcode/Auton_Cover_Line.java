@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name = "Blue_Foundation", group = "Auton")
+@Autonomous(name = "Cover_Line", group = "Auton")
 // @Autonomous(...) is the other common choice
 
 public class Auton_Cover_Line extends OpMode {

@@ -134,7 +134,7 @@ public class Auton_Red_Foundation extends OpMode {
 
         if (currentStage == stage._50_Shuttle_2_Line) {
             if (RBTChassis.subPushers.getIsUp()) {
-                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 30);
+                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 30);
                 currentStage = stage._60_Finish;
             }
         }
