@@ -17,7 +17,7 @@ public class ExtenderMove2Pos extends BaseHardware {
     private static final String TAGLIFTER = "8492-Extener2Pos";
 
     //Encoder positions for the Extender
-    public static final int EXTENDER_STEP = 10;
+    public static final int EXTENDER_STEP = 25;
     public static final int EXTENDER_POS_TOL = 15;
     public static final double LIFTERPOWER_UP = 1.0;
     public static final double LIFTERPOWER_DOWN = 1.0;
@@ -61,8 +61,8 @@ public class ExtenderMove2Pos extends BaseHardware {
         int foundationheight = 226;
         EXTENDER_POSITIONS_TICKS[0] = 0;  //start
         EXTENDER_POSITIONS_TICKS[1] = 204; //(int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .33);
-        EXTENDER_POSITIONS_TICKS[2] = 409; //(int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .66);
-        EXTENDER_POSITIONS_TICKS[3] = 620; //(int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .99);
+        EXTENDER_POSITIONS_TICKS[2] = 350; //(int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .66);
+        EXTENDER_POSITIONS_TICKS[3] = 600; //(int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .99);
 
         CurrentTickCount = EXT1.getCurrentPosition();
         EXT1.setTargetPosition(CurrentTickCount);

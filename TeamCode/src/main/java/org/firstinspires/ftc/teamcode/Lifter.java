@@ -17,7 +17,7 @@ public class Lifter extends BaseHardware {
     private static final String TAGLIFTER = "8492-LIFTER";
 
     //Encoder positions for the LIFTER
-    public static final int LIFTER_STEP = 10;
+    public static final int LIFTER_STEP = 40;
     public static final int LIFTERPOS_TOL = 15;
     public static final double LIFTERPOWER_UP = 1.0;
     public static final double LIFTERPOWER_DOWN = 1.0;
@@ -57,17 +57,17 @@ public class Lifter extends BaseHardware {
         //do not know what digital channel is check here for errors ******
         LIFTERTCH = hardwareMap.get(DigitalChannel.class, "lifterTCH");
         LIFTERTCH.setMode(DigitalChannel.Mode.INPUT);
-        int brickheight = 350;
+        int brickheight = 355;
         int foundationheight = 226;
-        LIFTER_POSITIONS_TICKS[0] = 0;  //start
+        LIFTER_POSITIONS_TICKS[0] = 0;  //start pick
         LIFTER_POSITIONS_TICKS[1] = 50;  //carry
         LIFTER_POSITIONS_TICKS[2] = foundationheight; //level 1
         LIFTER_POSITIONS_TICKS[3] = foundationheight + (1 * brickheight);  //level 2
         LIFTER_POSITIONS_TICKS[4] = foundationheight + (2 * brickheight); //level 3
         LIFTER_POSITIONS_TICKS[5] = foundationheight + (3 * brickheight);
         ;  //level 4
-        LIFTER_POSITIONS_TICKS[6] = foundationheight + (3 * brickheight);  //level 5
-        LIFTER_POSITIONS_TICKS[7] = foundationheight + (3 * brickheight);  //level 6
+        LIFTER_POSITIONS_TICKS[6] = foundationheight + (4 * brickheight);  //level 5
+        LIFTER_POSITIONS_TICKS[7] = foundationheight + (5 * brickheight);  //level 6
 
         CurrentTickCount = LFT1.getCurrentPosition();
         LFT1.setTargetPosition(CurrentTickCount);
@@ -183,9 +183,9 @@ public class Lifter extends BaseHardware {
 		//Make sure that we still have a valid index
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
 			//If we are in range then dec the index... Else we will move to the current index position
-            if (CommonLogic.inRange(CurrentIndex, LIFTER_POSITIONS_TICKS[CurrentIndex], LIFTERPOS_TOL)) {
+            //if (CommonLogic.inRange(CurrentIndex, LIFTER_POSITIONS_TICKS[CurrentIndex], LIFTERPOS_TOL)) {
                 CurrentIndex++;
-            }
+            //}
         }
         setPosition(CurrentIndex);
     }
@@ -198,9 +198,9 @@ public class Lifter extends BaseHardware {
 	    //Make sure that we still have a valid index
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
 			//If we are in range then dec the index... Else we will move to the current index position
-            if (CommonLogic.inRange(CurrentIndex, LIFTER_POSITIONS_TICKS[CurrentIndex], LIFTERPOS_TOL)) {
+            //if (CommonLogic.inRange(CurrentIndex, LIFTER_POSITIONS_TICKS[CurrentIndex], LIFTERPOS_TOL)) {
                 CurrentIndex--;
-            }
+            //}
         }
         setPosition(CurrentIndex);
     }
