@@ -200,7 +200,7 @@ public class HDrive extends BaseHardware {
     public void doStop() {
 
         RobotLog.aa(TAGHDrive, "doStop:");
-        if (HdriveMode_Current == HDriveMode.Stop) {
+        //if (HdriveMode_Current == HDriveMode.Stop) {
             TargetDistanceInchesH = 0;
             TargetMotorPowerH = 0;
 
@@ -212,7 +212,7 @@ public class HDrive extends BaseHardware {
             PrevMotorPowerH = TargetMotorPowerH;
             HdriveMode_Current = HDriveMode.Idle;
 
-        }
+        //}
     }
 
     //*********************************************************************************************

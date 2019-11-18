@@ -14,9 +14,11 @@ public class Auton_Blue_Foundation extends OpMode {
     private static enum stage {
         _unknown,
         _00_preStart,
+        _05_Shuttle_2_Center,
         _10_Drive_Out,
         _20_Pushers_Down,
         _30_Drive_Back,
+        _35_Stuff_it,
         _40_Pushers_Up,
         _50_Shuttle_2_Line,
         _60_Finish
@@ -101,12 +103,19 @@ public class Auton_Blue_Foundation extends OpMode {
         }
 
         if (currentStage == stage._00_preStart) {
+            currentStage = stage._05_Shuttle_2_Center;
+        }
+
+        if (currentStage == stage._05_Shuttle_2_Center) {
+            RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 12);
             currentStage = stage._10_Drive_Out;
         }
 
         if (currentStage == stage._10_Drive_Out) {
-            RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 30);
-            currentStage = stage._20_Pushers_Down;
+            if (RBTChassis.subHDrive.getcmdComplete()) {
+                RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 22);
+                currentStage = stage._20_Pushers_Down;
+            }
         }
 
         if (currentStage == stage._20_Pushers_Down) {
@@ -119,7 +128,16 @@ public class Auton_Blue_Foundation extends OpMode {
 
         if (currentStage == stage._30_Drive_Back) {
             if (RBTChassis.subPushers.getIsDown()) {
-                RBTChassis.cmdDrive(-AUTO_DRIVEPower, 0, 30);
+                RBTChassis.cmdDrive(-AUTO_DRIVEPower, 0, 22);
+                currentStage = stage._40_Pushers_Up;
+            }
+        }
+
+
+
+        if (currentStage == stage._35_Stuff_it) {
+            if (RBTChassis.getcmdComplete()) {
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 15);
                 currentStage = stage._40_Pushers_Up;
             }
         }
@@ -134,13 +152,13 @@ public class Auton_Blue_Foundation extends OpMode {
 
         if (currentStage == stage._50_Shuttle_2_Line) {
             if (RBTChassis.subPushers.getIsUp()) {
-                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 30);
+                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 39);
                 currentStage = stage._60_Finish;
             }
         }
 
-        if (currentStage == stage._60_Finish){
-            if (RBTChassis.subHDrive.getcmdComplete()){
+        if (currentStage == stage._60_Finish) {
+            if (RBTChassis.subHDrive.getcmdComplete()) {
                 RBTChassis.stop();
             }
         }

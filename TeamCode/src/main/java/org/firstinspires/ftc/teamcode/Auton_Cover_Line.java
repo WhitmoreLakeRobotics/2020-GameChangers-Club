@@ -71,7 +71,7 @@ public class Auton_Cover_Line extends OpMode {
     @Override
     public void start() {
         // initialize chassis
-        Runtime.getRuntime();
+        runtime.reset();
         RBTChassis.start();
         //RBTChassis.setMotorMode_RUN_WITHOUT_ENCODER();
 
@@ -96,17 +96,22 @@ public class Auton_Cover_Line extends OpMode {
             currentStage = stage._00_preStart;
         }
 
+        // delay until covering the line
+        if (runtime.seconds() < 22){
+            return;
+        }
+
         if (currentStage == stage._00_preStart) {
             currentStage = stage._10_Drive_Out;
         }
 
         if (currentStage == stage._10_Drive_Out) {
-            RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 9);
+            RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 12);
             currentStage = stage._20_Finish;
         }
 
         if (currentStage == stage._20_Finish){
-            if (RBTChassis.subHDrive.getcmdComplete()){
+            if (RBTChassis.getcmdComplete()){
                 RBTChassis.stop();
             }
         }
