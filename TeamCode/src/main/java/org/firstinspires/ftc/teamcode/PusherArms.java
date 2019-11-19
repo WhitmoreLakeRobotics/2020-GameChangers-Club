@@ -59,6 +59,9 @@ public class PusherArms extends BaseHardware {
      */
     @Override
     public void start() {
+        ArmLeft.servoArmMoveTime_mS = 650;
+        ArmRight.servoArmMoveTime_mS = 650;
+
         ArmLeft.start();
         ArmRight.start();
     }

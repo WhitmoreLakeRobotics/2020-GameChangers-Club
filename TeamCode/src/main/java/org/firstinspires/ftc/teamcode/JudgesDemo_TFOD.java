@@ -23,7 +23,7 @@ import java.util.List;
  * is explained below.
  */
 @TeleOp(name = "Judges-TFOD-Demo", group = "TeleOp")
-@Disabled
+//@Disabled
 public class JudgesDemo_TFOD extends LinearOpMode {
     private static final String TAGMineralVision = "8492-ConceptTFOD";
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
