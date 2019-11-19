@@ -26,15 +26,23 @@ public class Lifter extends BaseHardware {
 
     private Settings.CHASSIS_TYPE chassisType_Current = Settings.CHASSIS_TYPE.CHASSIS_COMPETITION;
 
+    //Named index positions
+    public static int PICK_POS = 0;
+    public static int CARRY_POS = 1;
+    public static int PRE_PICK_POS = 2;
+
     private static int LOW_INDEX = 0;
-    private static int HIGH_INDEX = 7;
+    private static int HIGH_INDEX = 8;
     private static int[] LIFTER_POSITIONS_TICKS = new int[HIGH_INDEX + 1];
     private int CurrentIndex = LOW_INDEX;
     private int CurrentTickCount = 0;
 
+
     // declare motors
     private DcMotor LFT1 = null;
     private DigitalChannel LIFTERTCH = null;
+
+    public boolean underLEGControl = false;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -61,13 +69,14 @@ public class Lifter extends BaseHardware {
         int foundationheight = 226;
         LIFTER_POSITIONS_TICKS[0] = 0;  //start pick
         LIFTER_POSITIONS_TICKS[1] = 50;  //carry
-        LIFTER_POSITIONS_TICKS[2] = foundationheight; //level 1
-        LIFTER_POSITIONS_TICKS[3] = foundationheight + (1 * brickheight);  //level 2
-        LIFTER_POSITIONS_TICKS[4] = foundationheight + (2 * brickheight); //level 3
-        LIFTER_POSITIONS_TICKS[5] = foundationheight + (3 * brickheight);
+        LIFTER_POSITIONS_TICKS[2] = 100;  // Pre-Pick location
+        LIFTER_POSITIONS_TICKS[3] = foundationheight; //level 1
+        LIFTER_POSITIONS_TICKS[4] = foundationheight + (1 * brickheight);  //level 2
+        LIFTER_POSITIONS_TICKS[5] = foundationheight + (2 * brickheight); //level 3
+        LIFTER_POSITIONS_TICKS[6] = foundationheight + (3 * brickheight);
         ;  //level 4
-        LIFTER_POSITIONS_TICKS[6] = foundationheight + (4 * brickheight);  //level 5
-        LIFTER_POSITIONS_TICKS[7] = foundationheight + (5 * brickheight);  //level 6
+        LIFTER_POSITIONS_TICKS[7] = foundationheight + (4 * brickheight);  //level 5
+        LIFTER_POSITIONS_TICKS[8] = foundationheight + (5 * brickheight);  //level 6
 
         CurrentTickCount = LFT1.getCurrentPosition();
         LFT1.setTargetPosition(CurrentTickCount);
@@ -180,11 +189,11 @@ public class Lifter extends BaseHardware {
     public void incPositionIndex() {
         //The user might have been using stick control reset the index
         CurrentIndex = findNextIndexUP(CurrentTickCount);
-		//Make sure that we still have a valid index
+        //Make sure that we still have a valid index
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
-			//If we are in range then dec the index... Else we will move to the current index position
+            //If we are in range then dec the index... Else we will move to the current index position
             //if (CommonLogic.inRange(CurrentIndex, LIFTER_POSITIONS_TICKS[CurrentIndex], LIFTERPOS_TOL)) {
-                CurrentIndex++;
+            CurrentIndex++;
             //}
         }
         setPosition(CurrentIndex);
@@ -193,13 +202,13 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
 
     public void decPositionIndex() {
-		//The user might have been using stick control reset the index
+        //The user might have been using stick control reset the index
         CurrentIndex = findNextIndexDown(CurrentTickCount);
-	    //Make sure that we still have a valid index
+        //Make sure that we still have a valid index
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
-			//If we are in range then dec the index... Else we will move to the current index position
+            //If we are in range then dec the index... Else we will move to the current index position
             //if (CommonLogic.inRange(CurrentIndex, LIFTER_POSITIONS_TICKS[CurrentIndex], LIFTERPOS_TOL)) {
-                CurrentIndex--;
+            CurrentIndex--;
             //}
         }
         setPosition(CurrentIndex);
@@ -212,13 +221,13 @@ public class Lifter extends BaseHardware {
 
         if (throttle < 0) {
             if ((CurrentTickCount - LIFTER_STEP) > LIFTER_POSITIONS_TICKS[LOW_INDEX]) {
-				// update the index so that it displays correctly
+                // update the index so that it displays correctly
                 CurrentIndex = findNextIndexDown(CurrentTickCount);
                 LFT1.setTargetPosition(CurrentTickCount - LIFTER_STEP);
             }
         } else if (throttle > 0) {
             if ((CurrentTickCount + LIFTER_STEP) < LIFTER_POSITIONS_TICKS[HIGH_INDEX]) {
-				// update the index so that it displays correctly
+                // update the index so that it displays correctly
                 CurrentIndex = findNextIndexUP(CurrentTickCount);
                 LFT1.setTargetPosition(CurrentTickCount + LIFTER_STEP);
             }
@@ -262,6 +271,32 @@ public class Lifter extends BaseHardware {
         return retValue;
     }
 
+
+    //
+    public int getIndexTics(int index) {
+
+        if (CommonLogic.indexCheck(index, LOW_INDEX, HIGH_INDEX)) {
+            return LIFTER_POSITIONS_TICKS[index];
+        } else if (index < LOW_INDEX) {
+            return LIFTER_POSITIONS_TICKS[LOW_INDEX];
+        }else {
+            return LIFTER_POSITIONS_TICKS[HIGH_INDEX];
+        }
+
+    }
+    //*********************************************************************************************
+
+    public int getPosTics() {
+        return CurrentTickCount;
+    }
+
+    //*********************************************************************************************
+    public void setPosTics(int tics) {
+        if ((tics >= LIFTER_POSITIONS_TICKS[0]) && (tics <= LIFTER_POSITIONS_TICKS[HIGH_INDEX])) {
+            LFT1.setTargetPosition(tics);
+        }
+
+    }
     //*********************************************************************************************
 
     public void stop() {
@@ -269,4 +304,6 @@ public class Lifter extends BaseHardware {
         LFT1.setTargetPosition(CurrentTickCount);
     }
     //*********************************************************************************************
+
+
 }

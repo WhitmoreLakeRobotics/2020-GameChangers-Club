@@ -30,6 +30,7 @@ public class Gripper extends BaseHardware {
     private double gripperSvoPos_open = 0.0;
     private double gripperSvoPos_close = 0.9;
     private double gripperSvoPos_start = gripperSvoPos_open;
+    public boolean underLEGControl = false;
 
 
     @Override

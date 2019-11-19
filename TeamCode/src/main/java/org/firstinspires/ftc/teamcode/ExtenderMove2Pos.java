@@ -35,6 +35,7 @@ public class ExtenderMove2Pos extends BaseHardware {
     // declare motors
     private DcMotor EXT1 = null;
     private DigitalChannel extenderTCH = null;
+    public boolean underLEGControl = false;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -67,6 +68,7 @@ public class ExtenderMove2Pos extends BaseHardware {
         CurrentTickCount = EXT1.getCurrentPosition();
         EXT1.setTargetPosition(CurrentTickCount);
         EXT1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
     //*********************************************************************************************
