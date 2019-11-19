@@ -33,7 +33,8 @@ public class ServoArm extends BaseHardware {
     private SERVO_ARM_STATES servoArmState_current = SERVO_ARM_STATES.UNKNOWN;
 
     private ElapsedTime ScannerArmTimer = null;
-    private int servoArmMoveTime = 1000;
+    public int servoArmMoveTime_mS = 1000;
+
 
     // Define the hardware
     private Servo grabSvo = null;
@@ -100,7 +101,7 @@ public class ServoArm extends BaseHardware {
             // We are now moving... We will be in this state for a while based on time
             // When the time is up we are considered to be in position.
             case MOVING_START: {
-                if (ScannerArmTimer.milliseconds() > servoArmMoveTime) {
+                if (ScannerArmTimer.milliseconds() > servoArmMoveTime_mS) {
                     servoArmState_current = SERVO_ARM_STATES.START;
                 }
                 break;
@@ -124,7 +125,7 @@ public class ServoArm extends BaseHardware {
             // We are now moving... We will be in this state for a while based on time
             // When the time is up we are considered to be in position.
             case MOVING_UP: {
-                if (ScannerArmTimer.milliseconds() > servoArmMoveTime) {
+                if (ScannerArmTimer.milliseconds() > servoArmMoveTime_mS) {
                     servoArmState_current = SERVO_ARM_STATES.UP;
                     ScannerArmTimer.reset();
                 }
@@ -149,7 +150,7 @@ public class ServoArm extends BaseHardware {
             // We are now moving... We will be in this state for a while based on time
             // When the time is up we are considered to be in position.
             case MOVING_DOWN: {
-                if (ScannerArmTimer.milliseconds() > servoArmMoveTime) {
+                if (ScannerArmTimer.milliseconds() > servoArmMoveTime_mS) {
                     servoArmState_current = SERVO_ARM_STATES.DOWN;
                 }
                 break;
