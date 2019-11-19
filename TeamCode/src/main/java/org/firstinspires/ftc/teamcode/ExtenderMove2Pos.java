@@ -26,8 +26,17 @@ public class ExtenderMove2Pos extends BaseHardware {
 
     private Settings.CHASSIS_TYPE chassisType_Current = Settings.CHASSIS_TYPE.CHASSIS_COMPETITION;
 
+
+    public static int IN = 0;
+    public static int PICK =1;
+    public static int PLACE_1=2;
+    public static int PLACE_2=3;
+    public static int PLACE_3=4;
+    public static int OUT=5;
+
+
     private static int LOW_INDEX = 0;
-    private static int HIGH_INDEX = 3;
+    private static int HIGH_INDEX = 5;
     private static int[] EXTENDER_POSITIONS_TICKS = new int[HIGH_INDEX + 1];
     private int CurrentIndex = LOW_INDEX;
     private int CurrentTickCount = 0;
@@ -57,16 +66,14 @@ public class ExtenderMove2Pos extends BaseHardware {
         //do not know what digital channel is check here for errors ******
         extenderTCH = hardwareMap.get(DigitalChannel.class, "extenderTCH");
         extenderTCH.setMode(DigitalChannel.Mode.INPUT);
-        int brickheight = 35;
-        int foundationheight = 226;
-        EXTENDER_POSITIONS_TICKS[0] = 0;  //start
-        EXTENDER_POSITIONS_TICKS[1] = 204; //(int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .33);
-        EXTENDER_POSITIONS_TICKS[2] = 350; //(int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .66);
-        EXTENDER_POSITIONS_TICKS[3] = 600; //(int) (Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV * .99);
 
-        CurrentTickCount = EXT1.getCurrentPosition();
-        EXT1.setTargetPosition(CurrentTickCount);
-        EXT1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        EXTENDER_POSITIONS_TICKS[IN] = 0;  //start
+        EXTENDER_POSITIONS_TICKS[PICK] = 204;
+        EXTENDER_POSITIONS_TICKS[PLACE_1] = 280;
+        EXTENDER_POSITIONS_TICKS[PLACE_2] = 380;
+        EXTENDER_POSITIONS_TICKS[PLACE_3] = 480;
+        EXTENDER_POSITIONS_TICKS[OUT] = 600;
+
     }
 
     //*********************************************************************************************
@@ -91,17 +98,27 @@ public class ExtenderMove2Pos extends BaseHardware {
      */
     @Override
     public void start() {
-
         // this is always called by chassis
-        EXT1.setPower(0);
-
+        EXT1.setPower(LIFTERPOWER_UP);
+        //If we are on the test chassis autostart
+        if (chassisType_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST) {
+            autoStart();
+        }
+        else if (! extenderTCH.getState()){
+            // we are on the switch go ahead and reset them
+            autoStart();
+        }
+        else {
+            // We are not on the switch go with current values in the encoders
+            CurrentTickCount = EXT1.getCurrentPosition();
+            EXT1.setTargetPosition(CurrentTickCount);
+            EXT1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
     //*********************************************************************************************
 
     public void autoStart() {
-        // This is only called by chassis when running Auto OpModes
-        //initLifterTCH();
         EXT1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         EXT1.setTargetPosition(EXTENDER_POSITIONS_TICKS[0]);
         EXT1.setMode(DcMotor.RunMode.RUN_TO_POSITION);

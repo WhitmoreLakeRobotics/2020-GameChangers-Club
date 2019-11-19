@@ -21,7 +21,7 @@ public class Gripper extends BaseHardware {
     private GRIPPER_STATES GripperState_current = GRIPPER_STATES.UNKNOWN;
 
     private ElapsedTime GripperTimer = null;
-    private int mSecGripperMoveTime = 1000;
+    private int mSecGripperMoveTime_mS = 750;
 
     // Define the hardware
     private Servo gripperSvo = null;
@@ -82,7 +82,7 @@ public class Gripper extends BaseHardware {
 
             // The second state in the opening process, this should be for about 1 second of time
             case OPENING: {
-                if (GripperTimer.milliseconds() > mSecGripperMoveTime) {
+                if (GripperTimer.milliseconds() > mSecGripperMoveTime_mS) {
                     GripperState_current = GRIPPER_STATES.OPEN;
                 }
                 break;
@@ -107,7 +107,7 @@ public class Gripper extends BaseHardware {
 
             // The second state in the closing process, this should be for about 1 second of time
             case CLOSING: {
-                if (GripperTimer.milliseconds() > mSecGripperMoveTime) {
+                if (GripperTimer.milliseconds() > mSecGripperMoveTime_mS) {
                     GripperState_current = GRIPPER_STATES.CLOSED;
                 }
                 break;

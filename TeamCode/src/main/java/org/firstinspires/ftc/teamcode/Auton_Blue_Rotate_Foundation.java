@@ -21,6 +21,7 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
         _35_Stuff_it,
         _40_Pushers_Up,
         _50_Drive_2_Line,
+        _55_Hug_wall,
         _60_Finish
     }
 
@@ -30,7 +31,7 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
 
     // declare auton power variables
     private double AUTO_DRIVEPower = .5;
-    private double AUTO_DRIVEPower_HI = .75;
+    private double AUTO_DRIVEPower_HI = .90;
     private double AUTO_TURNPower = .4;
     private double AUTO_DRIVEpower_HDrive = 1.0;
 
@@ -92,40 +93,36 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
         telemetry.addData("Blue_Rotate_Foundation", currentStage);
         RBTChassis.loop();
 
-
         //can not do anything until hDrive is zeroed and ready
         if (RBTChassis.subHDrive.getCurrentMode() == HDrive.HDriveMode.Initializing) {
             return;
         }
+
         // check stage and do what's appropriate
         if (currentStage == stage._unknown) {
             currentStage = stage._00_preStart;
         }
 
         if (currentStage == stage._00_preStart) {
-            currentStage = stage._05_Shuttle_2_End;
-        }
-
-        if (currentStage == stage._05_Shuttle_2_End) {
-            RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 15);
             currentStage = stage._10_Drive_Out;
         }
 
+        // Estimated Time = 1 sec
         if (currentStage == stage._10_Drive_Out) {
-            if (RBTChassis.subHDrive.getcmdComplete()) {
-                RBTChassis.cmdDrive(AUTO_DRIVEPower_HI, 0, 20);
+                RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 20);
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 15);
                 currentStage = stage._20_Pushers_Down;
-            }
         }
 
+        // Estimated Time = 1 sec
         if (currentStage == stage._20_Pushers_Down) {
-            if (RBTChassis.getcmdComplete()) {
+            if (RBTChassis.getcmdComplete() && RBTChassis.subHDrive.getcmdComplete()) {
                 RBTChassis.subPushers.cmdMoveAllDown();
                 currentStage = stage._30_Drive_Back;
             }
-
         }
 
+        // Estimated Time = 1 sec
         if (currentStage == stage._30_Drive_Back) {
             if (RBTChassis.subPushers.getIsDown()) {
                 RBTChassis.cmdDrive(-AUTO_DRIVEPower_HI, -90, 12);
@@ -134,14 +131,16 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
             }
         }
 
+        // Estimated Time = 1 sec
         if (currentStage == stage._35_Stuff_it) {
             if (RBTChassis.getcmdComplete() && RBTChassis.subHDrive.getcmdComplete()) {
                 RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 15);
-                RBTChassis.cmdDrive(AUTO_DRIVEPower_HI, -90, 6);
+                RBTChassis.cmdDrive(AUTO_DRIVEPower, -90, 6);
                 currentStage = stage._40_Pushers_Up;
             }
         }
 
+        // Estimated Time = 1 sec
         if (currentStage == stage._40_Pushers_Up) {
             if (RBTChassis.getcmdComplete() && RBTChassis.subHDrive.getcmdComplete()) {
                 RBTChassis.subPushers.cmdMoveAllUp();
@@ -149,19 +148,28 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
             }
         }
 
+        // Estimated Time = 1 sec
         if (currentStage == stage._50_Drive_2_Line) {
             if (RBTChassis.subPushers.getIsUp()) {
                 RBTChassis.cmdDrive(-AUTO_DRIVEPower_HI,-90, 39);
+                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 1);
+                currentStage = stage._55_Hug_wall;
+            }
+        }
+
+        // Estimated Time = 1 sec
+        if (currentStage == stage._55_Hug_wall) {
+            if (RBTChassis.getcmdComplete() && RBTChassis.subHDrive.getcmdComplete()) {
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 2);
                 currentStage = stage._60_Finish;
             }
         }
 
         if (currentStage == stage._60_Finish) {
-            if (RBTChassis.getcmdComplete()) {
+            if (RBTChassis.subHDrive.getcmdComplete()) {
                 RBTChassis.stop();
             }
         }
-
 
     }  //  loop
 

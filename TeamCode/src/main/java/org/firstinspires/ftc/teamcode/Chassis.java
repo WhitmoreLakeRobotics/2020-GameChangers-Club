@@ -178,7 +178,7 @@ public class Chassis extends OpMode {
     //*********************************************************************************************
 
     private void setChassis (){
-        subExtender.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
+        subExtender.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_COMPETITION);
         subHDrive.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_COMPETITION);
         subLifter.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
     }

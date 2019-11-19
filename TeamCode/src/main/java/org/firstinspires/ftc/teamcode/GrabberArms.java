@@ -59,8 +59,11 @@ public class GrabberArms extends BaseHardware {
      */
     @Override
     public void start() {
+        ArmLeft.servoArmMoveTime_mS = 750;
+        ArmRight.servoArmMoveTime_mS = 750;
         ArmLeft.start();
         ArmRight.start();
+
     }
 
     /*
