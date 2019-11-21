@@ -26,7 +26,7 @@ public class ExtenderMove2Pos extends BaseHardware {
     private Settings.CHASSIS_TYPE chassisType_Current = Settings.CHASSIS_TYPE.CHASSIS_COMPETITION;
 
 
-    public static int IN = 0;
+    public static int HOME = 0;
     public static int PICK =1;
     public static int PLACE_1=2;
     public static int PLACE_2=3;
@@ -67,12 +67,12 @@ public class ExtenderMove2Pos extends BaseHardware {
         extenderTCH = hardwareMap.get(DigitalChannel.class, "extenderTCH");
         extenderTCH.setMode(DigitalChannel.Mode.INPUT);
 
-        EXTENDER_POSITIONS_TICKS[IN] = 0;  //start
-        EXTENDER_POSITIONS_TICKS[PICK] = 204;
-        EXTENDER_POSITIONS_TICKS[PLACE_1] = 280;
-        EXTENDER_POSITIONS_TICKS[PLACE_2] = 380;
-        EXTENDER_POSITIONS_TICKS[PLACE_3] = 480;
-        EXTENDER_POSITIONS_TICKS[OUT] = 600;
+        EXTENDER_POSITIONS_TICKS[HOME] = 0;  //start
+        EXTENDER_POSITIONS_TICKS[PICK] = 185;
+        EXTENDER_POSITIONS_TICKS[PLACE_1] = 240;
+        EXTENDER_POSITIONS_TICKS[PLACE_2] = 425;
+        EXTENDER_POSITIONS_TICKS[PLACE_3] = 620;
+        EXTENDER_POSITIONS_TICKS[OUT] = 625;
 
     }
 
@@ -187,6 +187,9 @@ public class ExtenderMove2Pos extends BaseHardware {
             //Set the motor to hold the new position
             EXT1.setTargetPosition(EXTENDER_POSITIONS_TICKS[index]);
         }
+        else {
+            telemetry.addData("Extender Index Out of Range",index);
+        }
     }
 
     //*********************************************************************************************
@@ -197,9 +200,9 @@ public class ExtenderMove2Pos extends BaseHardware {
         //Make sure that we still have a valid index
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
             //If we are in range then dec the index... Else we will move to the current index position
-            if (CommonLogic.inRange(CurrentIndex, EXTENDER_POSITIONS_TICKS[CurrentIndex], EXTENDER_POS_TOL)) {
+            //if (CommonLogic.inRange(CurrentIndex, EXTENDER_POSITIONS_TICKS[CurrentIndex], EXTENDER_POS_TOL)) {
                 CurrentIndex++;
-            }
+            //}
         }
         setPosition(CurrentIndex);
     }
@@ -212,9 +215,9 @@ public class ExtenderMove2Pos extends BaseHardware {
         //Make sure that we still have a valid index
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
             //If we are in range then dec the index... Else we will move to the current index position
-            if (CommonLogic.inRange(CurrentIndex, EXTENDER_POSITIONS_TICKS[CurrentIndex], EXTENDER_POS_TOL)) {
+            //if (CommonLogic.inRange(CurrentIndex, EXTENDER_POSITIONS_TICKS[CurrentIndex], EXTENDER_POS_TOL)) {
                 CurrentIndex--;
-            }
+            //}
         }
         setPosition(CurrentIndex);
     }
@@ -274,6 +277,25 @@ public class ExtenderMove2Pos extends BaseHardware {
             }
         }
         return retValue;
+    }
+
+    //*********************************************************************************************
+
+    public int getIndexTics(int index) {
+
+        if (CommonLogic.indexCheck(index, LOW_INDEX, HIGH_INDEX)) {
+            return EXTENDER_POSITIONS_TICKS[index];
+        } else if (index < LOW_INDEX) {
+            return EXTENDER_POSITIONS_TICKS[LOW_INDEX];
+        } else {
+            return EXTENDER_POSITIONS_TICKS[HIGH_INDEX];
+        }
+
+    }
+    //*********************************************************************************************
+
+    public int getPosTics() {
+        return CurrentTickCount;
     }
 
     //*********************************************************************************************

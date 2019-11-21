@@ -18,12 +18,12 @@ public class Lifter extends BaseHardware {
 
     //Encoder positions for the LIFTER
     public static final int LIFTER_STEP = 40;
-    public static final int LIFTERPOS_TOL = 15;
+    public static final int LIFTERPOS_TOL = 5;
     public static final double LIFTERPOWER_UP = 1.0;
     public static final double LIFTERPOWER_DOWN = 1.0;
-    public static final double LIFTERPOWER_INIT = -.125;
+    //public static final double LIFTERPOWER_INIT = -.125;
     public static final double LIFTERStickDeadBand = .2;
-
+    public static final int CLEAR_NUB_TICS = 100;
     private Settings.CHASSIS_TYPE chassisType_Current = Settings.CHASSIS_TYPE.CHASSIS_COMPETITION;
 
     //Named index positions
@@ -65,11 +65,13 @@ public class Lifter extends BaseHardware {
         //do not know what digital channel is check here for errors ******
         LIFTERTCH = hardwareMap.get(DigitalChannel.class, "lifterTCH");
         LIFTERTCH.setMode(DigitalChannel.Mode.INPUT);
-        int brickheight = 355;
+        int brickheight = 300;
         int foundationheight = 226;
-        LIFTER_POSITIONS_TICKS[0] = 0;  //start pick
-        LIFTER_POSITIONS_TICKS[1] = 50;  //carry
-        LIFTER_POSITIONS_TICKS[2] = 100;  // Pre-Pick location
+        LIFTER_POSITIONS_TICKS[PICK_POS] = 15
+
+        ;  //start pick
+        LIFTER_POSITIONS_TICKS[CARRY_POS] = 70;  //carry
+        LIFTER_POSITIONS_TICKS[PRE_PICK_POS] = 100;  // Pre-Pick location
         LIFTER_POSITIONS_TICKS[3] = foundationheight; //level 1
         LIFTER_POSITIONS_TICKS[4] = foundationheight + (1 * brickheight);  //level 2
         LIFTER_POSITIONS_TICKS[5] = foundationheight + (2 * brickheight); //level 3
@@ -182,6 +184,9 @@ public class Lifter extends BaseHardware {
             //Set the motor to hold the new position
             LFT1.setTargetPosition(LIFTER_POSITIONS_TICKS[index]);
         }
+        else {
+            telemetry.addData("Lifter Index Out of Range",index);
+        }
     }
 
     //*********************************************************************************************
@@ -271,15 +276,27 @@ public class Lifter extends BaseHardware {
         return retValue;
     }
 
+    //*********************************************************************************************
+    public int clear_tower() {
 
-    //
+        int clear_tower_tics = CurrentTickCount + CLEAR_NUB_TICS;
+
+        if (clear_tower_tics > LIFTER_POSITIONS_TICKS[HIGH_INDEX]) {
+            clear_tower_tics = LIFTER_POSITIONS_TICKS[HIGH_INDEX];
+        }
+
+        LFT1.setTargetPosition(clear_tower_tics);
+        return clear_tower_tics;
+    }
+    //*********************************************************************************************
+
     public int getIndexTics(int index) {
 
         if (CommonLogic.indexCheck(index, LOW_INDEX, HIGH_INDEX)) {
             return LIFTER_POSITIONS_TICKS[index];
         } else if (index < LOW_INDEX) {
             return LIFTER_POSITIONS_TICKS[LOW_INDEX];
-        }else {
+        } else {
             return LIFTER_POSITIONS_TICKS[HIGH_INDEX];
         }
 

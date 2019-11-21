@@ -49,6 +49,7 @@ public class Chassis_Test extends OpMode {
     public GrabberArms subGrabbers = new GrabberArms();
     public PusherArms subPushers = new PusherArms();
     public Lifter subLifter = new Lifter();
+    public LEG subLeg = new LEG(subLifter,subExtender,subGripper);
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -147,7 +148,7 @@ public class Chassis_Test extends OpMode {
         subLifter.telemetry = telemetry;
         subLifter.hardwareMap = hardwareMap;
         subLifter.init();
-
+        subLeg.init();
         telemetry.addData("Chassis_Test", "Initialized");
         ChassisMode_Current = ChassisMode.STOP;
         runtime.reset();
@@ -175,6 +176,7 @@ public class Chassis_Test extends OpMode {
         subGrabbers.init_loop();
         subPushers.init_loop();
         subLifter.init_loop();
+        subLeg.init_loop();
     }
 
     //*********************************************************************************************
@@ -227,6 +229,7 @@ public class Chassis_Test extends OpMode {
         subGrabbers.start();
         subPushers.start();
         subLifter.start();
+        subLeg.start();
     }
 
     //*********************************************************************************************
@@ -242,6 +245,7 @@ public class Chassis_Test extends OpMode {
         subGrabbers.loop();
         subPushers.loop();
         subLifter.loop();
+        subLeg.loop();
 
         switch (ChassisMode_Current) {
 
@@ -269,7 +273,7 @@ public class Chassis_Test extends OpMode {
         }
         // Show the elapsed game time and wheel power.
         // telemetry.addData("Status", "Run Time: " + runtime.toString());
-
+        telemetry.update();
         // RobotLog.aa(TAGChassis,"Stage: "+ CurrentStage );
         //RobotLog.aa(TAGChassis, "Runtime: " + runtime.seconds());
         //double inchesTraveled = Math.abs(getEncoderInches());
@@ -452,6 +456,7 @@ public class Chassis_Test extends OpMode {
         subGrabbers.stop();
         subPushers.stop();
         subLifter.stop();
+        subLeg.stop();
 
     }
 
