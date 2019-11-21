@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.RobotLog;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Tele_Op", group = "TeleOp")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "PID-Tuner", group = "TeleOp")
 //@Disabled
 public class Pid_Tuner extends OpMode {
 
