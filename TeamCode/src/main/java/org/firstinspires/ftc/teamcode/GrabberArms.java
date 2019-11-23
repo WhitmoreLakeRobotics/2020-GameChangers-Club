@@ -14,11 +14,11 @@ public class GrabberArms extends BaseHardware {
 
     private double grabSvoRPos_start = 0.5;
     private double grabSvoRPos_up = 0.7;
-    private double grabSvoRPos_down = 0.3;
+    private double grabSvoRPos_down = 0.34;
 
     private double grabSvoLPos_start = .25;
     private double grabSvoLPos_up = .25;
-    private double grabSvoLPos_down = .7;
+    private double grabSvoLPos_down = .63;
 
     /*
      * Code to run ONCE when the driver hits INIT

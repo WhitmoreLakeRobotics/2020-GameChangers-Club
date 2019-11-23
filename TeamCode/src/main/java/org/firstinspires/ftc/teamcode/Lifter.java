@@ -6,7 +6,9 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -18,18 +20,18 @@ public class Lifter extends BaseHardware {
 
     //Encoder positions for the LIFTER
     public static final int LIFTER_STEP = 40;
-    public static final int LIFTERPOS_TOL = 5;
+    public static final int LIFTERPOS_TOL = 28;
     public static final double LIFTERPOWER_UP = 1.0;
     public static final double LIFTERPOWER_DOWN = 1.0;
     //public static final double LIFTERPOWER_INIT = -.125;
     public static final double LIFTERStickDeadBand = .2;
-    public static final int CLEAR_NUB_TICS = 100;
+    public static final int CLEAR_NUB_TICS = 144;
     private Settings.CHASSIS_TYPE chassisType_Current = Settings.CHASSIS_TYPE.CHASSIS_COMPETITION;
 
     //Named index positions
     public static int PICK_POS = 0;
     public static int CARRY_POS = 1;
-    public static int PRE_PICK_POS = 2;
+    public static int PRE_PICK_POS = 3;
 
     private static int LOW_INDEX = 0;
     private static int HIGH_INDEX = 8;
@@ -41,7 +43,11 @@ public class Lifter extends BaseHardware {
     // declare motors
     private DcMotor LFT1 = null;
     private DigitalChannel LIFTERTCH = null;
+    DcMotorControllerEx lftControl = null;
 
+    PIDFCoefficients pidUp = null;
+    PIDFCoefficients pidDown = null;
+    int motorIndex = 0;
     public boolean underLEGControl = false;
 
     /*
@@ -67,11 +73,9 @@ public class Lifter extends BaseHardware {
         LIFTERTCH.setMode(DigitalChannel.Mode.INPUT);
         int brickheight = 300;
         int foundationheight = 226;
-        LIFTER_POSITIONS_TICKS[PICK_POS] = 15
-
-        ;  //start pick
+        LIFTER_POSITIONS_TICKS[PICK_POS] = 15;  //start pick
         LIFTER_POSITIONS_TICKS[CARRY_POS] = 70;  //carry
-        LIFTER_POSITIONS_TICKS[PRE_PICK_POS] = 100;  // Pre-Pick location
+        LIFTER_POSITIONS_TICKS[2] = 100;
         LIFTER_POSITIONS_TICKS[3] = foundationheight; //level 1
         LIFTER_POSITIONS_TICKS[4] = foundationheight + (1 * brickheight);  //level 2
         LIFTER_POSITIONS_TICKS[5] = foundationheight + (2 * brickheight); //level 3
@@ -83,6 +87,30 @@ public class Lifter extends BaseHardware {
         CurrentTickCount = LFT1.getCurrentPosition();
         LFT1.setTargetPosition(CurrentTickCount);
         LFT1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        lftControl = (DcMotorControllerEx) LFT1.getController();
+
+        // get the port number of our configured motor.
+        motorIndex = LFT1.getPortNumber();
+
+        // get the PID coefficients for the RUN_USING_ENCODER  modes.
+        PIDFCoefficients pidOrig = lftControl.getPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION);
+
+        telemetry.addData("LFT1 P", pidOrig.p);
+        telemetry.addData("LFT1 I", pidOrig.i);
+        telemetry.addData("LFT1 D", pidOrig.d);
+        telemetry.addData("LFT1 F", pidOrig.f);
+
+        // Set new values here as needed from Pid_Tuner
+        double NEW_P = pidOrig.p;
+        double NEW_I = pidOrig.i;
+        double NEW_D = pidOrig.d;
+        double NEW_F = pidOrig.f;
+
+        // change coefficients.
+        PIDFCoefficients pidUp = new PIDFCoefficients(NEW_P, NEW_I, NEW_D, NEW_F);
+        PIDFCoefficients pidDown = new PIDFCoefficients(NEW_P, NEW_I, NEW_D, NEW_F);
+
     }
 
     //*********************************************************************************************
@@ -110,6 +138,7 @@ public class Lifter extends BaseHardware {
 
         // this is always called by chassis
         LFT1.setPower(0);
+
 
     }
 
@@ -175,23 +204,28 @@ public class Lifter extends BaseHardware {
             //if (!isInPosition(index)) {
             // If needed to go Down go slower than Up
             if (CurrentTickCount > LIFTER_POSITIONS_TICKS[index]) {
+                //lftControl.setPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION, pidDown);
                 LFT1.setPower(LIFTERPOWER_DOWN);
+
             }
             // If needed to go Up go faster than Down
             else {
                 LFT1.setPower(LIFTERPOWER_UP);
+                //lftControl.setPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION, pidUp);
             }
             //Set the motor to hold the new position
             LFT1.setTargetPosition(LIFTER_POSITIONS_TICKS[index]);
-        }
-        else {
-            telemetry.addData("Lifter Index Out of Range",index);
+        } else {
+            telemetry.addData("Lifter Index Out of Range", index);
         }
     }
 
     //*********************************************************************************************
 
     public void incPositionIndex() {
+        if (underLEGControl){
+            return;
+        }
         //The user might have been using stick control reset the index
         CurrentIndex = findNextIndexUP(CurrentTickCount);
         //Make sure that we still have a valid index
@@ -207,6 +241,9 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
 
     public void decPositionIndex() {
+        if (underLEGControl){
+            return;
+        }
         //The user might have been using stick control reset the index
         CurrentIndex = findNextIndexDown(CurrentTickCount);
         //Make sure that we still have a valid index
@@ -321,6 +358,5 @@ public class Lifter extends BaseHardware {
         LFT1.setTargetPosition(CurrentTickCount);
     }
     //*********************************************************************************************
-
 
 }

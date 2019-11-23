@@ -195,13 +195,17 @@ public class ExtenderMove2Pos extends BaseHardware {
     //*********************************************************************************************
 
     public void incPositionIndex() {
+        if (underLEGControl){
+            return;
+        }
         //The user might have been using stick control reset the index
         CurrentIndex = findNextIndexUP(CurrentTickCount);
         //Make sure that we still have a valid index
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX, HIGH_INDEX - 1)) {
             //If we are in range then dec the index... Else we will move to the current index position
             //if (CommonLogic.inRange(CurrentIndex, EXTENDER_POSITIONS_TICKS[CurrentIndex], EXTENDER_POS_TOL)) {
-                CurrentIndex++;
+
+            CurrentIndex++;
             //}
         }
         setPosition(CurrentIndex);
@@ -210,6 +214,9 @@ public class ExtenderMove2Pos extends BaseHardware {
     //*********************************************************************************************
 
     public void decPositionIndex() {
+        if (underLEGControl){
+            return;
+        }
         //The user might have been using stick control reset the index
         CurrentIndex = findNextIndexDown(CurrentTickCount);
         //Make sure that we still have a valid index

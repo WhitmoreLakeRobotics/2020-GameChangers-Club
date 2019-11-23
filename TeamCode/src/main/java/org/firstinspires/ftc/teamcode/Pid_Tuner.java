@@ -15,6 +15,7 @@ public class Pid_Tuner extends OpMode {
     private DcMotor motor = null;
     private DcMotorControllerEx motorControl = null;
     private int motorIndex = 0;
+    PIDFCoefficients pidOrig = null;
     double NEW_P = 2.5;
     double NEW_I = 0.1;
     double NEW_D = 0.2;
@@ -63,14 +64,14 @@ public class Pid_Tuner extends OpMode {
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        DcMotorControllerEx motorControl = (DcMotorControllerEx) motor.getController();
+        motorControl = (DcMotorControllerEx) motor.getController();
 
 
         // get the port number of our configured motor.
         motorIndex = motor.getPortNumber();
 
         // get the PID coefficients for the RUN_USING_ENCODER  modes.
-        PIDFCoefficients pidOrig = motorControl.getPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION);
+        pidOrig = motorControl.getPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION);
 
         telemetry.addData("LFT1 P", pidOrig.p);
         telemetry.addData("LFT1 I", pidOrig.i);
@@ -106,15 +107,15 @@ public class Pid_Tuner extends OpMode {
 
         boolean change = false;
 
-        PIDFCoefficients pidOrig = motorControl.getPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION);
+        pidOrig = motorControl.getPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION);
 
         if (CommonLogic.oneShot(gamepad2.dpad_right, gp2_prev_dpad_right)) {
-            pidOrig.i = pidOrig.i + .05;
+            pidOrig.i = pidOrig.i + .5;
             change = true;
         }
 
         if (CommonLogic.oneShot(gamepad2.dpad_up, gp2_prev_dpad_up)) {
-            pidOrig.p = pidOrig.p + .10;
+            pidOrig.p = pidOrig.p + .50;
             change = true;
         }
 
@@ -149,7 +150,9 @@ public class Pid_Tuner extends OpMode {
         }
 
         if (change) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motorControl.setPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION, pidOrig);
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
 

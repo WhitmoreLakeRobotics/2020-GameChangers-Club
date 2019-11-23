@@ -87,7 +87,10 @@ public class LEG extends BaseHardware {
             if (lift.getPosTics() > lift.getIndexTics(lift.PRE_PICK_POS)) {
                 pickingStage_Current = STAGE_PICKING.EXTENDING;
                 extender.setPosition(extender.PICK);
-
+            }
+            else if (CommonLogic.inRange(lift.getPosTics(), lift.getIndexTics(lift.PRE_PICK_POS), Lifter.LIFTERPOS_TOL)) {
+                pickingStage_Current = STAGE_PICKING.EXTENDING;
+                extender.setPosition(extender.PICK);
             }
         }
 
@@ -135,7 +138,7 @@ public class LEG extends BaseHardware {
         }
 
         if (placingStage_Current == STAGE_PLACING.RETRACTING){
-            if (CommonLogic.inRange(extender.getPosTics(),extender.getIndexTics(extender.HOME), extender.EXTENDER_POS_TOL)) {
+            if (CommonLogic.inRange(extender.getPosTics(),extender.getIndexTics(ExtenderMove2Pos.HOME), ExtenderMove2Pos.EXTENDER_POS_TOL)) {
                 placingStage_Current = STAGE_PLACING.LOWERING;
                 lift.setPosition(lift.PRE_PICK_POS);
             }

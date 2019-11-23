@@ -17,6 +17,7 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
         _05_Shuttle_2_End,
         _10_Drive_Out,
         _20_Pushers_Down,
+        _25_Turn_With_Foundation,
         _30_Drive_Back,
         _35_Stuff_it,
         _40_Pushers_Up,
@@ -109,7 +110,7 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
 
         // Estimated Time = 1 sec
         if (currentStage == stage._10_Drive_Out) {
-                RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 20);
+                RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 23);
                 RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 15);
                 currentStage = stage._20_Pushers_Down;
         }
@@ -118,13 +119,21 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
         if (currentStage == stage._20_Pushers_Down) {
             if (RBTChassis.getcmdComplete() && RBTChassis.subHDrive.getcmdComplete()) {
                 RBTChassis.subPushers.cmdMoveAllDown();
+                currentStage = stage._25_Turn_With_Foundation;
+            }
+        }
+
+
+        if (currentStage == stage._25_Turn_With_Foundation) {
+            if (RBTChassis.subPushers.getIsDown()) {
+               RBTChassis.cmdTurn(-AUTO_DRIVEPower_HI,AUTO_DRIVEPower,-40);
                 currentStage = stage._30_Drive_Back;
             }
         }
 
         // Estimated Time = 1 sec
         if (currentStage == stage._30_Drive_Back) {
-            if (RBTChassis.subPushers.getIsDown()) {
+            if (RBTChassis.getcmdComplete()) {
                 RBTChassis.cmdDrive(-AUTO_DRIVEPower_HI, -90, 12);
                 RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive,22);
                 currentStage = stage._35_Stuff_it;
