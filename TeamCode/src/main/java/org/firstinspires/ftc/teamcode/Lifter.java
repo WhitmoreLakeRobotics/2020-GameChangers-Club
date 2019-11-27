@@ -94,7 +94,7 @@ public class Lifter extends BaseHardware {
         motorIndex = LFT1.getPortNumber();
 
         // get the PID coefficients for the RUN_USING_ENCODER  modes.
-        PIDFCoefficients pidOrig = lftControl.getPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION);
+        PIDFCoefficients pidOrig = lftControl.getPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_USING_ENCODER);
 
         telemetry.addData("LFT1 P", pidOrig.p);
         telemetry.addData("LFT1 I", pidOrig.i);
@@ -108,8 +108,8 @@ public class Lifter extends BaseHardware {
         double NEW_F = pidOrig.f;
 
         // change coefficients.
-        PIDFCoefficients pidUp = new PIDFCoefficients(NEW_P, NEW_I, NEW_D, NEW_F);
-        PIDFCoefficients pidDown = new PIDFCoefficients(NEW_P, NEW_I, NEW_D, NEW_F);
+        pidUp = new PIDFCoefficients(10.0, .6, .1, 65);
+        pidDown = new PIDFCoefficients(10.0, .6, .1, 65);
 
     }
 
@@ -171,6 +171,13 @@ public class Lifter extends BaseHardware {
         CurrentTickCount = LFT1.getCurrentPosition();
         telemetry.addData("Lifter-Index", CurrentIndex);
         telemetry.addData("LifterPos-Ticks", CurrentTickCount);
+
+        PIDFCoefficients pidOrig = lftControl.getPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_USING_ENCODER);
+
+        telemetry.addData("LFT1 P", pidOrig.p);
+        telemetry.addData("LFT1 I", pidOrig.i);
+        telemetry.addData("LFT1 D", pidOrig.d);
+        telemetry.addData("LFT1 F", pidOrig.f);
     }
 
     //*********************************************************************************************
@@ -204,14 +211,14 @@ public class Lifter extends BaseHardware {
             //if (!isInPosition(index)) {
             // If needed to go Down go slower than Up
             if (CurrentTickCount > LIFTER_POSITIONS_TICKS[index]) {
-                //lftControl.setPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION, pidDown);
+                lftControl.setPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_USING_ENCODER, pidDown);
                 LFT1.setPower(LIFTERPOWER_DOWN);
 
             }
             // If needed to go Up go faster than Down
             else {
                 LFT1.setPower(LIFTERPOWER_UP);
-                //lftControl.setPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_TO_POSITION, pidUp);
+                lftControl.setPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_USING_ENCODER, pidUp);
             }
             //Set the motor to hold the new position
             LFT1.setTargetPosition(LIFTER_POSITIONS_TICKS[index]);
