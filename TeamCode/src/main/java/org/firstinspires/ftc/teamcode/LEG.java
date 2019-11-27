@@ -70,6 +70,10 @@ public class LEG extends BaseHardware {
 
         switch (majorStage_Current) {
             case IDLE:
+                gripper.underLEGControl = false;
+                extender.underLEGControl = false;
+                lift.underLEGControl = false;
+
                 break;
 
             case PICKING:
@@ -170,6 +174,7 @@ public class LEG extends BaseHardware {
         }
 
         if (placingStage_Current == STAGE_PLACING.LOWERING) {
+
             if (lift.isInPosition(Lifter.PRE_PICK_POS)) {
                 majorStage_Current = STAGE_MAJOR.IDLE;
                 gripper.underLEGControl = false;
