@@ -10,6 +10,8 @@ public class LEG extends BaseHardware {
     ExtenderMove2Pos extender = null;
     Gripper gripper = null;
     int clear_tower_tics = 0;
+    int lift_pos_ticks = 0;
+    int extend_pos_ticks = 0;
 
     public static final int CARRY_TICS = 50;
 
@@ -33,6 +35,7 @@ public class LEG extends BaseHardware {
     STAGE_PICKING pickingStage_Current = STAGE_PICKING.OPENING;
 
     public enum STAGE_PLACING {
+        EXTENDING,
         LIFTING,
         RETRACTING,
         LOWERING
@@ -47,17 +50,21 @@ public class LEG extends BaseHardware {
         gripper = grip;
     }
 
+    //*********************************************************************************************
     public void init() {
 
     }
 
+    //*********************************************************************************************
     public void init_loop() {
 
     }
 
+    //*********************************************************************************************
     public void start() {
 
     }
+    //*********************************************************************************************
 
     public void loop() {
 
@@ -80,29 +87,34 @@ public class LEG extends BaseHardware {
 
     }
 
+    //*********************************************************************************************
     // loop just for the pick operation
+
     private void pick_loop() {
 
+        lift_pos_ticks = lift.getPosTics();
+        extend_pos_ticks = extender.getPosTics();
+
         if (pickingStage_Current == STAGE_PICKING.LIFTING) {
-            if (lift.getPosTics() > lift.getIndexTics(lift.PRE_PICK_POS)) {
+
+            if (lift_pos_ticks > lift.getIndexTics(Lifter.PRE_PICK_POS)) {
                 pickingStage_Current = STAGE_PICKING.EXTENDING;
-                extender.setPosition(extender.PICK);
-            }
-            else if (CommonLogic.inRange(lift.getPosTics(), lift.getIndexTics(lift.PRE_PICK_POS), Lifter.LIFTERPOS_TOL)) {
+                extender.setPosition(ExtenderMove2Pos.PICK);
+            } else if (lift.isInPosition(Lifter.PRE_PICK_POS)) {
                 pickingStage_Current = STAGE_PICKING.EXTENDING;
-                extender.setPosition(extender.PICK);
+                extender.setPosition(ExtenderMove2Pos.PICK);
             }
         }
 
         if (pickingStage_Current == STAGE_PICKING.EXTENDING) {
-            if (gripper.getIsOpen() && (CommonLogic.inRange(lift.getPosTics(), lift.getIndexTics(lift.PRE_PICK_POS), Lifter.LIFTERPOS_TOL))) {
-                lift.setPosition(lift.PICK_POS);
+            if (extender.isInPosition(extender.PICK) && gripper.getIsOpen()) {
+                lift.setPosition(Lifter.PICK_POS);
                 pickingStage_Current = STAGE_PICKING.LOWERING;
             }
         }
 
         if (pickingStage_Current == STAGE_PICKING.LOWERING) {
-            if (lift.isInPosition(lift.PICK_POS)) {
+            if (lift.isInPosition(Lifter.PICK_POS)) {
                 gripper.cmd_close();
                 pickingStage_Current = STAGE_PICKING.CLOSING;
             }
@@ -111,12 +123,12 @@ public class LEG extends BaseHardware {
         if (pickingStage_Current == STAGE_PICKING.CLOSING) {
             if (gripper.getIsClosed()) {
                 pickingStage_Current = STAGE_PICKING.CARRY_POS;
-                lift.setPosition(lift.CARRY_POS);
+                lift.setPosition(Lifter.CARRY_POS);
             }
         }
 
         if (pickingStage_Current == STAGE_PICKING.CARRY_POS) {
-            if (lift.isInPosition(lift.CARRY_POS)) {
+            if (lift.isInPosition(Lifter.CARRY_POS)) {
                 // We are done picking
                 majorStage_Current = STAGE_MAJOR.IDLE;
                 gripper.underLEGControl = false;
@@ -126,26 +138,39 @@ public class LEG extends BaseHardware {
         }
     }
 
-
+    //*********************************************************************************************
     // loop just for place operation
     private void place_loop() {
 
-        if (placingStage_Current == STAGE_PLACING.LIFTING) {
-            if (CommonLogic.inRange(lift.getPosTics(), clear_tower_tics, lift.LIFTERPOS_TOL)) {
-                placingStage_Current = STAGE_PLACING.RETRACTING;
-                extender.setPosition(extender.HOME);
+        lift_pos_ticks = lift.getPosTics();
+        extend_pos_ticks = extender.getPosTics();
+
+        if (placingStage_Current == STAGE_PLACING.EXTENDING) {
+            if (extender.isInPosition(ExtenderMove2Pos.PLACE_1)) {
+                placingStage_Current = STAGE_PLACING.LIFTING;
+                gripper.cmd_open();
+                clear_tower_tics = lift.clear_tower();
             }
         }
 
-        if (placingStage_Current == STAGE_PLACING.RETRACTING){
-            if (CommonLogic.inRange(extender.getPosTics(),extender.getIndexTics(ExtenderMove2Pos.HOME), ExtenderMove2Pos.EXTENDER_POS_TOL)) {
+        if (placingStage_Current == STAGE_PLACING.LIFTING) {
+            if (CommonLogic.inRange(lift_pos_ticks, clear_tower_tics, Lifter.LIFTERPOS_TOL) ||
+                    lift_pos_ticks > clear_tower_tics) {
+                placingStage_Current = STAGE_PLACING.RETRACTING;
+                extender.setPosition(ExtenderMove2Pos.HOME);
+            }
+        }
+
+        if (placingStage_Current == STAGE_PLACING.RETRACTING) {
+            if (extender.isInPosition(ExtenderMove2Pos.HOME) ||
+                    extend_pos_ticks < extender.getIndexTics(ExtenderMove2Pos.PICK)) {
                 placingStage_Current = STAGE_PLACING.LOWERING;
-                lift.setPosition(lift.PRE_PICK_POS);
+                lift.setPosition(Lifter.PICK_POS);
             }
         }
 
         if (placingStage_Current == STAGE_PLACING.LOWERING) {
-            if (CommonLogic.inRange(lift.getPosTics(),lift.getIndexTics(lift.PRE_PICK_POS),lift.LIFTERPOS_TOL)) {
+            if (lift.isInPosition(Lifter.PRE_PICK_POS)) {
                 majorStage_Current = STAGE_MAJOR.IDLE;
                 gripper.underLEGControl = false;
                 extender.underLEGControl = false;
@@ -154,11 +179,15 @@ public class LEG extends BaseHardware {
         }
     }
 
+    //*********************************************************************************************
+
     public void stop() {
         lift.stop();
         extender.stop();
         gripper.stop();
     }
+
+    //*********************************************************************************************
 
     public void pick() {
         majorStage_Current = STAGE_MAJOR.PICKING;
@@ -171,15 +200,26 @@ public class LEG extends BaseHardware {
         lift.setPosition(lift.PRE_PICK_POS);
     }
 
-    public void place() {
-        majorStage_Current = STAGE_MAJOR.PLACING;
-        placingStage_Current = STAGE_PLACING.LIFTING;
+    //*********************************************************************************************
 
+    public void place() {
+
+        majorStage_Current = STAGE_MAJOR.PLACING;
         lift.underLEGControl = true;
         extender.underLEGControl = true;
         gripper.underLEGControl = true;
-        gripper.cmd_open();
-        clear_tower_tics = lift.clear_tower();
-    }
 
+        extend_pos_ticks = extender.getPosTics();
+
+        // If we are only at Pick location on the extender then we can not drop the stone yet.
+        if (CommonLogic.inRange(extend_pos_ticks, extender.getIndexTics(ExtenderMove2Pos.PLACE_1), ExtenderMove2Pos.EXTENDER_POS_TOL) ||
+                (extend_pos_ticks > extender.getIndexTics(ExtenderMove2Pos.PLACE_1))) {
+            placingStage_Current = STAGE_PLACING.LIFTING;
+            gripper.cmd_open();
+            clear_tower_tics = lift.clear_tower();
+        } else {
+            placingStage_Current = STAGE_PLACING.EXTENDING;
+            extender.setPosition(ExtenderMove2Pos.PLACE_1);
+        }
+    }
 }
