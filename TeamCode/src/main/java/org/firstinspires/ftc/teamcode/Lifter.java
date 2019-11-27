@@ -20,7 +20,7 @@ public class Lifter extends BaseHardware {
 
     //Encoder positions for the LIFTER
     public static final int LIFTER_STEP = 40;
-    public static final int LIFTERPOS_TOL = 28;
+    public static final int LIFTERPOS_TOL = 15;
     public static final double LIFTERPOWER_UP = 1.0;
     public static final double LIFTERPOWER_DOWN = 1.0;
     //public static final double LIFTERPOWER_INIT = -.125;
@@ -31,7 +31,7 @@ public class Lifter extends BaseHardware {
     //Named index positions
     public static int PICK_POS = 0;
     public static int CARRY_POS = 1;
-    public static int PRE_PICK_POS = 3;
+    public static int PRE_PICK_POS = 2;
 
     private static int LOW_INDEX = 0;
     private static int HIGH_INDEX = 8;
@@ -73,9 +73,9 @@ public class Lifter extends BaseHardware {
         LIFTERTCH.setMode(DigitalChannel.Mode.INPUT);
         int brickheight = 300;
         int foundationheight = 226;
-        LIFTER_POSITIONS_TICKS[PICK_POS] = 15;  //start pick
+        LIFTER_POSITIONS_TICKS[PICK_POS] = 0;  //start pick
         LIFTER_POSITIONS_TICKS[CARRY_POS] = 70;  //carry
-        LIFTER_POSITIONS_TICKS[2] = 100;
+        LIFTER_POSITIONS_TICKS[2] = 150;
         LIFTER_POSITIONS_TICKS[3] = foundationheight; //level 1
         LIFTER_POSITIONS_TICKS[4] = foundationheight + (1 * brickheight);  //level 2
         LIFTER_POSITIONS_TICKS[5] = foundationheight + (2 * brickheight); //level 3
