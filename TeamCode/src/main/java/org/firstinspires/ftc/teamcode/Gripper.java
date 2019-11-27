@@ -16,22 +16,17 @@ public class Gripper extends BaseHardware {
     private static final String TAGIntakeArm = "8492-GripperServo";
 
     /* Declare OpMode members. */
-
+    public boolean underLEGControl = false;
     private GRIPPER_STATES GripperState_desired = GRIPPER_STATES.UNKNOWN;
     private GRIPPER_STATES GripperState_current = GRIPPER_STATES.UNKNOWN;
-
     private ElapsedTime GripperTimer = null;
     private int mSecGripperMoveTime_mS = 750;
-
     // Define the hardware
     private Servo gripperSvo = null;
-
     // set neutral positions for first time running on the robot
     private double gripperSvoPos_open = 0.9;
     private double gripperSvoPos_close = 0.0;
     private double gripperSvoPos_start = gripperSvoPos_open;
-    public boolean underLEGControl = false;
-
 
     @Override
     public void init() {
@@ -167,7 +162,7 @@ public class Gripper extends BaseHardware {
 
     }
 
-    public static enum GRIPPER_STATES {
+    public enum GRIPPER_STATES {
         COMMANDED_OPEN,
         OPENING,
         OPEN,

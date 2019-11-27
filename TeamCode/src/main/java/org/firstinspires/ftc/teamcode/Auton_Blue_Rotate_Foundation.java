@@ -11,31 +11,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Auton_Blue_Rotate_Foundation extends OpMode {
 
 
-    private static enum stage {
-        _unknown,
-        _00_preStart,
-        _05_Shuttle_2_End,
-        _10_Drive_Out,
-        _20_Pushers_Down,
-        _25_Turn_With_Foundation,
-        _30_Drive_Back,
-        _35_Stuff_it,
-        _40_Pushers_Up,
-        _50_Drive_2_Line,
-        _55_Hug_wall,
-        _60_Finish
-    }
-
     Chassis RBTChassis = new Chassis();
-
     private stage currentStage = stage._unknown;
-
     // declare auton power variables
     private double AUTO_DRIVEPower = .5;
     private double AUTO_DRIVEPower_HI = .90;
     private double AUTO_TURNPower = .4;
     private double AUTO_DRIVEpower_HDrive = 1.0;
-
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -81,7 +63,6 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
         // initialize chassis
         Runtime.getRuntime();
         RBTChassis.start();
-        //RBTChassis.setMotorMode_RUN_WITHOUT_ENCODER();
 
     }
 
@@ -110,9 +91,9 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
 
         // Estimated Time = 1 sec
         if (currentStage == stage._10_Drive_Out) {
-                RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 23);
-                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 15);
-                currentStage = stage._20_Pushers_Down;
+            RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 23);
+            RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 15);
+            currentStage = stage._20_Pushers_Down;
         }
 
         // Estimated Time = 1 sec
@@ -123,19 +104,18 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
             }
         }
 
-
         if (currentStage == stage._25_Turn_With_Foundation) {
             if (RBTChassis.subPushers.getIsDown()) {
-               RBTChassis.cmdTurn(-AUTO_DRIVEPower_HI,AUTO_DRIVEPower,-40);
-                currentStage = stage._30_Drive_Back;
+                RBTChassis.cmdTurn(-1.0, -.25, -90);
+                currentStage = stage._35_Stuff_it;
             }
         }
 
         // Estimated Time = 1 sec
         if (currentStage == stage._30_Drive_Back) {
             if (RBTChassis.getcmdComplete()) {
-                RBTChassis.cmdDrive(-AUTO_DRIVEPower_HI, -90, 12);
-                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive,22);
+                RBTChassis.cmdDrive(-AUTO_DRIVEPower_HI, -90, 6);
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 22);
                 currentStage = stage._35_Stuff_it;
             }
         }
@@ -143,8 +123,8 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
         // Estimated Time = 1 sec
         if (currentStage == stage._35_Stuff_it) {
             if (RBTChassis.getcmdComplete() && RBTChassis.subHDrive.getcmdComplete()) {
-                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 15);
-                RBTChassis.cmdDrive(AUTO_DRIVEPower, -90, 6);
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 22);
+                RBTChassis.cmdDrive(AUTO_DRIVEPower, -90, 12);
                 currentStage = stage._40_Pushers_Up;
             }
         }
@@ -160,7 +140,7 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
         // Estimated Time = 1 sec
         if (currentStage == stage._50_Drive_2_Line) {
             if (RBTChassis.subPushers.getIsUp()) {
-                RBTChassis.cmdDrive(-AUTO_DRIVEPower_HI,-90, 39);
+                RBTChassis.cmdDrive(-AUTO_DRIVEPower_HI, -90, 39);
                 RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 1);
                 currentStage = stage._55_Hug_wall;
             }
@@ -187,7 +167,23 @@ public class Auton_Blue_Rotate_Foundation extends OpMode {
      */
     @Override
     public void stop() {
+
         RBTChassis.stop();
+    }
+
+    private enum stage {
+        _unknown,
+        _00_preStart,
+        _05_Shuttle_2_End,
+        _10_Drive_Out,
+        _20_Pushers_Down,
+        _25_Turn_With_Foundation,
+        _30_Drive_Back,
+        _35_Stuff_it,
+        _40_Pushers_Up,
+        _50_Drive_2_Line,
+        _55_Hug_wall,
+        _60_Finish
     }
 
 }

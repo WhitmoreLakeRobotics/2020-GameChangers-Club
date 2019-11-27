@@ -13,16 +13,10 @@ import java.util.Locale;
 
 public class CommonGyro extends BaseHardware {
 
-    public enum HDriveMode {
-        Active,
-        Idle
-    }
-
     // The IMU sensor object
     BNO055IMU imu;
     // State used for updating telemetry
     Orientation angles;
-
     int gyroHeading_Current = 0;
 
     /*
@@ -66,6 +60,7 @@ public class CommonGyro extends BaseHardware {
     public void start() {
 
     }
+
     //*********************************************************************************************
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
@@ -74,9 +69,7 @@ public class CommonGyro extends BaseHardware {
     public void loop() {
 
 
-
     }
-
 
     //*********************************************************************************************
     /*
@@ -104,6 +97,7 @@ public class CommonGyro extends BaseHardware {
 
         return (degrees);
     }
+
     //*********************************************************************************************
     public boolean gyroInTol(int currHeading, int desiredHeading, int tol) {
 
@@ -163,12 +157,14 @@ public class CommonGyro extends BaseHardware {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         //return formatAngle(angles.angleUnit, angles.firstAngle);
-        gyroHeading_Current =  -1 * (int) (angles.firstAngle);
+        gyroHeading_Current = -1 * (int) (angles.firstAngle);
     }
+
     //*********************************************************************************************
-    public int getGyroHeading (){
+    public int getGyroHeading() {
         return gyroHeading_Current;
     }
+
     //*********************************************************************************************
     public int deltaHeading(int currHeading, int targetHeading) {
         int returnValue = 0;
@@ -234,6 +230,7 @@ public class CommonGyro extends BaseHardware {
                     }
                 });
     }
+
     //*********************************************************************************************
     String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
@@ -246,5 +243,10 @@ public class CommonGyro extends BaseHardware {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
 
-    
+    public enum HDriveMode {
+        Active,
+        Idle
+    }
+
+
 }

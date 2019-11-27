@@ -13,35 +13,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class ServoArm extends BaseHardware {
 
-    public enum SERVO_ARM_STATES {
-        COMMANDED_START,
-        START,
-        MOVING_START,
-        COMMANDED_UP,
-        MOVING_UP,
-        UP,
-        COMMANDED_DOWN,
-        MOVING_DOWN,
-        DOWN,
-        UNKNOWN
-    }
-
     private static final String TAGIntakeArm = "8492-ScannerArm";
+    public int servoArmMoveTime_mS = 1000;
 
     /* Declare OpMode members. */
-
     private SERVO_ARM_STATES servoArmState_current = SERVO_ARM_STATES.UNKNOWN;
 
     private ElapsedTime ScannerArmTimer = null;
-    public int servoArmMoveTime_mS = 1000;
-
-
     // Define the hardware
     private Servo grabSvo = null;
     private double grabSvoPos_start = 0;
     private double grabSvoPos_up = 0;
     private double grabSvoPos_down = 0;
-
 
     public void setServo(Servo svro) {
         grabSvo = svro;
@@ -172,16 +155,13 @@ public class ServoArm extends BaseHardware {
         return (servoArmState_current == test_state);
     }
 
-
     public void cmd_moveDown() {
         servoArmState_current = SERVO_ARM_STATES.COMMANDED_DOWN;
     }
 
-
     public void cmd_moveUp() {
         servoArmState_current = SERVO_ARM_STATES.COMMANDED_UP;
     }
-
 
     public void cmd_moveStart() {
         servoArmState_current = SERVO_ARM_STATES.COMMANDED_START;
@@ -195,11 +175,9 @@ public class ServoArm extends BaseHardware {
         return servoArmState_current == SERVO_ARM_STATES.UP;
     }
 
-
     public boolean getIsStart() {
         return servoArmState_current == SERVO_ARM_STATES.START;
     }
-
 
     /*
      * Code to run ONCE after the driver hits STOP
@@ -207,6 +185,20 @@ public class ServoArm extends BaseHardware {
     @Override
     public void stop() {
 
+    }
+
+
+    public enum SERVO_ARM_STATES {
+        COMMANDED_START,
+        START,
+        MOVING_START,
+        COMMANDED_UP,
+        MOVING_UP,
+        UP,
+        COMMANDED_DOWN,
+        MOVING_DOWN,
+        DOWN,
+        UNKNOWN
     }
 
 

@@ -13,8 +13,6 @@ import com.qualcomm.robotcore.util.RobotLog;
 //@TeleOp(name = "LIFTER", group = "CHASSIS")  // @Autonomous(...) is the other common choice
 
 public class ExtenderMove2Pos extends BaseHardware {
-    private static final String TAGLIFTER = "8492-Extener2Pos";
-
     //Encoder positions for the Extender
     public static final int EXTENDER_STEP = 25;
     public static final int EXTENDER_POS_TOL = 15;
@@ -22,28 +20,23 @@ public class ExtenderMove2Pos extends BaseHardware {
     public static final double LIFTERPOWER_DOWN = 1.0;
     public static final double LIFTERPOWER_INIT = -.125;
     public static final double LIFTERStickDeadBand = .2;
-
-    private Settings.CHASSIS_TYPE chassisType_Current = Settings.CHASSIS_TYPE.CHASSIS_COMPETITION;
-
-
+    private static final String TAGLIFTER = "8492-Extener2Pos";
     public static int HOME = 0;
-    public static int PICK =1;
-    public static int PLACE_1=2;
-    public static int PLACE_2=3;
-    public static int PLACE_3=4;
-    public static int OUT=5;
-
-
+    public static int PICK = 1;
+    public static int PLACE_1 = 2;
+    public static int PLACE_2 = 3;
+    public static int PLACE_3 = 4;
+    public static int OUT = 5;
     private static int LOW_INDEX = 0;
     private static int HIGH_INDEX = 5;
     private static int[] EXTENDER_POSITIONS_TICKS = new int[HIGH_INDEX + 1];
+    public boolean underLEGControl = false;
+    private Settings.CHASSIS_TYPE chassisType_Current = Settings.CHASSIS_TYPE.CHASSIS_COMPETITION;
     private int CurrentIndex = LOW_INDEX;
     private int CurrentTickCount = 0;
-
     // declare motors
     private DcMotor EXT1 = null;
     private DigitalChannel extenderTCH = null;
-    public boolean underLEGControl = false;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -105,12 +98,10 @@ public class ExtenderMove2Pos extends BaseHardware {
         //If we are on the test chassis autostart
         if (chassisType_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST) {
             resetEncoders();
-        }
-        else if (! extenderTCH.getState()){
+        } else if (!extenderTCH.getState()) {
             // we are on the switch go ahead and reset them
             resetEncoders();
-        }
-        else {
+        } else {
             // We are not on the switch go with current values in the encoders
             CurrentTickCount = EXT1.getCurrentPosition();
             EXT1.setTargetPosition(CurrentTickCount);
@@ -186,16 +177,15 @@ public class ExtenderMove2Pos extends BaseHardware {
             }
             //Set the motor to hold the new position
             EXT1.setTargetPosition(EXTENDER_POSITIONS_TICKS[index]);
-        }
-        else {
-            telemetry.addData("Extender Index Out of Range",index);
+        } else {
+            telemetry.addData("Extender Index Out of Range", index);
         }
     }
 
     //*********************************************************************************************
 
     public void incPositionIndex() {
-        if (underLEGControl){
+        if (underLEGControl) {
             return;
         }
         //The user might have been using stick control reset the index
@@ -214,7 +204,7 @@ public class ExtenderMove2Pos extends BaseHardware {
     //*********************************************************************************************
 
     public void decPositionIndex() {
-        if (underLEGControl){
+        if (underLEGControl) {
             return;
         }
         //The user might have been using stick control reset the index
@@ -223,7 +213,7 @@ public class ExtenderMove2Pos extends BaseHardware {
         if (CommonLogic.indexCheck(CurrentIndex, LOW_INDEX + 1, HIGH_INDEX)) {
             //If we are in range then dec the index... Else we will move to the current index position
             //if (CommonLogic.inRange(CurrentIndex, EXTENDER_POSITIONS_TICKS[CurrentIndex], EXTENDER_POS_TOL)) {
-                CurrentIndex--;
+            CurrentIndex--;
             //}
         }
         setPosition(CurrentIndex);

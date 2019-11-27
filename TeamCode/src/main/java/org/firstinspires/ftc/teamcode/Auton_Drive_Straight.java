@@ -11,30 +11,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Auton_Drive_Straight extends OpMode {
 
 
-    private static enum stage {
-        _unknown,
-        _00_preStart,
-        _10_crawlOut,
-        _20_DriveStraight,
-        _30_crawlBack,
-        _40_DriveStraightBack,
-        _50_Done
-    }
-
     Chassis_Test RBTChassis = new Chassis_Test();
-
     private stage currentStage = stage._unknown;
-
     // declare auton power variables
     private double AUTO_DRIVEPower = .5;
     private double AUTO_DRIVEPower_HI = .75;
     private double AUTO_TURNPower = .4;
     private double AUTO_DRIVEpower_HDrive = 1.0;
-
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
-     /*
+    /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
@@ -90,7 +77,7 @@ public class Auton_Drive_Straight extends OpMode {
         RBTChassis.loop();
 
         //can not do anything until hDrive is zeroed and ready
-        if (RBTChassis.subHDrive.getCurrentMode() == HDrive.HDriveMode.Initializing){
+        if (RBTChassis.subHDrive.getCurrentMode() == HDrive.HDriveMode.Initializing) {
             return;
         }
 
@@ -100,7 +87,7 @@ public class Auton_Drive_Straight extends OpMode {
         }
 
         if (currentStage == stage._00_preStart) {
-            if (RBTChassis.subHDrive.getcmdComplete()){
+            if (RBTChassis.subHDrive.getcmdComplete()) {
                 currentStage = stage._10_crawlOut;
             }
         }
@@ -128,12 +115,12 @@ public class Auton_Drive_Straight extends OpMode {
 
         if (currentStage == stage._40_DriveStraightBack) {
             if (RBTChassis.subHDrive.getcmdComplete()) {
-                RBTChassis.cmdDrive(-AUTO_DRIVEPower, 0,24);
+                RBTChassis.cmdDrive(-AUTO_DRIVEPower, 0, 24);
                 currentStage = stage._50_Done;
             }
         }
 
-        if (currentStage == stage._50_Done){
+        if (currentStage == stage._50_Done) {
             if (RBTChassis.getcmdComplete()) {
                 RBTChassis.stop();
             }
@@ -147,6 +134,16 @@ public class Auton_Drive_Straight extends OpMode {
     @Override
     public void stop() {
         RBTChassis.stop();
+    }
+
+    private enum stage {
+        _unknown,
+        _00_preStart,
+        _10_crawlOut,
+        _20_DriveStraight,
+        _30_crawlBack,
+        _40_DriveStraightBack,
+        _50_Done
     }
 
 }

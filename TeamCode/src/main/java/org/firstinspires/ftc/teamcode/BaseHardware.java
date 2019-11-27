@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 
@@ -46,7 +47,7 @@ public abstract class BaseHardware {
      * This method will be called repeatedly when the INIT button is pressed.
      * This method is optional. By default this method takes no action.
      */
-    abstract public void init_loop() ;
+    abstract public void init_loop();
 
     /**
      * User defined start method.
@@ -54,9 +55,8 @@ public abstract class BaseHardware {
      * This method will be called once when the PLAY button is first pressed.
      * This method is optional. By default this method takes not action.
      * Example usage: Starting another thread.
-     *
      */
-    abstract public void start() ;
+    abstract public void start();
 
     /**
      * User defined loop method
@@ -69,8 +69,8 @@ public abstract class BaseHardware {
      * User defined stop method
      * <p>
      * This method will be called when this op mode is first disabled
-     *
+     * <p>
      * The stop method is optional. By default this method takes no action.
      */
-    abstract void stop() ;
+    abstract void stop();
 }

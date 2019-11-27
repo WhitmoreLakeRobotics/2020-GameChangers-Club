@@ -6,43 +6,16 @@ package org.firstinspires.ftc.teamcode;
 
 public class LEG extends BaseHardware {
 
+    public static final int CARRY_TICS = 50;
     Lifter lift = null;
     ExtenderMove2Pos extender = null;
     Gripper gripper = null;
     int clear_tower_tics = 0;
     int lift_pos_ticks = 0;
     int extend_pos_ticks = 0;
-
-    public static final int CARRY_TICS = 50;
-
-    public enum STAGE_MAJOR {
-        IDLE,
-        PICKING,
-        PLACING
-    }
-
     STAGE_MAJOR majorStage_Current = STAGE_MAJOR.IDLE;
-
-    public enum STAGE_PICKING {
-        OPENING,
-        LIFTING,
-        EXTENDING,
-        LOWERING,
-        CLOSING,
-        CARRY_POS
-    }
-
     STAGE_PICKING pickingStage_Current = STAGE_PICKING.OPENING;
-
-    public enum STAGE_PLACING {
-        EXTENDING,
-        LIFTING,
-        RETRACTING,
-        LOWERING
-    }
-
     STAGE_PLACING placingStage_Current = STAGE_PLACING.LIFTING;
-
 
     LEG(Lifter lft, ExtenderMove2Pos ext, Gripper grip) {
         lift = lft;
@@ -64,7 +37,6 @@ public class LEG extends BaseHardware {
     public void start() {
 
     }
-    //*********************************************************************************************
 
     public void loop() {
 
@@ -87,12 +59,7 @@ public class LEG extends BaseHardware {
             default:
                 break;
         }
-
-
     }
-
-    //*********************************************************************************************
-    // loop just for the pick operation
 
     private void pick_loop() {
 
@@ -111,7 +78,7 @@ public class LEG extends BaseHardware {
         }
 
         if (pickingStage_Current == STAGE_PICKING.EXTENDING) {
-            if (extender.isInPosition(extender.PICK) && gripper.getIsOpen()) {
+            if (extender.isInPosition(ExtenderMove2Pos.PICK) && gripper.getIsOpen()) {
                 lift.setPosition(Lifter.PICK_POS);
                 pickingStage_Current = STAGE_PICKING.LOWERING;
             }
@@ -183,16 +150,21 @@ public class LEG extends BaseHardware {
             }
         }
     }
+    //*********************************************************************************************
 
     //*********************************************************************************************
+    public boolean getcmdComplete() {
+        return (majorStage_Current == STAGE_MAJOR.IDLE);
+    }
+
+    //*********************************************************************************************
+    // loop just for the pick operation
 
     public void stop() {
         lift.stop();
         extender.stop();
         gripper.stop();
     }
-
-    //*********************************************************************************************
 
     public void pick() {
         majorStage_Current = STAGE_MAJOR.PICKING;
@@ -202,10 +174,8 @@ public class LEG extends BaseHardware {
         extender.underLEGControl = true;
         gripper.underLEGControl = true;
         gripper.cmd_open();
-        lift.setPosition(lift.PRE_PICK_POS);
+        lift.setPosition(Lifter.PRE_PICK_POS);
     }
-
-    //*********************************************************************************************
 
     public void place() {
 
@@ -226,5 +196,32 @@ public class LEG extends BaseHardware {
             placingStage_Current = STAGE_PLACING.EXTENDING;
             extender.setPosition(ExtenderMove2Pos.PLACE_1);
         }
+    }
+    //*********************************************************************************************
+
+    public enum STAGE_MAJOR {
+        IDLE,
+        PICKING,
+        PLACING
+    }
+
+    //*********************************************************************************************
+
+    public enum STAGE_PICKING {
+        OPENING,
+        LIFTING,
+        EXTENDING,
+        LOWERING,
+        CLOSING,
+        CARRY_POS
+    }
+
+    //*********************************************************************************************
+
+    public enum STAGE_PLACING {
+        EXTENDING,
+        LIFTING,
+        RETRACTING,
+        LOWERING
     }
 }

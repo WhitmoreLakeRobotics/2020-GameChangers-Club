@@ -35,12 +35,12 @@ public class Settings extends Object {
     //    PARENT_MODE_TELE
     //}
 
-    public static enum CHASSIS_TYPE {
+    public enum CHASSIS_TYPE {
         CHASSIS_COMPETITION,
         CHASSIS_TEST
     }
 
-    public static enum switch_names {
+    public enum switch_names {
         bumper_left,
         bumper_right,
         dpad_up,
@@ -54,7 +54,7 @@ public class Settings extends Object {
         unknown
     }
 
-    public static enum throttle_names{
+    public enum throttle_names {
         right_stick_x,
         right_stick_y,
         left_stick_x,

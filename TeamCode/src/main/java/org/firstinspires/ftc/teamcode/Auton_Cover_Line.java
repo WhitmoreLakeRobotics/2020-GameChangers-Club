@@ -11,23 +11,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Auton_Cover_Line extends OpMode {
 
 
-    private static enum stage {
-        _unknown,
-        _00_preStart,
-        _10_Drive_Out,
-        _20_Finish
-    }
-
     Chassis RBTChassis = new Chassis();
-
     private stage currentStage = stage._unknown;
-
     // declare auton power variables
     private double AUTO_DRIVEPower = .5;
     private double AUTO_DRIVEPower_HI = .75;
     private double AUTO_TURNPower = .4;
     private double AUTO_DRIVEpower_HDrive = 1.0;
-
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -97,7 +87,7 @@ public class Auton_Cover_Line extends OpMode {
         }
 
         // delay until covering the line
-        if (runtime.seconds() < 22){
+        if (runtime.seconds() < 22) {
             return;
         }
 
@@ -110,8 +100,8 @@ public class Auton_Cover_Line extends OpMode {
             currentStage = stage._20_Finish;
         }
 
-        if (currentStage == stage._20_Finish){
-            if (RBTChassis.getcmdComplete()){
+        if (currentStage == stage._20_Finish) {
+            if (RBTChassis.getcmdComplete()) {
                 RBTChassis.stop();
             }
         }
@@ -125,6 +115,13 @@ public class Auton_Cover_Line extends OpMode {
     @Override
     public void stop() {
         RBTChassis.stop();
+    }
+
+    private enum stage {
+        _unknown,
+        _00_preStart,
+        _10_Drive_Out,
+        _20_Finish
     }
 
 }

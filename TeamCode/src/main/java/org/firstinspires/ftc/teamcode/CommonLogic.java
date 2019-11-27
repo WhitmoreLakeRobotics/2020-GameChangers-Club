@@ -43,9 +43,9 @@ public class CommonLogic extends Object {
     }
     //*********************************************************************************************
 
-    public static boolean indexCheck (int value, int low, int high){
+    public static boolean indexCheck(int value, int low, int high) {
 
-        return ( value >= low && value <= high);
+        return (value >= low && value <= high);
     }
 
     public static boolean oneShot(boolean currState, boolean prevState) {

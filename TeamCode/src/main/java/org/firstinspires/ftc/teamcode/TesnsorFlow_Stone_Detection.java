@@ -54,13 +54,10 @@ import java.util.List;
 @TeleOp(name = "TensorFlow Stone Detection", group = "Tele-Op")
 @Disabled
 public class TesnsorFlow_Stone_Detection extends OpMode {
+    public static final float INVALID_VALUE = -1;
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
-
-
-    private static float[] ObjectBoarders = new float[8];
-
     private static final int OB_MAX = 7;
     private static final int TOP = 0;
     private static final int RIGHT = 1;
@@ -70,8 +67,6 @@ public class TesnsorFlow_Stone_Detection extends OpMode {
     private static final int HEIGHT = 5;
     private static final int WIDTH_CENTER = 6;
     private static final int HEIGHT_CENTER = OB_MAX;
-    public static final float INVALID_VALUE = -1;
-
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
      * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
@@ -85,7 +80,7 @@ public class TesnsorFlow_Stone_Detection extends OpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY = StoneVisionKey.VUFORIA_KEY;
-
+    private static float[] ObjectBoarders = new float[8];
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.

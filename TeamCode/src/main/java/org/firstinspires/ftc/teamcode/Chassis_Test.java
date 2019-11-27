@@ -1,20 +1,9 @@
-
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
-
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
-import java.util.Locale;
 
 
 //@Disabled
@@ -22,16 +11,6 @@ public class Chassis_Test extends OpMode {
 
     //for truning this is the tolerance of trun in degrees
     public static final int chassis_GyroHeadingTol = 3;
-
-    public enum ChassisMode {
-        STOP,
-        DRIVE,
-        TURN,
-        TELEOP,
-        UNKNOWN
-    }
-
-
     public static final int ticsPerRev = Settings.REV_HD_40_MOTOR_TICKS_PER_REV;
     public static final double wheelDistPerRev = 4.0 * 3.14159;
     public static final double gearRatio = 80.0 / 80.0;
@@ -40,8 +19,6 @@ public class Chassis_Test extends OpMode {
     // naj set constant for Gyro KP for driving straight
     public static final double chassis_KPGyroStraight = 0.02;
     private static final String TAGChassis = "8492-Chassis-Test";
-
-
     public ExtenderMove2Pos subExtender = new ExtenderMove2Pos();
     public CommonGyro subGyro = new CommonGyro();
     public HDrive subHDrive = new HDrive();
@@ -49,8 +26,7 @@ public class Chassis_Test extends OpMode {
     public GrabberArms subGrabbers = new GrabberArms();
     public PusherArms subPushers = new PusherArms();
     public Lifter subLifter = new Lifter();
-    public LEG subLeg = new LEG(subLifter,subExtender,subGripper);
-
+    public LEG subLeg = new LEG(subLifter, subExtender, subGripper);
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private int initCounter = 0;
@@ -62,15 +38,11 @@ public class Chassis_Test extends OpMode {
     private DcMotor LDM2 = null;
     private DcMotor RDM1 = null;
     private DcMotor RDM2 = null;
-
     private double TargetMotorPowerLeft = 0.0;
     private double TargetMotorPowerRight = 0.0;
-
     private int TargetHeadingDeg = 0;
     private double TargetDistanceInches = 0.0;
-
     private double maxPower = 1.0;
-
 
     //*********************************************************************************************
     /*
@@ -179,13 +151,13 @@ public class Chassis_Test extends OpMode {
         subLeg.init_loop();
     }
 
-    //*********************************************************************************************
-
     private void setChassis() {
         subExtender.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
         subHDrive.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
         subLifter.setChassisType(Settings.CHASSIS_TYPE.CHASSIS_TEST);
     }
+
+    //*********************************************************************************************
 
     //*********************************************************************************************
     private void setMotorMode(DcMotor.RunMode newMode) {
@@ -405,14 +377,14 @@ public class Chassis_Test extends OpMode {
         doTurn();
     }
 
-    //*********************************************************************************************
-
     public void cmdTeleOp(double lSpeed, double rSpeed) {
         cmdComplete = false;
         ChassisMode_Current = ChassisMode.TELEOP;
         TargetMotorPowerLeft = lSpeed;
         TargetMotorPowerRight = rSpeed;
     }
+
+    //*********************************************************************************************
 
     //*********************************************************************************************
     public double getEncoderInches() {
@@ -463,6 +435,14 @@ public class Chassis_Test extends OpMode {
     //*********************************************************************************************
     public void setMaxPower(double newMax) {
         maxPower = Math.abs(newMax);
+    }
+
+    public enum ChassisMode {
+        STOP,
+        DRIVE,
+        TURN,
+        TELEOP,
+        UNKNOWN
     }
     //*********************************************************************************************
 }

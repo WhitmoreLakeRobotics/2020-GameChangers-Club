@@ -10,22 +10,10 @@ public class HDrive extends BaseHardware {
 
     //for tuning this is the tolerance of turn in degrees
     public static final int chassis_GyroHeadingTol = 3;
-
-    public enum HDriveMode {
-        Stop,
-        Drive,
-        Unknown,
-        TeleOp,
-        Idle,
-        Initializing
-    }
-
     public static final int TICKS_PER_REV = Settings.REV_CORE_HEX_MOTOR_TICKS_PER_REV;
     public static final int HDM2_UP_POS = 0;
-
-    public static final int HDM2_DOWN_POS = (int) (TICKS_PER_REV / 2);
+    public static final int HDM2_DOWN_POS = TICKS_PER_REV / 2;
     public static final int HDM2_TOL = 56;
-
     public static final double wheelDistPerRev = 3.0 * 3.14159;
     public static final double gearRatio = 80 / 80;
     public static final double ticsPerInch = TICKS_PER_REV / wheelDistPerRev / gearRatio;
@@ -33,7 +21,8 @@ public class HDrive extends BaseHardware {
     // naj set constant for Gyro KP for driving straight
     public static final double chassis_KPGyroStraight = 0.02;
     private static final String TAGHDrive = "8492-HDrive";
-
+    private static double HLiftPower = 1.0;
+    private static double HLiftInitPower = 1.0;
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private int initCounter = 0;
@@ -49,8 +38,6 @@ public class HDrive extends BaseHardware {
     private double TargetDistanceInchesH = 0;
     private DigitalChannel hDriveTCH = null;
     private int curr_pos = 0;
-    private static double HLiftPower = 1.0;
-    private static double HLiftInitPower = 1.0;
     private double maxPower = 1.0;
 
     //*********************************************************************************************
@@ -91,11 +78,12 @@ public class HDrive extends BaseHardware {
 
     }
 
-    //*********************************************************************************************
-
     public void setChassisType(Settings.CHASSIS_TYPE ct) {
         chassistype_Current = ct;
     }
+
+    //*********************************************************************************************
+
     //*********************************************************************************************
     /*
      * Code to run ONCE when the driver hits PLAY
@@ -108,10 +96,9 @@ public class HDrive extends BaseHardware {
         HDM2.setTargetPosition(HDM2_UP_POS);
         HDM2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        if (isHDriveInitialized() ) {
+        if (isHDriveInitialized()) {
             completeInitializing();
-        }
-        else{
+        } else {
             HDM2.setPower(HLiftInitPower);
             HdriveMode_Current = HDriveMode.Initializing;
             cmdComplete = false;
@@ -143,8 +130,7 @@ public class HDrive extends BaseHardware {
                 if (isHDriveInitialized()) {
                     // We can see the switch we are sure that the H -Drive is at Top-Dead-Center
                     completeInitializing();
-                }
-                else {
+                } else {
                     curr_pos = curr_pos + 10;
                     HDM2.setTargetPosition(curr_pos);
                     //telemetry.addData("H-Drive-Ticks", curr_pos);
@@ -163,11 +149,12 @@ public class HDrive extends BaseHardware {
     public HDriveMode getCurrentMode() {
         return HdriveMode_Current;
     }
+
     //*********************************************************************************************
     private boolean isHDriveInitialized() {
 
         // Test chassis does not have a mechinisim to hit the switch
-        return (chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST || (! hDriveTCH.getState()));
+        return (chassistype_Current == Settings.CHASSIS_TYPE.CHASSIS_TEST || (!hDriveTCH.getState()));
     }
 
     //*********************************************************************************************
@@ -186,7 +173,7 @@ public class HDrive extends BaseHardware {
     public void cmdTeleop(double leftPower, double rightPower) {
 
 
-        if (HdriveMode_Current != HdriveMode_Current.Initializing) {
+        if (HdriveMode_Current != HDriveMode.Initializing) {
             HdriveMode_Current = HDriveMode.TeleOp;
             double totalPower = leftPower - rightPower;
             totalPower = CommonLogic.CapMotorPower(totalPower, -1.0, 1.0);
@@ -195,26 +182,24 @@ public class HDrive extends BaseHardware {
             //telemetry.log().add(String.format("TargetMotorPowerH= %.2f", TargetMotorPowerH));
         }
     }
-    //*********************************************************************************************
 
     public void doStop() {
 
         RobotLog.aa(TAGHDrive, "doStop:");
         //if (HdriveMode_Current == HDriveMode.Stop) {
-            TargetDistanceInchesH = 0;
-            TargetMotorPowerH = 0;
+        TargetDistanceInchesH = 0;
+        TargetMotorPowerH = 0;
 
-            // If we were driving then raise the wheels
-            HDM2.setTargetPosition(HDM2_UP_POS);
-            HDM2.setPower(HLiftPower);
+        // If we were driving then raise the wheels
+        HDM2.setTargetPosition(HDM2_UP_POS);
+        HDM2.setPower(HLiftPower);
 
-            HDM1.setPower(TargetMotorPowerH);
-            PrevMotorPowerH = TargetMotorPowerH;
-            HdriveMode_Current = HDriveMode.Idle;
+        HDM1.setPower(TargetMotorPowerH);
+        PrevMotorPowerH = TargetMotorPowerH;
+        HdriveMode_Current = HDriveMode.Idle;
 
         //}
     }
-
     //*********************************************************************************************
 
     private void doDrive() {
@@ -249,14 +234,13 @@ public class HDrive extends BaseHardware {
     }    // doDrive()
 
     //*********************************************************************************************
+
+    //*********************************************************************************************
     // create method to return complete bolean
     public boolean getcmdComplete() {
 
         return (cmdComplete);
     }
-
-    //*********************************************************************************************
-    // create command to be called from auton to drive straight
 
     public void cmdDrive(double DrivePower, double targetDistanceInches) {
         cmdComplete = false;
@@ -269,11 +253,14 @@ public class HDrive extends BaseHardware {
     }
 
     //*********************************************************************************************
+    // create command to be called from auton to drive straight
 
     public void cmdStop() {
         //TargetMotorPowerH = 0;
         HdriveMode_Current = HDriveMode.Stop;
     }
+
+    //*********************************************************************************************
 
     //*********************************************************************************************
     public double getEncoderInches() {
@@ -295,6 +282,15 @@ public class HDrive extends BaseHardware {
     //*********************************************************************************************
     public void setMaxPower(double newMax) {
         maxPower = Math.abs(newMax);
+    }
+
+    public enum HDriveMode {
+        Stop,
+        Drive,
+        Unknown,
+        TeleOp,
+        Idle,
+        Initializing
     }
 
     //*********************************************************************************************

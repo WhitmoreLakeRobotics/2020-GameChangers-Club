@@ -11,29 +11,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Auton_Red_Foundation extends OpMode {
 
 
-    private static enum stage {
-        _unknown,
-        _00_preStart,
-        _05_Shuttle_2_Center,
-        _10_Drive_Out,
-        _20_Pushers_Down,
-        _30_Drive_Back,
-        _35_Stuff_it,
-        _40_Pushers_Up,
-        _50_Shuttle_2_Line,
-        _60_Finish
-    }
-
     Chassis RBTChassis = new Chassis();
-
     private stage currentStage = stage._unknown;
-
     // declare auton power variables
     private double AUTO_DRIVEPower = .5;
     private double AUTO_DRIVEPower_HI = .75;
     private double AUTO_TURNPower = .4;
     private double AUTO_DRIVEpower_HDrive = -1.0;
-
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -134,7 +118,6 @@ public class Auton_Red_Foundation extends OpMode {
         }
 
 
-
         if (currentStage == stage._35_Stuff_it) {
             if (RBTChassis.getcmdComplete()) {
                 RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 15);
@@ -172,6 +155,19 @@ public class Auton_Red_Foundation extends OpMode {
     @Override
     public void stop() {
         RBTChassis.stop();
+    }
+
+    private enum stage {
+        _unknown,
+        _00_preStart,
+        _05_Shuttle_2_Center,
+        _10_Drive_Out,
+        _20_Pushers_Down,
+        _30_Drive_Back,
+        _35_Stuff_it,
+        _40_Pushers_Up,
+        _50_Shuttle_2_Line,
+        _60_Finish
     }
 
 }

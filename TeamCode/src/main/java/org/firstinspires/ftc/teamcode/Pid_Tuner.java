@@ -1,37 +1,32 @@
 package org.firstinspires.ftc.teamcode;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.util.RobotLog;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "PID-Tuner", group = "TeleOp")
 //@Disabled
 public class Pid_Tuner extends OpMode {
 
 
-    private DcMotor motor = null;
-    private DcMotorControllerEx motorControl = null;
-    private int motorIndex = 0;
-    PIDFCoefficients pidOrig = null;
-    double NEW_P = 2.5;
-    double NEW_I = 0.1;
-    double NEW_D = 0.2;
     public static final int LIFTERPOS_TOL = 5;
     public static final double LIFTERPOWER_UP = 1.0;
     public static final double LIFTERPOWER_DOWN = 1.0;
-
-
     //Named index positions
     public static int PICK_POS = 0;
     public static int CARRY_POS = 1;
     public static int PRE_PICK_POS = 2;
-
     private static int LOW_INDEX = 0;
     private static int HIGH_INDEX = 8;
     private static int[] LIFTER_POSITIONS_TICKS = new int[HIGH_INDEX + 1];
+    PIDFCoefficients pidOrig = null;
+    double NEW_P = 2.5;
+    double NEW_I = 0.1;
+    double NEW_D = 0.2;
+    private DcMotor motor = null;
+    private DcMotorControllerEx motorControl = null;
+    private int motorIndex = 0;
     private int CurrentIndex = LOW_INDEX;
     private int CurrentTickCount = 0;
 
@@ -166,7 +161,7 @@ public class Pid_Tuner extends OpMode {
 
         CurrentTickCount = motor.getCurrentPosition();
 
-        telemetry.addData("r", String.format("Idx=%d\tTics=%d", CurrentIndex,  LIFTER_POSITIONS_TICKS[CurrentIndex]));
+        telemetry.addData("r", String.format("Idx=%d\tTics=%d", CurrentIndex, LIFTER_POSITIONS_TICKS[CurrentIndex]));
         telemetry.addData("c", String.format("\tPos-Tics=%d", CurrentTickCount));
 
         telemetry.addData("MC P", pidOrig.p);
@@ -222,9 +217,8 @@ public class Pid_Tuner extends OpMode {
             }
             //Set the motor to hold the new position
             motor.setTargetPosition(LIFTER_POSITIONS_TICKS[index]);
-        }
-        else {
-            telemetry.addData("Lifter Index Out of Range",index);
+        } else {
+            telemetry.addData("Lifter Index Out of Range", index);
         }
     }
 

@@ -1,0 +1,234 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+@Autonomous(name = "Blue_Stone_Foundation", group = "Auton")
+public class Auton_Blue_Stone_Move_Foundation extends OpMode {
+
+
+    Chassis RBTChassis = new Chassis();
+    private stage currentStage = stage._unknown;
+    // declare auton power variables
+    private double AUTO_DRIVEPower = .5;
+    private double AUTO_DRIVEPower_HI = .90;
+    private double AUTO_TURNPower = .4;
+    private double AUTO_DRIVEpower_HDrive = 1.0;
+    /* Declare OpMode members. */
+    private ElapsedTime runtime = new ElapsedTime();
+
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
+    @Override
+    public void init() {
+        //----------------------------------------------------------------------------------------------
+        // These constants manage the duration we allow for callbacks to user code to run for before
+        // such code is considered to be stuck (in an infinite loop, or wherever) and consequently
+        // the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
+        // necessary as poorly chosen values might inadvertently compromise safety.
+        //----------------------------------------------------------------------------------------------
+        msStuckDetectInit = Settings.msStuckDetectInit;
+        msStuckDetectInitLoop = Settings.msStuckDetectInitLoop;
+        msStuckDetectStart = Settings.msStuckDetectStart;
+        msStuckDetectLoop = Settings.msStuckDetectLoop;
+        msStuckDetectStop = Settings.msStuckDetectStop;
+
+
+        RBTChassis.hardwareMap = hardwareMap;
+        RBTChassis.telemetry = telemetry;
+        RBTChassis.init();
+        telemetry.addData("Blue_Stone_Foundation", "Initialized");
+    }
+
+    /*
+     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+     */
+    @Override
+    public void init_loop() {
+        // initialize chassis
+        RBTChassis.init_loop();
+
+    }
+
+    /*
+     * Code to run ONCE when the driver hits PLAY
+     */
+    @Override
+    public void start() {
+        // initialize chassis
+        Runtime.getRuntime();
+        RBTChassis.start();
+
+    }
+
+    /*
+     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
+     */
+    @Override
+    public void loop() {
+
+        telemetry.addData("Blue_Rotate_Foundation", currentStage);
+        RBTChassis.loop();
+
+        //can not do anything until hDrive is zeroed and ready
+        if (RBTChassis.subHDrive.getCurrentMode() == HDrive.HDriveMode.Initializing) {
+            return;
+        }
+
+        // check stage and do what's appropriate
+        if (currentStage == stage._unknown) {
+            currentStage = stage._00_preStart;
+        }
+
+        if (currentStage == stage._00_preStart) {
+            RBTChassis.cmdDrive(AUTO_DRIVEPower_HI, 0, 18);
+            currentStage = stage._10_Drive_Out;
+        }
+
+        if (currentStage == stage._10_Drive_Out) {
+            if (RBTChassis.getcmdComplete()) {
+                RBTChassis.subLeg.pick();
+                currentStage = stage._20_Pick_Stone;
+            }
+        }
+
+        if (currentStage == stage._20_Pick_Stone) {
+            if (RBTChassis.subLeg.getcmdComplete()) {
+                RBTChassis.cmdDrive(-AUTO_DRIVEPower, 0, 4);
+                currentStage = stage._30_Drive_Back;
+            }
+        }
+
+        if (currentStage == stage._30_Drive_Back) {
+            if (RBTChassis.getcmdComplete()) {
+                RBTChassis.cmdTurn(-AUTO_TURNPower, AUTO_TURNPower, -90);
+                currentStage = stage._35_Turn_90_Degress;
+            }
+        }
+
+        if (currentStage == stage._35_Turn_90_Degress) {
+            if (RBTChassis.getcmdComplete()) {
+                RBTChassis.cmdDrive(AUTO_DRIVEPower, -90, 30);
+                currentStage = stage._40_DriveUnderBridge;
+            }
+        }
+
+        if (currentStage == stage._40_DriveUnderBridge) {
+            if (RBTChassis.getcmdComplete()) {
+                //Also start the lift to the first stone height to clear foundation
+
+                RBTChassis.subLifter.setPosition(Lifter.CLEAR_FOUNDATION_POS);
+
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 15);
+                currentStage = stage._50_Shuttle_2_Foundation;
+            }
+        }
+
+        if (currentStage == stage._50_Shuttle_2_Foundation) {
+            if (RBTChassis.subLifter.isInPosition(Lifter.CLEAR_FOUNDATION_POS) &&
+                    RBTChassis.subHDrive.getcmdComplete()) {
+                RBTChassis.subExtender.setPosition(ExtenderMove2Pos.PLACE_1);
+                RBTChassis.cmdDrive(AUTO_DRIVEPower, -90, 8);
+                currentStage = stage._60_Drive_Forward;
+            }
+        }
+
+        if (currentStage == stage._60_Drive_Forward) {
+            if (RBTChassis.getcmdComplete() &&
+                    RBTChassis.subExtender.isInPosition(ExtenderMove2Pos.PLACE_1)) {
+                RBTChassis.subGripper.cmd_open();
+                RBTChassis.subPushers.cmdMoveAllDown();
+                currentStage = stage._70_Place_Stone;
+            }
+        }
+
+        if (currentStage == stage._70_Place_Stone) {
+            if (RBTChassis.subPushers.getIsDown()) {
+                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 30);
+                RBTChassis.subExtender.setPosition(ExtenderMove2Pos.HOME);
+                currentStage = stage._90_Pull_Sideways;
+            }
+        }
+
+
+        if (currentStage == stage._90_Pull_Sideways) {
+            if (RBTChassis.subHDrive.getcmdComplete()) {
+                RBTChassis.cmdDrive(AUTO_DRIVEPower, -90, 8);
+                RBTChassis.subLifter.setPosition(Lifter.CARRY_POS);
+                currentStage = stage._100_Push_2_Corner;
+            }
+        }
+
+        if (currentStage == stage._100_Push_2_Corner) {
+            if (RBTChassis.getcmdComplete()) {
+                RBTChassis.subPushers.cmdMoveAllUp();
+                currentStage = stage._110_Pushers_up;
+            }
+        }
+
+        if (currentStage == stage._110_Pushers_up) {
+            if (RBTChassis.subPushers.getIsUp()) {
+                currentStage = stage._120_Shuttle_2_Far_Lane;
+                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 9);
+            }
+        }
+
+        if (currentStage == stage._120_Shuttle_2_Far_Lane) {
+            //if (RBTChassis.subHDrive.getcmdComplete()) {
+            RBTChassis.cmdDrive(-AUTO_DRIVEPower_HI, -90, 12);
+            currentStage = stage._130_Park_On_Line;
+            //}
+        }
+
+        if (currentStage == stage._130_Park_On_Line) {
+            if (RBTChassis.getcmdComplete()) {
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 2);
+                currentStage = stage._140_Hug_Bridge;
+            }
+        }
+
+        if (currentStage == stage._140_Hug_Bridge) {
+            if (RBTChassis.subHDrive.getcmdComplete()) {
+                currentStage = stage._150_Finish;
+            }
+        }
+
+        if (currentStage == stage._150_Finish) {
+            stop();
+        }
+
+    }  //  loop
+
+    /*
+     * Code to run ONCE after the driver hits STOP
+     */
+    @Override
+    public void stop() {
+
+        RBTChassis.stop();
+    }
+
+    private enum stage {
+        _unknown,
+        _00_preStart,
+        _10_Drive_Out,
+        _20_Pick_Stone,
+        _30_Drive_Back,
+        _35_Turn_90_Degress,
+        _40_DriveUnderBridge,
+        _50_Shuttle_2_Foundation,
+        _60_Drive_Forward,
+        _70_Place_Stone,
+        _80_Pushers_Down,
+        _90_Pull_Sideways,
+        _100_Push_2_Corner,
+        _110_Pushers_up,
+        _120_Shuttle_2_Far_Lane,
+        _130_Park_On_Line,
+        _140_Hug_Bridge,
+        _150_Finish
+    }
+}

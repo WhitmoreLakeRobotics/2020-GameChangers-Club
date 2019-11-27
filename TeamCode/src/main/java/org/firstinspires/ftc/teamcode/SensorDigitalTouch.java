@@ -50,7 +50,7 @@ public class SensorDigitalTouch extends LinearOpMode {
      * The REV Robotics Touch Sensor
      * is treated as a digital channel.  It is HIGH if the button is unpressed.
      * It pulls LOW if the button is pressed.
-     *
+     * <p>
      * Also, when you connect a REV Robotics Touch Sensor to the digital I/O port on the
      * Expansion Hub using a 4-wire JST cable, the second pin gets connected to the Touch Sensor.
      * The lower (first) pin stays unconnected.*
@@ -59,6 +59,7 @@ public class SensorDigitalTouch extends LinearOpMode {
     DigitalChannel extenderTCH;  // Hardware Device Object
     DigitalChannel hDriveTCH;  // Hardware Device Object
     DigitalChannel lifterTCH;  // Hardware Device Object
+
     @Override
     public void runOpMode() {
 
@@ -87,21 +88,21 @@ public class SensorDigitalTouch extends LinearOpMode {
 
             // send the info back to driver station using telemetry function.
             // if the digital channel returns true it's HIGH and the button is unpressed.
-            if (! extenderTCH.getState()) {
+            if (!extenderTCH.getState()) {
                 telemetry.addData("extenderTCH", "Is Pressed");
             } else {
                 telemetry.addData("extenderTCH", "Is Not Pressed");
 
             }
 
-            if (! hDriveTCH.getState()) {
+            if (!hDriveTCH.getState()) {
                 telemetry.addData("hDriveTCH", "Is Pressed");
             } else {
                 telemetry.addData("hDriveTCH", "Is Not Pressed");
 
             }
 
-            if (! lifterTCH.getState()) {
+            if (!lifterTCH.getState()) {
                 telemetry.addData("lifterTCH", "Is Pressed");
             } else {
                 telemetry.addData("lifterTCH", "Is Not Pressed");

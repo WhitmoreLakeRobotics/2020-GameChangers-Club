@@ -9,15 +9,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 
 //@TeleOp(name = "LIFTER", group = "CHASSIS")  // @Autonomous(...) is the other common choice
 
 public class Lifter extends BaseHardware {
-    private static final String TAGLIFTER = "8492-LIFTER";
-
     //Encoder positions for the LIFTER
     public static final int LIFTER_STEP = 40;
     public static final int LIFTERPOS_TOL = 15;
@@ -26,29 +23,26 @@ public class Lifter extends BaseHardware {
     //public static final double LIFTERPOWER_INIT = -.125;
     public static final double LIFTERStickDeadBand = .2;
     public static final int CLEAR_NUB_TICS = 144;
-    private Settings.CHASSIS_TYPE chassisType_Current = Settings.CHASSIS_TYPE.CHASSIS_COMPETITION;
-
+    private static final String TAGLIFTER = "8492-LIFTER";
     //Named index positions
     public static int PICK_POS = 0;
     public static int CARRY_POS = 1;
     public static int PRE_PICK_POS = 2;
-
+    public static int CLEAR_FOUNDATION_POS = 3;
     private static int LOW_INDEX = 0;
     private static int HIGH_INDEX = 8;
     private static int[] LIFTER_POSITIONS_TICKS = new int[HIGH_INDEX + 1];
-    private int CurrentIndex = LOW_INDEX;
-    private int CurrentTickCount = 0;
-
-
-    // declare motors
-    private DcMotor LFT1 = null;
-    private DigitalChannel LIFTERTCH = null;
+    public boolean underLEGControl = false;
     DcMotorControllerEx lftControl = null;
-
     PIDFCoefficients pidUp = null;
     PIDFCoefficients pidDown = null;
     int motorIndex = 0;
-    public boolean underLEGControl = false;
+    private Settings.CHASSIS_TYPE chassisType_Current = Settings.CHASSIS_TYPE.CHASSIS_COMPETITION;
+    private int CurrentIndex = LOW_INDEX;
+    private int CurrentTickCount = 0;
+    // declare motors
+    private DcMotor LFT1 = null;
+    private DigitalChannel LIFTERTCH = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -75,12 +69,12 @@ public class Lifter extends BaseHardware {
         int foundationheight = 226;
         LIFTER_POSITIONS_TICKS[PICK_POS] = 0;  //start pick
         LIFTER_POSITIONS_TICKS[CARRY_POS] = 70;  //carry
-        LIFTER_POSITIONS_TICKS[2] = 150;
-        LIFTER_POSITIONS_TICKS[3] = foundationheight; //level 1
+        LIFTER_POSITIONS_TICKS[PRE_PICK_POS] = 150;
+        LIFTER_POSITIONS_TICKS[CLEAR_FOUNDATION_POS] = foundationheight; //level 1
         LIFTER_POSITIONS_TICKS[4] = foundationheight + (1 * brickheight);  //level 2
         LIFTER_POSITIONS_TICKS[5] = foundationheight + (2 * brickheight); //level 3
         LIFTER_POSITIONS_TICKS[6] = foundationheight + (3 * brickheight);
-        ;  //level 4
+        //level 4
         LIFTER_POSITIONS_TICKS[7] = foundationheight + (4 * brickheight);  //level 5
         LIFTER_POSITIONS_TICKS[8] = foundationheight + (5 * brickheight);  //level 6
 
@@ -107,9 +101,16 @@ public class Lifter extends BaseHardware {
         double NEW_D = pidOrig.d;
         double NEW_F = pidOrig.f;
 
+
+        // Stock PIDF values from the first time we looked at the pids
+        // p = 4.9600067138
+        // i = 0.4960002197
+        // d = 0.0
+        // F = 49.600006103
+
         // change coefficients.
         pidUp = new PIDFCoefficients(10.0, .6, .1, 65);
-        pidDown = new PIDFCoefficients(10.0, .6, .1, 65);
+        pidDown = new PIDFCoefficients(12.0, .8, .1, 65);
 
     }
 
@@ -230,7 +231,7 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
 
     public void incPositionIndex() {
-        if (underLEGControl){
+        if (underLEGControl) {
             return;
         }
         //The user might have been using stick control reset the index
@@ -248,7 +249,7 @@ public class Lifter extends BaseHardware {
     //*********************************************************************************************
 
     public void decPositionIndex() {
-        if (underLEGControl){
+        if (underLEGControl) {
             return;
         }
         //The user might have been using stick control reset the index
