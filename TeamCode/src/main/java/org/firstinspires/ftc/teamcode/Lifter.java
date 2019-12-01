@@ -16,21 +16,23 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 public class Lifter extends BaseHardware {
     //Encoder positions for the LIFTER
-    public static final int LIFTER_STEP = 40;
-    public static final int LIFTERPOS_TOL = 15;
+    public static final int LIFTER_STEP = 250;
+    public static final int LIFTERPOS_TOL = 60;
     public static final double LIFTERPOWER_UP = 1.0;
     public static final double LIFTERPOWER_DOWN = 1.0;
     //public static final double LIFTERPOWER_INIT = -.125;
     public static final double LIFTERStickDeadBand = .2;
-    public static final int CLEAR_NUB_TICS = 144;
+    public static final int CLEAR_NUB_TICS = 525;
     private static final String TAGLIFTER = "8492-LIFTER";
     //Named index positions
     public static int PICK_POS = 0;
     public static int CARRY_POS = 1;
     public static int PRE_PICK_POS = 2;
-    public static int CLEAR_FOUNDATION_POS = 3;
+    public static int CLEAR_FOUNDATION_POS = 2;
+
+
     private static int LOW_INDEX = 0;
-    private static int HIGH_INDEX = 8;
+    private static int HIGH_INDEX = 7;
     private static int[] LIFTER_POSITIONS_TICKS = new int[HIGH_INDEX + 1];
     public boolean underLEGControl = false;
     DcMotorControllerEx lftControl = null;
@@ -65,18 +67,17 @@ public class Lifter extends BaseHardware {
         //do not know what digital channel is check here for errors ******
         LIFTERTCH = hardwareMap.get(DigitalChannel.class, "lifterTCH");
         LIFTERTCH.setMode(DigitalChannel.Mode.INPUT);
-        int brickheight = 300;
-        int foundationheight = 226;
-        LIFTER_POSITIONS_TICKS[PICK_POS] = 0;  //start pick
-        LIFTER_POSITIONS_TICKS[CARRY_POS] = 70;  //carry
-        LIFTER_POSITIONS_TICKS[PRE_PICK_POS] = 150;
-        LIFTER_POSITIONS_TICKS[CLEAR_FOUNDATION_POS] = foundationheight; //level 1
-        LIFTER_POSITIONS_TICKS[4] = foundationheight + (1 * brickheight);  //level 2
-        LIFTER_POSITIONS_TICKS[5] = foundationheight + (2 * brickheight); //level 3
-        LIFTER_POSITIONS_TICKS[6] = foundationheight + (3 * brickheight);
-        //level 4
-        LIFTER_POSITIONS_TICKS[7] = foundationheight + (4 * brickheight);  //level 5
-        LIFTER_POSITIONS_TICKS[8] = foundationheight + (5 * brickheight);  //level 6
+        //int brickheight = 350;
+        //int foundationheight = 240;
+        LIFTER_POSITIONS_TICKS[PICK_POS] = -50;  //start pick
+        LIFTER_POSITIONS_TICKS[CARRY_POS] = 248; //70;  //carry
+        // Pre-Pick pos is the same as CLEAR_FOUNDATION_POS
+        LIFTER_POSITIONS_TICKS[CLEAR_FOUNDATION_POS] = 910;   //level 1
+        LIFTER_POSITIONS_TICKS[3] = 2375; //611;  //level 2
+        LIFTER_POSITIONS_TICKS[4] = 3595; //900;  //level 3
+        LIFTER_POSITIONS_TICKS[5] = 4720; //1175;  //level 4
+        LIFTER_POSITIONS_TICKS[6] = 5890; //1475;  //level 5
+        LIFTER_POSITIONS_TICKS[7] = 6775; //1695;  //level 6
 
         CurrentTickCount = LFT1.getCurrentPosition();
         LFT1.setTargetPosition(CurrentTickCount);
@@ -109,8 +110,11 @@ public class Lifter extends BaseHardware {
         // F = 49.600006103
 
         // change coefficients.
-        pidUp = new PIDFCoefficients(10.0, .6, .1, 65);
-        pidDown = new PIDFCoefficients(12.0, .8, .1, 65);
+        //pidUp = new PIDFCoefficients(20.0, 2.1, .1, 65);
+        //pidDown = new PIDFCoefficients(20.0, 2.1, .1, 65);
+
+        pidUp = new PIDFCoefficients(NEW_P, NEW_I, NEW_D, NEW_F);
+        pidDown = new PIDFCoefficients(NEW_P, NEW_I, NEW_D, NEW_F);
 
     }
 
@@ -173,12 +177,12 @@ public class Lifter extends BaseHardware {
         telemetry.addData("Lifter-Index", CurrentIndex);
         telemetry.addData("LifterPos-Ticks", CurrentTickCount);
 
-        PIDFCoefficients pidOrig = lftControl.getPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_USING_ENCODER);
+        //PIDFCoefficients pidOrig = lftControl.getPIDFCoefficients(motorIndex, DcMotor.RunMode.RUN_USING_ENCODER);
 
-        telemetry.addData("LFT1 P", pidOrig.p);
-        telemetry.addData("LFT1 I", pidOrig.i);
-        telemetry.addData("LFT1 D", pidOrig.d);
-        telemetry.addData("LFT1 F", pidOrig.f);
+        //telemetry.addData("LFT1 P", pidOrig.p);
+        //telemetry.addData("LFT1 I", pidOrig.i);
+        //telemetry.addData("LFT1 D", pidOrig.d);
+        //telemetry.addData("LFT1 F", pidOrig.f);
     }
 
     //*********************************************************************************************

@@ -20,7 +20,7 @@ public class Gripper extends BaseHardware {
     private GRIPPER_STATES GripperState_desired = GRIPPER_STATES.UNKNOWN;
     private GRIPPER_STATES GripperState_current = GRIPPER_STATES.UNKNOWN;
     private ElapsedTime GripperTimer = null;
-    private int mSecGripperMoveTime_mS = 750;
+    private int mSecGripperMoveTime_mS = 1100;
     // Define the hardware
     private Servo gripperSvo = null;
     // set neutral positions for first time running on the robot

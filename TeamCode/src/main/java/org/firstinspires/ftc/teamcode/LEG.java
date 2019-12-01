@@ -118,9 +118,16 @@ public class LEG extends BaseHardware {
 
         if (placingStage_Current == STAGE_PLACING.EXTENDING) {
             if (extender.isInPosition(ExtenderMove2Pos.PLACE_1)) {
-                placingStage_Current = STAGE_PLACING.LIFTING;
+                placingStage_Current = STAGE_PLACING.OPENING;
                 gripper.cmd_open();
+
+            }
+        }
+
+        if (placingStage_Current == STAGE_PLACING.OPENING) {
+            if (gripper.getIsOpen()){
                 clear_tower_tics = lift.clear_tower();
+                placingStage_Current = STAGE_PLACING.LIFTING;
             }
         }
 
@@ -189,9 +196,9 @@ public class LEG extends BaseHardware {
         // If we are only at Pick location on the extender then we can not drop the stone yet.
         if (CommonLogic.inRange(extend_pos_ticks, extender.getIndexTics(ExtenderMove2Pos.PLACE_1), ExtenderMove2Pos.EXTENDER_POS_TOL) ||
                 (extend_pos_ticks > extender.getIndexTics(ExtenderMove2Pos.PLACE_1))) {
-            placingStage_Current = STAGE_PLACING.LIFTING;
+            placingStage_Current = STAGE_PLACING.OPENING;
             gripper.cmd_open();
-            clear_tower_tics = lift.clear_tower();
+
         } else {
             placingStage_Current = STAGE_PLACING.EXTENDING;
             extender.setPosition(ExtenderMove2Pos.PLACE_1);
@@ -220,6 +227,7 @@ public class LEG extends BaseHardware {
 
     public enum STAGE_PLACING {
         EXTENDING,
+        OPENING,
         LIFTING,
         RETRACTING,
         LOWERING
