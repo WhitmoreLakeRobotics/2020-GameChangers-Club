@@ -104,100 +104,92 @@ public class Auton_Blue_Stone_Move_Foundation extends OpMode {
 
         if (currentStage == stage._30_Drive_Back) {
             if (RBTChassis.getcmdComplete()) {
-                RBTChassis.cmdTurn(-AUTO_TURNPower, AUTO_TURNPower, -90);
-                currentStage = stage._35_Turn_90_Degress;
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive,72);
+                currentStage = stage._40_Drive_H_UnderBridge;
             }
         }
 
-        if (currentStage == stage._35_Turn_90_Degress) {
-            if (RBTChassis.getcmdComplete()) {
-                RBTChassis.cmdDrive(AUTO_DRIVEPower, -90, 30);
-                currentStage = stage._40_DriveUnderBridge;
-            }
-        }
-
-        if (currentStage == stage._40_DriveUnderBridge) {
-            if (RBTChassis.getcmdComplete()) {
+        if (currentStage == stage._40_Drive_H_UnderBridge) {
+            if (RBTChassis.subHDrive.getcmdComplete()) {
                 //Also start the lift to the first stone height to clear foundation
-
                 RBTChassis.subLifter.setPosition(Lifter.CLEAR_FOUNDATION_POS);
-
-                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 15);
-                currentStage = stage._50_Shuttle_2_Foundation;
+                currentStage = stage._45_Lifter_up;
             }
         }
 
-        if (currentStage == stage._50_Shuttle_2_Foundation) {
-            if (RBTChassis.subLifter.isInPosition(Lifter.CLEAR_FOUNDATION_POS) &&
-                    RBTChassis.subHDrive.getcmdComplete()) {
-                RBTChassis.subExtender.setPosition(ExtenderMove2Pos.PLACE_1);
-                RBTChassis.cmdDrive(AUTO_DRIVEPower, -90, 8);
-                currentStage = stage._60_Drive_Forward;
+        if (currentStage == stage._45_Lifter_up){
+            if (RBTChassis.subLifter.isInPosition(Lifter.CLEAR_FOUNDATION_POS)){
+                currentStage = stage._50_Drive_Forward;
+                RBTChassis.cmdDrive(AUTO_DRIVEPower,0,4);
+                RBTChassis.subExtender.setPosition(ExtenderMove2Pos.PLACE_2);
             }
         }
 
-        if (currentStage == stage._60_Drive_Forward) {
+        if (currentStage == stage._50_Drive_Forward) {
             if (RBTChassis.getcmdComplete() &&
-                    RBTChassis.subExtender.isInPosition(ExtenderMove2Pos.PLACE_1)) {
-                RBTChassis.subGripper.cmd_open();
+                    RBTChassis.subExtender.isInPosition(ExtenderMove2Pos.PLACE_2)) {
+                RBTChassis.subLeg.place();
                 RBTChassis.subPushers.cmdMoveAllDown();
                 currentStage = stage._70_Place_Stone;
             }
         }
 
         if (currentStage == stage._70_Place_Stone) {
-            if (RBTChassis.subPushers.getIsDown()) {
-                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 30);
-                RBTChassis.subExtender.setPosition(ExtenderMove2Pos.HOME);
-                currentStage = stage._90_Pull_Sideways;
+            if (RBTChassis.subPushers.getIsDown() && RBTChassis.subLeg.getcmdComplete()){
+                RBTChassis.cmdDrive(-AUTO_DRIVEPower, 0,30);
+                currentStage = stage._90_Pull_Back;
             }
         }
 
 
-        if (currentStage == stage._90_Pull_Sideways) {
-            if (RBTChassis.subHDrive.getcmdComplete()) {
-                RBTChassis.cmdDrive(AUTO_DRIVEPower, -90, 8);
-                RBTChassis.subLifter.setPosition(Lifter.CARRY_POS);
-                currentStage = stage._100_Push_2_Corner;
-            }
-        }
-
-        if (currentStage == stage._100_Push_2_Corner) {
+        if (currentStage == stage._90_Pull_Back) {
             if (RBTChassis.getcmdComplete()) {
                 RBTChassis.subPushers.cmdMoveAllUp();
-                currentStage = stage._110_Pushers_up;
+                currentStage = stage._95_Pushers_Up;
             }
         }
 
-        if (currentStage == stage._110_Pushers_up) {
+        if (currentStage == stage._95_Pushers_Up){
             if (RBTChassis.subPushers.getIsUp()) {
-                currentStage = stage._120_Shuttle_2_Far_Lane;
-                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 9);
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 12);
+                currentStage = stage._110_Drive_Forward;
             }
         }
 
-        if (currentStage == stage._120_Shuttle_2_Far_Lane) {
-            //if (RBTChassis.subHDrive.getcmdComplete()) {
-            RBTChassis.cmdDrive(-AUTO_DRIVEPower_HI, -90, 12);
-            currentStage = stage._130_Park_On_Line;
-            //}
-        }
 
-        if (currentStage == stage._130_Park_On_Line) {
+        if (currentStage == stage._110_Drive_Forward) {
             if (RBTChassis.getcmdComplete()) {
-                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 2);
-                currentStage = stage._140_Hug_Bridge;
+                currentStage = stage._120_Slam_Foundation;
+                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 4);
             }
         }
 
-        if (currentStage == stage._140_Hug_Bridge) {
+
+        if (currentStage == stage._120_Slam_Foundation) {
             if (RBTChassis.subHDrive.getcmdComplete()) {
+                RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 4);
+                currentStage = stage._130_Get_In_Lane;
+            }
+        }
+
+        if (currentStage == stage._130_Get_In_Lane) {
+            if (RBTChassis.getcmdComplete()) {
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 20);
+                currentStage = stage._140_Park_On_Line;
+            }
+        }
+
+        if (currentStage == stage._140_Park_On_Line) {
+            if (RBTChassis.subHDrive.getcmdComplete()) {
+                RBTChassis.cmdDrive(AUTO_DRIVEPower,0,2);
                 currentStage = stage._150_Finish;
             }
         }
 
         if (currentStage == stage._150_Finish) {
-            stop();
+            if (RBTChassis.getcmdComplete()) {
+                stop();
+            }
         }
 
     }  //  loop
@@ -217,18 +209,18 @@ public class Auton_Blue_Stone_Move_Foundation extends OpMode {
         _10_Drive_Out,
         _20_Pick_Stone,
         _30_Drive_Back,
-        _35_Turn_90_Degress,
-        _40_DriveUnderBridge,
-        _50_Shuttle_2_Foundation,
-        _60_Drive_Forward,
+        _40_Drive_H_UnderBridge,
+        _45_Lifter_up,
+        _50_Drive_Forward,
         _70_Place_Stone,
         _80_Pushers_Down,
-        _90_Pull_Sideways,
-        _100_Push_2_Corner,
-        _110_Pushers_up,
-        _120_Shuttle_2_Far_Lane,
-        _130_Park_On_Line,
-        _140_Hug_Bridge,
+        _90_Pull_Back,
+        _95_Pushers_Up,
+        _110_Drive_Forward,
+        _120_Slam_Foundation,
+        _130_Get_In_Lane,
+        _140_Park_On_Line,
+        _145_Hug_Bridge,
         _150_Finish
     }
 }
