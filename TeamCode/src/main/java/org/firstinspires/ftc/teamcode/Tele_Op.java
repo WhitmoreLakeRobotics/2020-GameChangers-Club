@@ -211,7 +211,7 @@ public class Tele_Op extends OpMode {
             RBTChassis.subLifter.decPositionIndex();
         }
 
-        // Update the previous status for gamepad 1
+        // Update the previous status for gamepad1
         gp1_prev_a = gamepad1.a;
         gp1_prev_b = gamepad1.b;
         gp1_prev_x = gamepad1.x;

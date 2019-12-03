@@ -23,9 +23,9 @@ public class Settings extends Object {
     // the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
     // necessary as poorly chosen values might inadvertently compromise safety.
     //----------------------------------------------------------------------------------------------
-    public static final int msStuckDetectInit = 15000;
-    public static final int msStuckDetectInitLoop = 5000;
-    public static final int msStuckDetectStart = 5000;
+    public static final int msStuckDetectInit = 17000;
+    public static final int msStuckDetectInitLoop = 8000;
+    public static final int msStuckDetectStart = 8000;
     public static final int msStuckDetectLoop = 5000;
     public static final int msStuckDetectStop = 1000;
 

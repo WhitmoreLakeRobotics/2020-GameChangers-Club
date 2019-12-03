@@ -84,7 +84,7 @@ public class Auton_Blue_Stone_Move_Foundation extends OpMode {
         }
 
         if (currentStage == stage._00_preStart) {
-            RBTChassis.cmdDrive(AUTO_DRIVEPower_HI, 0, 18);
+            RBTChassis.cmdDrive(AUTO_DRIVEPower_HI, 0, 19);
             currentStage = stage._10_Drive_Out;
         }
 
