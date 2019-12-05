@@ -247,10 +247,13 @@ public class HDrive extends BaseHardware {
         if (HdriveMode_Current != HDriveMode.Drive) {
             HdriveMode_Current = HDriveMode.Drive;
         }
+        HDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        HDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RobotLog.aa(TAGHDrive, "cmdDrive: " + DrivePower);
         TargetMotorPowerH = DrivePower;
         TargetDistanceInchesH = targetDistanceInches;
     }
+
 
     //*********************************************************************************************
     // create command to be called from auton to drive straight

@@ -67,7 +67,7 @@ public class CommonGyro extends BaseHardware {
      */
     @Override
     public void loop() {
-
+        //updateGyroHeading();
 
     }
 
@@ -162,6 +162,7 @@ public class CommonGyro extends BaseHardware {
 
     //*********************************************************************************************
     public int getGyroHeading() {
+        updateGyroHeading();
         return gyroHeading_Current;
     }
 

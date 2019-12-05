@@ -84,7 +84,9 @@ public class Auton_Blue_Stone_Move_Foundation extends OpMode {
         }
 
         if (currentStage == stage._00_preStart) {
-            RBTChassis.cmdDrive(AUTO_DRIVEPower_HI, 0, 19);
+            RBTChassis.cmdDrive((AUTO_DRIVEPower * .7), 0, 19);
+            RBTChassis.subLifter.setPosition(Lifter.PRE_PICK_POS);
+            RBTChassis.subExtender.setPosition(ExtenderMove2Pos.PICK);
             currentStage = stage._10_Drive_Out;
         }
 
@@ -112,15 +114,15 @@ public class Auton_Blue_Stone_Move_Foundation extends OpMode {
         if (currentStage == stage._40_Drive_H_UnderBridge) {
             if (RBTChassis.subHDrive.getcmdComplete()) {
                 //Also start the lift to the first stone height to clear foundation
-                RBTChassis.subLifter.setPosition(Lifter.CLEAR_FOUNDATION_POS);
+                RBTChassis.subLifter.setPosition(Lifter.PRE_PICK_POS);
                 currentStage = stage._45_Lifter_up;
             }
         }
 
         if (currentStage == stage._45_Lifter_up){
-            if (RBTChassis.subLifter.isInPosition(Lifter.CLEAR_FOUNDATION_POS)){
+            if (RBTChassis.subLifter.isInPosition(Lifter.PRE_PICK_POS)){
                 currentStage = stage._50_Drive_Forward;
-                RBTChassis.cmdDrive(AUTO_DRIVEPower,0,4);
+                RBTChassis.cmdDrive(AUTO_DRIVEPower,0,9);
                 RBTChassis.subExtender.setPosition(ExtenderMove2Pos.PLACE_2);
             }
         }
@@ -136,7 +138,7 @@ public class Auton_Blue_Stone_Move_Foundation extends OpMode {
 
         if (currentStage == stage._70_Place_Stone) {
             if (RBTChassis.subPushers.getIsDown() && RBTChassis.subLeg.getcmdComplete()){
-                RBTChassis.cmdDrive(-AUTO_DRIVEPower, 0,30);
+                RBTChassis.cmdDrive(-AUTO_DRIVEPower, 0,24);
                 currentStage = stage._90_Pull_Back;
             }
         }
@@ -151,7 +153,7 @@ public class Auton_Blue_Stone_Move_Foundation extends OpMode {
 
         if (currentStage == stage._95_Pushers_Up){
             if (RBTChassis.subPushers.getIsUp()) {
-                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 12);
+                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 24);
                 currentStage = stage._100_Shuttle_Out;
             }
         }
@@ -159,37 +161,37 @@ public class Auton_Blue_Stone_Move_Foundation extends OpMode {
 
         if (currentStage == stage._100_Shuttle_Out){
             if (RBTChassis.subHDrive.getcmdComplete()){
-                RBTChassis.cmdDrive(AUTO_DRIVEPower,0,4);
+                RBTChassis.cmdDrive(AUTO_DRIVEPower,0,11);
                 currentStage = stage._110_Drive_Forward;
             }
-
         }
 
         if (currentStage == stage._110_Drive_Forward) {
             if (RBTChassis.getcmdComplete()) {
                 currentStage = stage._120_Slam_Foundation;
-                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 4);
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 7);
             }
         }
 
 
         if (currentStage == stage._120_Slam_Foundation) {
             if (RBTChassis.subHDrive.getcmdComplete()) {
-                RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 4);
+                RBTChassis.cmdDrive(AUTO_DRIVEPower *.9, 0, 6);
+                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive,2);
                 currentStage = stage._130_Get_In_Lane;
             }
         }
 
         if (currentStage == stage._130_Get_In_Lane) {
             if (RBTChassis.getcmdComplete()) {
-                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 20);
+                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 24);
                 currentStage = stage._140_Park_On_Line;
             }
         }
 
         if (currentStage == stage._140_Park_On_Line) {
             if (RBTChassis.subHDrive.getcmdComplete()) {
-                RBTChassis.cmdDrive(AUTO_DRIVEPower,0,2);
+                RBTChassis.cmdDrive(AUTO_DRIVEPower*.5,0,1);
                 currentStage = stage._150_Finish;
             }
         }

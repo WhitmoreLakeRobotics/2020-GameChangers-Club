@@ -72,12 +72,12 @@ public class Lifter extends BaseHardware {
         LIFTER_POSITIONS_TICKS[PICK_POS] = -50;  //start pick
         LIFTER_POSITIONS_TICKS[CARRY_POS] = 248; //70;  //carry
         // Pre-Pick pos is the same as CLEAR_FOUNDATION_POS
-        LIFTER_POSITIONS_TICKS[CLEAR_FOUNDATION_POS] = 910;   //level 1
-        LIFTER_POSITIONS_TICKS[3] = 2375; //611;  //level 2
-        LIFTER_POSITIONS_TICKS[4] = 3595; //900;  //level 3
-        LIFTER_POSITIONS_TICKS[5] = 4720; //1175;  //level 4
-        LIFTER_POSITIONS_TICKS[6] = 5890; //1475;  //level 5
-        LIFTER_POSITIONS_TICKS[7] = 6775; //1695;  //level 6
+        LIFTER_POSITIONS_TICKS[CLEAR_FOUNDATION_POS] = 1350;   //level 1
+        LIFTER_POSITIONS_TICKS[3] = 2775; //611;  //level 2
+        LIFTER_POSITIONS_TICKS[4] = 3995; //900;  //level 3
+        LIFTER_POSITIONS_TICKS[5] = 5120; //1175;  //level 4
+        LIFTER_POSITIONS_TICKS[6] = 6290; //1475;  //level 5
+        LIFTER_POSITIONS_TICKS[7] = 7075; //1695;  //level 6
 
         CurrentTickCount = LFT1.getCurrentPosition();
         LFT1.setTargetPosition(CurrentTickCount);
