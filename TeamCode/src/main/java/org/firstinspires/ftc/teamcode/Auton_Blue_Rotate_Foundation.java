@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name = "Blue_Rotate_Foundation", group = "Auton")
 // @Autonomous(...) is the other common choice
-
+@Disabled
 public class Auton_Blue_Rotate_Foundation extends OpMode {
 
 

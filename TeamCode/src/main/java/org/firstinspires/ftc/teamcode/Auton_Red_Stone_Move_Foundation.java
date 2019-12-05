@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name = "Blue_Stone_Foundation", group = "Auton")
-public class Auton_Blue_Stone_Move_Foundation extends OpMode {
+@Autonomous(name = "Red_Stone_Foundation", group = "Auton")
+public class Auton_Red_Stone_Move_Foundation extends OpMode {
 
 
     Chassis RBTChassis = new Chassis();
@@ -15,7 +15,7 @@ public class Auton_Blue_Stone_Move_Foundation extends OpMode {
     private double AUTO_DRIVEPower = .6;
     private double AUTO_DRIVEPower_HI = .90;
     private double AUTO_TURNPower = .4;
-    private double AUTO_DRIVEpower_HDrive = 1.0;
+    private double AUTO_DRIVEpower_HDrive = -1.0;
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -40,7 +40,7 @@ public class Auton_Blue_Stone_Move_Foundation extends OpMode {
         RBTChassis.hardwareMap = hardwareMap;
         RBTChassis.telemetry = telemetry;
         RBTChassis.init();
-        telemetry.addData("Blue_Stone_Foundation", "Initialized");
+        telemetry.addData("Red_Stone_Foundation", "Initialized");
     }
 
     /*
