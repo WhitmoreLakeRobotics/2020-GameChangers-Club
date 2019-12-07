@@ -91,7 +91,7 @@ public class Auton_Blue_Foundation extends OpMode {
         }
 
         if (currentStage == stage._05_Shuttle_2_Center) {
-            RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 12);
+            RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 9);
             currentStage = stage._10_Drive_Out;
         }
 
@@ -135,7 +135,7 @@ public class Auton_Blue_Foundation extends OpMode {
 
         if (currentStage == stage._50_Shuttle_2_Line) {
             if (RBTChassis.subPushers.getIsUp()) {
-                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 39);
+                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 42);
                 currentStage = stage._60_Finish;
             }
         }

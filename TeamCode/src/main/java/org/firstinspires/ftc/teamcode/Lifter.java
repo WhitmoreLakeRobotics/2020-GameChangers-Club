@@ -70,7 +70,7 @@ public class Lifter extends BaseHardware {
         //int brickheight = 350;
         //int foundationheight = 240;
         LIFTER_POSITIONS_TICKS[PICK_POS] = -50;  //start pick
-        LIFTER_POSITIONS_TICKS[CARRY_POS] = 248; //70;  //carry
+        LIFTER_POSITIONS_TICKS[CARRY_POS] = 300; //70;  //carry
         // Pre-Pick pos is the same as CLEAR_FOUNDATION_POS
         LIFTER_POSITIONS_TICKS[CLEAR_FOUNDATION_POS] = 1350;   //level 1
         LIFTER_POSITIONS_TICKS[3] = 2775; //611;  //level 2
