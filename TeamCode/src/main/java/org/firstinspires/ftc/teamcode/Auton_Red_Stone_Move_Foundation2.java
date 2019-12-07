@@ -40,7 +40,7 @@ public class Auton_Red_Stone_Move_Foundation2 extends OpMode {
         RBTChassis.hardwareMap = hardwareMap;
         RBTChassis.telemetry = telemetry;
         RBTChassis.init();
-        telemetry.addData("Red_Stone_Foundation", "Initialized");
+        telemetry.addData("Red_Stone_Foundation2", "Initialized");
     }
 
     /*
@@ -162,7 +162,7 @@ public class Auton_Red_Stone_Move_Foundation2 extends OpMode {
         if (currentStage == stage._100_Shuttle_Out) {
             if (RBTChassis.subHDrive.getcmdComplete()) {
                 RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 13);
-                currentStage = stage._125_Clear_Foundation;
+                currentStage = stage._130_Get_In_Lane;
             }
         }
         /*
@@ -179,14 +179,14 @@ public class Auton_Red_Stone_Move_Foundation2 extends OpMode {
                 currentStage = stage._125_Clear_Foundation;
             }
         }
-*/
+
         if (currentStage == stage._125_Clear_Foundation) {
             if (RBTChassis.getcmdComplete()) {
                 RBTChassis.cmdDrive(AUTO_DRIVEPower, 0, 7);
                 currentStage = stage._130_Get_In_Lane;
             }
         }
-
+*/
         if (currentStage == stage._130_Get_In_Lane) {
             if (RBTChassis.getcmdComplete()) {
                 RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 24);
