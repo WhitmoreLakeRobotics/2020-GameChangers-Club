@@ -84,7 +84,7 @@ public class Auton_Red_Stone_Move_Foundation extends OpMode {
         }
 
         if (currentStage == stage._00_preStart) {
-            RBTChassis.cmdDrive((AUTO_DRIVEPower * .7), 0, 19);
+            RBTChassis.cmdDrive((AUTO_DRIVEPower * .7), 0, 20);
             RBTChassis.subLifter.setPosition(Lifter.PRE_PICK_POS);
             RBTChassis.subExtender.setPosition(ExtenderMove2Pos.PICK);
             currentStage = stage._10_Drive_Out;
@@ -99,14 +99,14 @@ public class Auton_Red_Stone_Move_Foundation extends OpMode {
 
         if (currentStage == stage._20_Pick_Stone) {
             if (RBTChassis.subLeg.getcmdComplete()) {
-                RBTChassis.cmdDrive(-AUTO_DRIVEPower, 0, 4);
+                RBTChassis.cmdDrive(-AUTO_DRIVEPower, 0, 5);
                 currentStage = stage._30_Drive_Back;
             }
         }
 
         if (currentStage == stage._30_Drive_Back) {
             if (RBTChassis.getcmdComplete()) {
-                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive,72);
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive,74);
                 currentStage = stage._40_Drive_H_UnderBridge;
             }
         }
@@ -123,7 +123,7 @@ public class Auton_Red_Stone_Move_Foundation extends OpMode {
             if (RBTChassis.subLifter.isInPosition(Lifter.PRE_PICK_POS)){
                 currentStage = stage._50_Drive_Forward;
                 RBTChassis.cmdDrive(AUTO_DRIVEPower,0,9);
-                RBTChassis.subExtender.setPosition(ExtenderMove2Pos.PLACE_2);
+                RBTChassis.subExtender.setPosition(ExtenderMove2Pos.PLACE_3);
             }
         }
 
@@ -153,7 +153,7 @@ public class Auton_Red_Stone_Move_Foundation extends OpMode {
 
         if (currentStage == stage._95_Pushers_Up){
             if (RBTChassis.subPushers.getIsUp()) {
-                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 24);
+                RBTChassis.subHDrive.cmdDrive(-AUTO_DRIVEpower_HDrive, 27);
                 currentStage = stage._100_Shuttle_Out;
             }
         }
@@ -169,7 +169,7 @@ public class Auton_Red_Stone_Move_Foundation extends OpMode {
         if (currentStage == stage._110_Drive_Forward) {
             if (RBTChassis.getcmdComplete()) {
                 currentStage = stage._120_Slam_Foundation;
-                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 6);
+                RBTChassis.subHDrive.cmdDrive(AUTO_DRIVEpower_HDrive, 3);
             }
         }
 
