@@ -19,7 +19,7 @@ Echo pushing code
 echo added changes
 git add .
 echo posting comment %finalcomment%
-git commit -m %finalcomment%
+git commit -m "%finalcomment%"
 echo pushing package
 git push
 echo pulling for changes
