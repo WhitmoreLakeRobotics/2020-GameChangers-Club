@@ -26,6 +26,5 @@ echo pulling for changes
 git pull 
 echo status
 git status
-pause
 
 :END
