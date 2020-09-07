@@ -4,7 +4,7 @@ echo please enter your initials
 set /P initials=
 echo %id% please enter your update comments
 set /P comments=
-set finalcomment=%initials%_%comments%
+set finalcomment=%initials%-%comments%
 
 echo %finalcomment%
 :choice
