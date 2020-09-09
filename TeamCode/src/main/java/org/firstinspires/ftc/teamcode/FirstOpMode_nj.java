@@ -1,54 +1,49 @@
 package org.firstinspires.ftc.teamcode;
-
-import com.qualcomm.robotcore.hardware.HardwareMap;
+// This is a comment that this is Your first program.
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+
 
 /**
- * Base class for FTC Team 8492 defined hardware
+ * An Op mode is a mode of operation either autonomous or teleop.
+  * The op mode name should be unique. It will be the name displayed on the driver station. If
+ * multiple op modes have the same name, only one will be available.
  */
-public abstract class BaseHardware {
-    /* Telemetry is a way to send and display data on the driver station
-
-    /**
-     * The {@link #telemetry} field contains an object in which a user may accumulate data which
-     * is to be transmitted to the driver station. This data is automatically transmitted to the
-     * driver station on a regular, periodic basis.
-     */
+@Autonomous(name = "FirstOpMode_nj", group = "Auton")
+public class FirstOpMode_nj  extends OpMode {
+    /* The Telemetry object that allows us to send and display data on the driver station     */
     public Telemetry telemetry = null;
 
-    /**
-     * Hardware Mappings
-     */
-    public HardwareMap hardwareMap = null; // will be set in parent
-
 
     /**
-     * BaseHardware constructor
-     * <p>
-     * The op mode name should be unique. It will be the name displayed on the driver station. If
-     * multiple op modes have the same name, only one will be available.
+     * Hardware Mappings go in this section
      */
-    public BaseHardware() {
-
-    }
 
     /**
      * User defined init method
-     * <p>
      * This method will be called once when the INIT button is pressed.
      */
-    abstract public void init();
+    public void init() {
 
+    }
     /**
      * User defined init_loop method
      * <p>
      * This method will be called repeatedly when the INIT button is pressed.
      * This method is optional. By default this method takes no action.
      */
-    abstract public void init_loop();
 
+    public void init_loop() {
+
+    }
     /**
      * User defined start method.
      * <p>
@@ -56,14 +51,18 @@ public abstract class BaseHardware {
      * This method is optional. By default this method takes not action.
      * Example usage: Starting another thread.
      */
-    abstract public void start();
+    public void start(){
+
+    }
 
     /**
      * User defined loop method
      * <p>
      * This method will be called repeatedly in a loop while this op mode is running
      */
-    abstract public void loop();
+    public void loop() {
+
+    }
 
     /**
      * User defined stop method
@@ -72,5 +71,7 @@ public abstract class BaseHardware {
      * <p>
      * The stop method is optional. By default this method takes no action.
      */
-    abstract void stop();
+    public void stop() {
+
+    }
 }
