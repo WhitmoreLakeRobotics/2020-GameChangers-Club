@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -13,6 +14,9 @@ public class FirstOpMode_NAJ extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor LDM1 = null;
+    private DcMotor RDM1 = null;
+    private String driveMode = "drive";
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -25,9 +29,15 @@ public class FirstOpMode_NAJ extends OpMode {
         // the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
         // necessary as poorly chosen values might inadvertently compromise safety.
         //----------------------------------------------------------------------------------------------
-
-
         telemetry.addData("SampleOpMode", "Initialized");
+
+        LDM1 = hardwareMap.dcMotor.get("LDM1");
+        LDM1.setDirection(DcMotor.Direction.FORWARD);
+        LDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        RDM1 = hardwareMap.dcMotor.get("RDM1");
+        RDM1.setDirection(DcMotor.Direction.REVERSE);
+        RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     /*
@@ -42,7 +52,6 @@ public class FirstOpMode_NAJ extends OpMode {
      */
     @Override
     public void start() {
-        Runtime.getRuntime();
     }
 
     /*
@@ -50,6 +59,12 @@ public class FirstOpMode_NAJ extends OpMode {
      */
     @Override
     public void loop() {
+        if (ElapsedTime.MILLIS_IN_NANO <= 3000) {
+            RDM1.setPower(5);
+            LDM1.setPower(5);
+        }
+        RDM1.setPower(0);
+        LDM1.setPower(0);
 
 
     }  //  loop

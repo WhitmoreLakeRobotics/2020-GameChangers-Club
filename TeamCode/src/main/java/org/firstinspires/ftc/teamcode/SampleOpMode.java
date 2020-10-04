@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name = "SampleOpMode", group = "Auton")
-// @Autonomous(...) is the other common choice
+// @TeleOp(...) is the other common choice
 
 public class SampleOpMode extends OpMode {
 
