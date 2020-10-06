@@ -27,9 +27,7 @@ public class FirstOpMode_VB extends OpMode {
         //----------------------------------------------------------------------------------------------
 
 
-        telemetry.addData("First
-
-        OpMode_VB", "Initialized");
+        telemetry.addData("FirstOpMode_VB", "Initialized");
     }
 
     /*

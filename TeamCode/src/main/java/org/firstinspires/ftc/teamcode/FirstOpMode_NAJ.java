@@ -7,7 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name = "FirstOpMode_NAJ", group = "Auton")
-// @Autonomous(...) is the other common choice
+//@TeleOp(name="FirstOpMode_NAJ", group="Teleop")
+
 
 public class FirstOpMode_NAJ extends OpMode {
 
@@ -16,7 +17,6 @@ public class FirstOpMode_NAJ extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor LDM1 = null;
     private DcMotor RDM1 = null;
-    private String driveMode = "drive";
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -59,13 +59,12 @@ public class FirstOpMode_NAJ extends OpMode {
      */
     @Override
     public void loop() {
-        if (ElapsedTime.MILLIS_IN_NANO <= 3000) {
-            RDM1.setPower(5);
-            LDM1.setPower(5);
+        if (ElapsedTime.MILLIS_IN_NANO >= 3000) {
+            RDM1.setPower(0);
+            LDM1.setPower(0);
         }
-        RDM1.setPower(0);
-        LDM1.setPower(0);
-
+        RDM1.setPower(.5);
+        LDM1.setPower(.5);
 
     }  //  loop
 
