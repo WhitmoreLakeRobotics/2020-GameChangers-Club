@@ -52,6 +52,7 @@ public class FirstOpMode_NAJ extends OpMode {
      */
     @Override
     public void start() {
+        runtime.reset();
     }
 
     /*
@@ -59,13 +60,14 @@ public class FirstOpMode_NAJ extends OpMode {
      */
     @Override
     public void loop() {
-        if (ElapsedTime.MILLIS_IN_NANO >= 3000) {
+        telemetry.addData("RunTime",runtime.milliseconds());
+        if (runtime.milliseconds() >= 3000) {
             RDM1.setPower(0);
             LDM1.setPower(0);
         }
-        RDM1.setPower(.5);
-        LDM1.setPower(.5);
-
+        else {
+            RDM1.setPower(.5);
+            LDM1.setPower(.5);}
     }  //  loop
 
     /*

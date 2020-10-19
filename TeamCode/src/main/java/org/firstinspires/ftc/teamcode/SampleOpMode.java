@@ -42,6 +42,7 @@ public class SampleOpMode extends OpMode {
      */
     @Override
     public void start() {
+
         Runtime.getRuntime();
     }
 
