@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -13,6 +14,8 @@ public class firstopmode_IND extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor LDM1 = null;
+    private DcMotor RDM1 = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -25,9 +28,14 @@ public class firstopmode_IND extends OpMode {
         // the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
         // necessary as poorly chosen values might inadvertently compromise safety.
         //----------------------------------------------------------------------------------------------
+        LDM1 = hardwareMap.dcMotor.get("LDM1");
+        LDM1.setDirection(DcMotor.Direction.FORWARD);
+        LDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RDM1 = hardwareMap.dcMotor.get("RDM1");
+        RDM1.setDirection(DcMotor.Direction.REVERSE);
+        RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
-        telemetry.addData("SampleOpMode", "Initialized");
+        telemetry.addData("is_a_tacobella", "Initialized");
     }
 
     /*
@@ -35,6 +43,7 @@ public class firstopmode_IND extends OpMode {
      */
     @Override
     public void init_loop() {
+
     }
 
     /*
@@ -50,8 +59,16 @@ public class firstopmode_IND extends OpMode {
      */
     @Override
     public void loop() {
-
-
+        telemetry.addData("is_a_tacobella", "RuNNinG");
+        telemetry.addData("Runtime", runtime.milliseconds());
+        if (runtime.milliseconds() >=3000) {
+            RDM1.setPower(0);
+            LDM1.setPower(0);
+        }
+        else{
+            RDM1.setPower(1);
+            LDM1.setPower(1);
+        }
     }  //  loop
 
     /*
