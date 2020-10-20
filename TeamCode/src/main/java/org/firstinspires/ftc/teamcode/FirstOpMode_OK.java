@@ -2,20 +2,18 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name = "FirstOpMode_VB", group = "Auton")
+@Autonomous(name = "FirstOpMode_OK", group = "Auton")
 // @Autonomous(...) is the other common choice
 
-public class FirstOpMode_VB extends OpMode {
+public class FirstOpMode_OK extends OpMode {
 
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor LDM1 = null;
-    private DcMotor RDM1 = null;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -27,15 +25,9 @@ public class FirstOpMode_VB extends OpMode {
         // the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
         // necessary as poorly chosen values might inadvertently compromise safety.
         //----------------------------------------------------------------------------------------------
-      LDM1 = hardwareMap.dcMotor.get("LDM1");
-        LDM1.setDirection(DcMotor.Direction.FORWARD);
-        LDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-      RDM1 = hardwareMap.dcMotor.get("RDM1");
-        RDM1.setDirection(DcMotor.Direction.REVERSE);
-        RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-        telemetry.addData("Vincent uhh yeah me", "Initialized");
+        telemetry.addData("SampleOpMode", "Initialized");
     }
 
     /*
@@ -58,19 +50,8 @@ public class FirstOpMode_VB extends OpMode {
      */
     @Override
     public void loop() {
-        telemetry.addData("Vincent uhhhh yeah me", "Running");
-        telemetry.addData("RunTime",runtime.milliseconds());
-        if (runtime.milliseconds()>=3000) {
-            RDM1.setPower(0);
-            LDM1.setPower(0);
 
-        }
 
-        else {
-            
-            RDM1.setPower(.56789);
-            LDM1.setPower(.56789);
-        }
     }  //  loop
 
     /*
