@@ -1,0 +1,6 @@
+LDM1.setDirection(DcMotor.Direction.FORWARD);
+LDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+RDM1.setDirection(DcMotor.Direction.REVERSE);
+RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+

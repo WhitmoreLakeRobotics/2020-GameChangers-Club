@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.comm.RobotUsbDevicePretendModernRobotics;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name = "SampleOpMode", group = "Auton")
-// @TeleOp(...) is the other common choice
+@Autonomous(name = "FirstOpMode_TG.java", group = "Auton")
+// @Autonomous(...) is the other common choice
 
-public class SampleOpMode extends OpMode {
+public class FirstOpMode_TG extends OpMode {
 
 
     /* Declare OpMode members. */
@@ -42,7 +43,6 @@ public class SampleOpMode extends OpMode {
      */
     @Override
     public void start() {
-
         Runtime.getRuntime();
     }
 

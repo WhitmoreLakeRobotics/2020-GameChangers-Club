@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name = "SampleOpMode", group = "Auton")
-// @TeleOp(...) is the other common choice
+@Autonomous(name = "FirstOP_modeWm ", group = "Auton")
+// @Autonomous(...) is the other common choice
 
-public class SampleOpMode extends OpMode {
+public class FirstOP_modeWm extends OpMode {
 
 
     /* Declare OpMode members. */
@@ -42,7 +42,6 @@ public class SampleOpMode extends OpMode {
      */
     @Override
     public void start() {
-
         Runtime.getRuntime();
     }
 

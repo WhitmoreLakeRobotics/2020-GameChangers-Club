@@ -5,10 +5,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name = "SampleOpMode", group = "Auton")
-// @TeleOp(...) is the other common choice
+@Autonomous(name = "FirstOpMode_VB", group = "Auton")
+// @Autonomous(...) is the other common choice
 
-public class SampleOpMode extends OpMode {
+public class FirstOpMode_VB extends OpMode {
 
 
     /* Declare OpMode members. */
@@ -27,7 +27,7 @@ public class SampleOpMode extends OpMode {
         //----------------------------------------------------------------------------------------------
 
 
-        telemetry.addData("SampleOpMode", "Initialized");
+        telemetry.addData("FirstOpMode_VB", "Initialized");
     }
 
     /*
@@ -42,7 +42,6 @@ public class SampleOpMode extends OpMode {
      */
     @Override
     public void start() {
-
         Runtime.getRuntime();
     }
 
