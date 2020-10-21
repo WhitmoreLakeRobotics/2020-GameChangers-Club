@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -13,7 +14,8 @@ public class FirstOPmode_JJC extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-
+private DcMotor LDM1 = null;
+private DcMotor RDM1 = null;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -27,7 +29,15 @@ public class FirstOPmode_JJC extends OpMode {
         //----------------------------------------------------------------------------------------------
 
 
-        telemetry.addData("SampleOpMode", "Initialized");
+        telemetry.addData("JustThinkCoding", "Initialized");
+        LDM1 = hardwareMap.dcMotor.get("LDM1");
+        LDM1.setDirection(DcMotor.Direction.FORWARD);
+        LDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        RDM1 = hardwareMap.dcMotor.get("RDM1");
+        RDM1.setDirection(DcMotor.Direction.REVERSE);
+        RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     /*
@@ -50,6 +60,17 @@ public class FirstOPmode_JJC extends OpMode {
      */
     @Override
     public void loop() {
+        telemetry.addData("JustThinkCoding", "Running");
+        telemetry.addData("RunTime",runtime.milliseconds());
+        if (runtime.milliseconds()>= 3000)
+        {
+            RDM1.setPower(0);
+            LDM1.setPower(0);
+        }
+        else {
+            RDM1.setPower(.5);
+            LDM1.setPower(.5);
+        }
 
 
     }  //  loop
