@@ -6,11 +6,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name = "FirstOpMode_NAJ", group = "Auton")
+@Autonomous(name = "Auton_drive_encorder_NAJ", group = "Auton")
 //@TeleOp(name="FirstOpMode_NAJ", group="Teleop")
 
 
-public class FirstOpMode_NAJ extends OpMode {
+public class Auton_drive_encorder_NAJ extends OpMode {
 
 
     /* Declare OpMode members. */

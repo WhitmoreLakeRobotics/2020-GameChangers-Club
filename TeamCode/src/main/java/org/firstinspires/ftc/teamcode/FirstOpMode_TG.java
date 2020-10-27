@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.modernrobotics.comm.RobotUsbDevicePretendModernRobotics;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -27,11 +29,11 @@ private DcMotor LDM1 = null;
         // the robot controller application is restarted. They SHOULD NOT be modified except as absolutely
         // necessary as poorly chosen values might inadvertently compromise safety.
         //----------------------------------------------------------------------------------------------
-        LDM1 = hardwareMap.dcMmotor.get("LDM1");
+        LDM1 = hardwareMap.dcMotor.get("LDM1");
         LDM1.setDirection(DcMotor.Direction.FORWARD);
         LDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        RDM1 = hardwareMap.dcMmotor.get("RDM10");
+        RDM1 = hardwareMap.dcMotor.get("RDM10");
         RDM1.setDirection(DcMotor.Direction.REVERSE);
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 

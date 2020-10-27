@@ -13,8 +13,8 @@ public class FirstOpMode_KG extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-Private DcMotors LDM1 = null;
-Private DcMotors RDM1 = null;
+    Private DcMotors LDM1 = null;
+    Private DcMotors RDM1 = null;
     /*
 
      * Code to run ONCE when the driver hits INIT
