@@ -14,9 +14,19 @@ public class Auton_drive_encorder_NAJ extends OpMode {
 
 
     /* Declare OpMode members. */
+    public static final int REV_CORE_HEX_MOTOR_TICKS_PER_REV = 288;
+    public static final int REV_HD_40_MOTOR_TICKS_PER_REV = 1120;
+    public static final int REV_HD_20_MOTOR_TICKS_PER_REV = 560;
+    public static final int TICS_PER_REV = REV_HD_40_MOTOR_TICKS_PER_REV;
+    public static final int WHEEL_SIZE = 3;
+    public static final double WHEEL_DIST_PER_REV = WHEEL_SIZE * 3.14159;
+    public static final double TICS_PER_INCH = TICS_PER_REV / WHEEL_DIST_PER_REV;
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor LDM1 = null;
     private DcMotor RDM1 = null;
+
+    private double DistanceTarget = 20;
+    private double TicsTarget = DistanceTarget * TICS_PER_INCH;
 
     /*
      * Code to run ONCE when the driver hits INIT
