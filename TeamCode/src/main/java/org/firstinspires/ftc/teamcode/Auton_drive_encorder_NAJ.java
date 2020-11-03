@@ -44,14 +44,16 @@ public class Auton_drive_encorder_NAJ extends OpMode {
         LDM1 = hardwareMap.dcMotor.get("LDM1");
         LDM1.setDirection(DcMotor.Direction.FORWARD);
         LDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        LDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         RDM1 = hardwareMap.dcMotor.get("RDM1");
         RDM1.setDirection(DcMotor.Direction.REVERSE);
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        LDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
     }
 
     /*
@@ -76,7 +78,7 @@ public class Auton_drive_encorder_NAJ extends OpMode {
     public void loop() {
         telemetry.addData("RunTime",runtime.milliseconds());
         telemetry.addData("Ms. Jewell Jumpers", "running");
-        if (runtime.milliseconds() >= 3000) {
+        if (LDM1.getCurrentPosition() >= TicsTarget) {
             RDM1.setPower(0);
             LDM1.setPower(0);
         }
