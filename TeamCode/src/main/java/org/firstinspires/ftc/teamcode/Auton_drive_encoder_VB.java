@@ -1,20 +1,29 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name = "FirstOpMode_VB", group = "Auton")
+
+
+@Autonomous(name = "Auton_drive_encoder_VB", group = "Auton")
 // @Autonomous(...) is the other common choice
 
-public class FirstOpMode_VB extends OpMode {
+public class Auton_drive_encoder_VB extends OpMode {
 
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor LDM1 = null;
     private DcMotor RDM1 = null;
+    public static final int WHEEL_SIZE = 3;
+    public static final double WHEEL_DIST_PER_REV = WHEEL_SIZE * 3.14159;
+    public static final int TICS_PER_REV = 1120;
+    public static final double TICS_PER_INCH = TICS_PER_REV / WHEEL_DIST_PER_REV;
+    private double DistanceTarget;
+    private double TicsTarget = DistanceTarget * TICS_PER_INCH;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -29,9 +38,13 @@ public class FirstOpMode_VB extends OpMode {
       LDM1 = hardwareMap.dcMotor.get("LDM1");
         LDM1.setDirection(DcMotor.Direction.FORWARD);
         LDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
       RDM1 = hardwareMap.dcMotor.get("RDM1");
         RDM1.setDirection(DcMotor.Direction.REVERSE);
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         telemetry.addData("Vincent uhh yeah me", "Initialized");
@@ -59,7 +72,8 @@ public class FirstOpMode_VB extends OpMode {
     public void loop() {
         telemetry.addData("Vincent uhhhh yeah me", "Running");
         telemetry.addData("RunTime",runtime.milliseconds());
-        if (runtime.milliseconds()>=3000) {
+        DistanceTarget = 24;
+        if (LDM1.getCurrentPosition()>=TicsTarget) {
             RDM1.setPower(0);
             LDM1.setPower(0);
 
