@@ -9,8 +9,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.lang.annotation.ElementType;
 
 
 /**
@@ -31,6 +34,10 @@ public class FirstOpMode_mg  extends OpMode {
         TELEOP,
         UNKNOWN
     }
+
+    int DriveTime;
+    int DriveTimeTarget;
+    private ElapsedTime runtime = new ElapsedTime();
     /**
      * Hardware Mappings go in this section
      */
@@ -54,7 +61,8 @@ public class FirstOpMode_mg  extends OpMode {
         RDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
+        DriveTime = 0;
+        DriveTimeTarget = 3000;
 
 
         if (LDM1 == null) {
@@ -82,7 +90,10 @@ public class FirstOpMode_mg  extends OpMode {
      * Example usage: Starting another thread.
      */
     public void start(){
-telemetry.addData("first note","Hello world");
+
+        telemetry.addData("first note","Hello world");
+
+        DriveForwardTime(2,.25);
     }
 
     /**
@@ -92,7 +103,7 @@ telemetry.addData("first note","Hello world");
      */
     public void loop() {
     //Drive for 2 secs at 0.25 or 25%
-        DriveForwardTime(2,0.25);
+      //  DriveForwardTime(2,0.25);
     }
 
     /**
@@ -110,8 +121,11 @@ telemetry.addData("first note","Hello world");
         //drive forward for time specified as parameter
         setMotorMode_RUN_WITHOUT_ENCODER();
 
-            LDM1.setPower(Powerlevel);
-            RDM1.setPower(Powerlevel);
+if (DriveTimeTarget >= ElapsedTime())
+        //need to set timer and drive forward for that time.
+        LDM1.setPower(Powerlevel);
+        RDM1.setPower(Powerlevel);
+        // use DriveTime object and Drive timer
 
 
     }
