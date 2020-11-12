@@ -121,7 +121,7 @@ public class FirstOpMode_mg  extends OpMode {
         //drive forward for time specified as parameter
         setMotorMode_RUN_WITHOUT_ENCODER();
 
-if (DriveTimeTarget >= ElapsedTime())
+if (DriveTimeTarget >= runtime.milliseconds())
         //need to set timer and drive forward for that time.
         LDM1.setPower(Powerlevel);
         RDM1.setPower(Powerlevel);

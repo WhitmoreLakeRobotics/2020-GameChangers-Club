@@ -18,7 +18,7 @@ public class Auton_drive_encorder_NAJ extends OpMode {
     public static final int REV_HD_40_MOTOR_TICKS_PER_REV = 1120;
     public static final int REV_HD_20_MOTOR_TICKS_PER_REV = 560;
     public static final int TICS_PER_REV = REV_HD_40_MOTOR_TICKS_PER_REV;
-    public static final int WHEEL_SIZE = 3;
+    public static final int WHEEL_SIZE = 4;
     public static final double WHEEL_DIST_PER_REV = WHEEL_SIZE * 3.14159;
     public static final double TICS_PER_INCH = TICS_PER_REV / WHEEL_DIST_PER_REV;
     private ElapsedTime runtime = new ElapsedTime();
@@ -44,15 +44,15 @@ public class Auton_drive_encorder_NAJ extends OpMode {
         LDM1 = hardwareMap.dcMotor.get("LDM1");
         LDM1.setDirection(DcMotor.Direction.FORWARD);
         LDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        LDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         RDM1 = hardwareMap.dcMotor.get("RDM1");
         RDM1.setDirection(DcMotor.Direction.REVERSE);
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
 
@@ -77,14 +77,22 @@ public class Auton_drive_encorder_NAJ extends OpMode {
     @Override
     public void loop() {
         telemetry.addData("RunTime",runtime.milliseconds());
-        telemetry.addData("Ms. Jewell Jumpers", "running");
-        if (LDM1.getCurrentPosition() >= TicsTarget) {
+        telemetry.addData("Ms. Jewell Encoders", "running");
+        telemetry.addData("tictarget= " + TicsTarget, "curr_tics " + LDM1.getCurrentPosition());
+       if (LDM1.getCurrentPosition() >= TicsTarget) {
+            telemetry.addData("in if","if");
             RDM1.setPower(0);
             LDM1.setPower(0);
         }
+
+
         else {
-            RDM1.setPower(.5);
-            LDM1.setPower(.5);}
+            telemetry.addData("in", "else");
+        RDM1.setPower(.5);
+        LDM1.setPower(.5);}
+
+
+//        RDM1.setPower(1);
     }  //  loop
 
     /*

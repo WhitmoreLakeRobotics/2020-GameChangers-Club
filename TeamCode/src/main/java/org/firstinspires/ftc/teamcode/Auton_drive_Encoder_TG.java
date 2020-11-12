@@ -34,14 +34,14 @@ private DcMotor LDM1 = null;
         LDM1 = hardwareMap.dcMotor.get("LDM1");
         LDM1.setDirection(DcMotor.Direction.FORWARD);
         LDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        LDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         LDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         RDM1 = hardwareMap.dcMotor.get("RDM10");
         RDM1.setDirection(DcMotor.Direction.REVERSE);
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        RDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         RDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         telemetry.addData("minecraft boss", "Initialized");
     }
