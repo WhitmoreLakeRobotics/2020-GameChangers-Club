@@ -22,7 +22,7 @@ public class Auton_drive_encoder_VB extends OpMode {
     public static final double WHEEL_DIST_PER_REV = WHEEL_SIZE * 3.14159;
     public static final int TICS_PER_REV = 1120;
     public static final double TICS_PER_INCH = TICS_PER_REV / WHEEL_DIST_PER_REV;
-    private double DistanceTarget;
+    private double DistanceTarget = 24;
     private double TicsTarget = DistanceTarget * TICS_PER_INCH;
     /*
      * Code to run ONCE when the driver hits INIT
@@ -73,7 +73,6 @@ public class Auton_drive_encoder_VB extends OpMode {
     public void loop() {
         telemetry.addData("Vincent uhhhh yeah me", "Running");
         telemetry.addData("RunTime",runtime.milliseconds());
-        DistanceTarget = 24;
         telemetry.addData("tictarget= " + TicsTarget, "curr_tics " + LDM1.getCurrentPosition());
 
         if (LDM1.getCurrentPosition()>=TicsTarget) {
