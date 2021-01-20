@@ -25,7 +25,7 @@ public class Auton_drive_encorder_NAJ extends OpMode {
     private DcMotor LDM1 = null;
     private DcMotor RDM1 = null;
 
-    private double DistanceTarget = 20;
+    private double DistanceTarget = 74;
     private double TicsTarget = DistanceTarget * TICS_PER_INCH;
 
     /*

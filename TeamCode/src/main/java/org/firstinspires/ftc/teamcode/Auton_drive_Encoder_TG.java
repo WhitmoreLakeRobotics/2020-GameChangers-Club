@@ -18,8 +18,9 @@ private DcMotor LDM1 = null;
      public static final double WHEEL_DIST_PER_REV=WHEEL_SIZE*3.14159;
      public static final int TICS_PER_REV=1120;
     public static final double TICS_PER_INCH=TICS_PER_REV/WHEEL_DIST_PER_REV;
-    private double DistanceTarget;
+    private double DistanceTarget=58;
     private double TicsTarget=DistanceTarget*TICS_PER_INCH;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -37,7 +38,7 @@ private DcMotor LDM1 = null;
         LDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        RDM1 = hardwareMap.dcMotor.get("RDM10");
+        RDM1 = hardwareMap.dcMotor.get("RDM1");
         RDM1.setDirection(DcMotor.Direction.REVERSE);
         RDM1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -68,7 +69,7 @@ private DcMotor LDM1 = null;
     public void loop() {
         telemetry.addData("minecraft boss", "Running");
 telemetry.addData("RunTime",runtime.milliseconds());
-DistanceTarget = 24;
+
         if (LDM1.getCurrentPosition() >= TicsTarget) {
             RDM1.setPower(0);
             LDM1.setPower(0);
