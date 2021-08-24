@@ -1,0 +1,5 @@
+c
+
+RDM1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+RDM1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
